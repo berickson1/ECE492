@@ -37,3 +37,4 @@ impact_impact.xwbt
 *.vcd
 /Quartus/.qsys_edit
 /Quartus/nios_system*
+/Quartus/output_files
