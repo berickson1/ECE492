@@ -35,3 +35,4 @@ impact_impact.xwbt
 *.bak
 *.vpp
 *.vcd
+/Quartus/.qsys_edit
