@@ -5,23 +5,89 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use ieee.VITAL_Primatives.all;
+use work.DE2_CONSTANTS.all;
 
 entity BioLock is
         port (
+		-- Reset and Clock
+		KEY		: in std_logic_vector (0 downto 0);
+		CLOCK_50	: in std_logic;
+
+
+		-- Off Chip
+		GPIO_0		: in std_logic_vector(0 downto 0);
+
+		-- Switches
+		SW		: in std_logic_vector (16 downto 0); 
+
+		-- Green LEDs On Board
+		LEDG		: out DE2_LED_GREEN;
+
+		-- LCD On Board
+		LCD_BLON	: out std_logic;
+		LCD_ON		: out std_logic;
+		LCD_DATA	: inout DE2_LCD_DATA_BUS;
+		LCD_RS		: out std_logic;
+		LCD_EN		: out std_logic;
+		LCD_RW		: out std_logic;
+
+		-- Serial Connection
+		UART_RXD	: in std_logic;
+		UART_TXD	: out std_logic; 
+
+		-- SDRAM On Board
+		DRAM_ADDR	: out DE2_SDRAM_ADDR_BUS;
+		DRAM_BA_0	: out std_logic;
+		DRAM_BA_1	: out std_logic;
+		DRAM_CAS_N	: out std_logic;
+		DRAM_CKE	: out std_logic;
+		DRAM_CLK	: out std_logic;
+		DRAM_CD_N	: out std_logic;
+		DRAM_DQ		: inout DE2_SDRAM_DATA_BUS;
+		DRAM_LDQM	: out std_logic;
+		DRAM_UDQM	: out std_logic;
+		DRAM_RAS_N	: out std_logic;
+		DRAM_WE_N	: out std_logic;
+
+		-- SRAM On Board
+		SRAM_ADDR	: out DE2_SRAM_ADDR_BUS;
+		SRAM_DQ		: inout DE2_SRAM_DATA_BUS;
+		SRAM_WE_N	: out std_logic;
+		SRAM_OE_N	: out std_logic;
+		SRAM_UB_N	: out std_logic;
+		SRAM_LB_N	: out std_logic; 
+		SRAM_CE_N	: out std_logic;
+	
+	);
+end BioLock;
+
+
+architecture structure of BioLock is
+
+	component BioLock_System is
+	port (
+	    clk_clk                                 : in    std_logic                     := 'X';             -- clk
             reset_reset_n                           : in    std_logic                     := 'X';             -- reset_n
+
             gpio_external_connection_export         : out   std_logic;                                        -- export
-            switches_external_connection_export     : in    std_logic_vector(15 downto 0) := (others => 'X'); -- export
+
+            switches_external_connection_export     : in    std_logic_vector(17 downto 0) := (others => 'X'); -- export
+
             green_leds_external_connection_export   : out   std_logic_vector(7 downto 0);                     -- export
+
             character_lcd_0_external_interface_DATA : inout std_logic_vector(7 downto 0)  := (others => 'X'); -- DATA
             character_lcd_0_external_interface_ON   : out   std_logic;                                        -- ON
             character_lcd_0_external_interface_BLON : out   std_logic;                                        -- BLON
             character_lcd_0_external_interface_EN   : out   std_logic;                                        -- EN
             character_lcd_0_external_interface_RS   : out   std_logic;                                        -- RS
             character_lcd_0_external_interface_RW   : out   std_logic;                                        -- RW
+
             altpll_0_c0_clk                         : out   std_logic;                                        -- clk
+
             serial_external_connection_rxd          : in    std_logic                     := 'X';             -- rxd
             serial_external_connection_txd          : out   std_logic;                                        -- txd
-            sdram_0_wire_addr                       : out   std_logic_vector(11 downto 0);                    -- addr
+            
+	    sdram_0_wire_addr                       : out   std_logic_vector(11 downto 0);                    -- addr
             sdram_0_wire_ba                         : out   std_logic_vector(1 downto 0);                     -- ba
             sdram_0_wire_cas_n                      : out   std_logic;                                        -- cas_n
             sdram_0_wire_cke                        : out   std_logic;                                        -- cke
@@ -30,7 +96,7 @@ entity BioLock is
             sdram_0_wire_dqm                        : out   std_logic_vector(1 downto 0);                     -- dqm
             sdram_0_wire_ras_n                      : out   std_logic;                                        -- ras_n
             sdram_0_wire_we_n                       : out   std_logic;                                        -- we_n
-            clk_clk                                 : in    std_logic                     := 'X';             -- clk
+            
             sram_0_external_interface_DQ            : inout std_logic_vector(15 downto 0) := (others => 'X'); -- DQ
             sram_0_external_interface_ADDR          : out   std_logic_vector(17 downto 0);                    -- ADDR
             sram_0_external_interface_LB_N          : out   std_logic;                                        -- LB_N
@@ -39,39 +105,76 @@ entity BioLock is
             sram_0_external_interface_OE_N          : out   std_logic;                                        -- OE_N
             sram_0_external_interface_WE_N          : out   std_logic                                         -- WE_N
         );
-    end component BioLock;
+    end component BioLock_System;
 
-    u0 : component BioLock
+	-- signals to match provided IP core to specific SDRAM chip of our system
+	signal BA	: std_logic_vector (1 downto 0);
+	signal DQM	: std_logic_vector (1 downto 0);
+begin
+	DRAM_BA_1 <= BA(1);
+	DRAM_BA_0 <= BA(0);
+
+	DRAM_UDQM <= DQM(1);
+	DRAM_LDQM <= DQM(0);
+
+    u0 : component BioLock_System
         port map (
-            reset_reset_n                           => CONNECTED_TO_reset_reset_n,                           --                              reset.reset_n
-            gpio_external_connection_export         => CONNECTED_TO_gpio_external_connection_export,         --           gpio_external_connection.export
-            switches_external_connection_export     => CONNECTED_TO_switches_external_connection_export,     --       switches_external_connection.export
-            green_leds_external_connection_export   => CONNECTED_TO_green_leds_external_connection_export,   --     green_leds_external_connection.export
-            character_lcd_0_external_interface_DATA => CONNECTED_TO_character_lcd_0_external_interface_DATA, -- character_lcd_0_external_interface.DATA
-            character_lcd_0_external_interface_ON   => CONNECTED_TO_character_lcd_0_external_interface_ON,   --                                   .ON
-            character_lcd_0_external_interface_BLON => CONNECTED_TO_character_lcd_0_external_interface_BLON, --                                   .BLON
-            character_lcd_0_external_interface_EN   => CONNECTED_TO_character_lcd_0_external_interface_EN,   --                                   .EN
-            character_lcd_0_external_interface_RS   => CONNECTED_TO_character_lcd_0_external_interface_RS,   --                                   .RS
-            character_lcd_0_external_interface_RW   => CONNECTED_TO_character_lcd_0_external_interface_RW,   --                                   .RW
-            altpll_0_c0_clk                         => CONNECTED_TO_altpll_0_c0_clk,                         --                        altpll_0_c0.clk
-            serial_external_connection_rxd          => CONNECTED_TO_serial_external_connection_rxd,          --         serial_external_connection.rxd
-            serial_external_connection_txd          => CONNECTED_TO_serial_external_connection_txd,          --                                   .txd
-            sdram_0_wire_addr                       => CONNECTED_TO_sdram_0_wire_addr,                       --                       sdram_0_wire.addr
-            sdram_0_wire_ba                         => CONNECTED_TO_sdram_0_wire_ba,                         --                                   .ba
-            sdram_0_wire_cas_n                      => CONNECTED_TO_sdram_0_wire_cas_n,                      --                                   .cas_n
-            sdram_0_wire_cke                        => CONNECTED_TO_sdram_0_wire_cke,                        --                                   .cke
-            sdram_0_wire_cs_n                       => CONNECTED_TO_sdram_0_wire_cs_n,                       --                                   .cs_n
-            sdram_0_wire_dq                         => CONNECTED_TO_sdram_0_wire_dq,                         --                                   .dq
-            sdram_0_wire_dqm                        => CONNECTED_TO_sdram_0_wire_dqm,                        --                                   .dqm
-            sdram_0_wire_ras_n                      => CONNECTED_TO_sdram_0_wire_ras_n,                      --                                   .ras_n
-            sdram_0_wire_we_n                       => CONNECTED_TO_sdram_0_wire_we_n,                       --                                   .we_n
-            clk_clk                                 => CONNECTED_TO_clk_clk,                                 --                                clk.clk
-            sram_0_external_interface_DQ            => CONNECTED_TO_sram_0_external_interface_DQ,            --          sram_0_external_interface.DQ
-            sram_0_external_interface_ADDR          => CONNECTED_TO_sram_0_external_interface_ADDR,          --                                   .ADDR
-            sram_0_external_interface_LB_N          => CONNECTED_TO_sram_0_external_interface_LB_N,          --                                   .LB_N
-            sram_0_external_interface_UB_N          => CONNECTED_TO_sram_0_external_interface_UB_N,          --                                   .UB_N
-            sram_0_external_interface_CE_N          => CONNECTED_TO_sram_0_external_interface_CE_N,          --                                   .CE_N
-            sram_0_external_interface_OE_N          => CONNECTED_TO_sram_0_external_interface_OE_N,          --                                   .OE_N
-            sram_0_external_interface_WE_N          => CONNECTED_TO_sram_0_external_interface_WE_N           --                                   .WE_N
+            reset_reset_n                           => KEY(0),                           		     -- reset.reset_n
+
+            gpio_external_connection_export         => GPIO_0(0),         				     -- gpio_external_connection.export
+
+            switches_external_connection_export     => SW(17 downto 0),     				     -- switches_external_connection.export
+
+            green_leds_external_connection_export   => LEDG,   						     -- green_leds_external_connection.export
+
+            character_lcd_0_external_interface_DATA => LCD_DATA, 					     -- character_lcd_0_external_interface.DATA
+            character_lcd_0_external_interface_ON   => LCD_ON,  					     --                                   .ON
+            character_lcd_0_external_interface_BLON => LCD_BLON, 					     --                                   .BLON
+            character_lcd_0_external_interface_EN   => LCD_EN,   					     --                                   .EN
+            character_lcd_0_external_interface_RS   => LCD_RS,					             --                                   .RS
+            character_lcd_0_external_interface_RW   => LCD_RW, 						     --                                   .RW
+
+            altpll_0_c0_clk                         => DRAM_CLK, 		                             --                        altpll_0_c0.clk
+
+            serial_external_connection_rxd          => UART_RXD,				             --         serial_external_connection.rxd
+            serial_external_connection_txd          => UART_TXD, 				             --                                   .txd
+
+            sdram_0_wire_addr                       => DRAM_ADDR, 		 	                     --                       sdram_0_wire.addr
+            sdram_0_wire_ba                         => BA,                         			     --                                   .ba
+            sdram_0_wire_cas_n                      => DRAM_CAS_N,			                     --                                   .cas_n
+            sdram_0_wire_cke                        => DRAM_CKE,			                     --                                   .cke
+            sdram_0_wire_cs_n                       => DRAM_CS_N,               			     --                                   .cs_n
+            sdram_0_wire_dq                         => DRAM_DQ,  			                     --                                   .dq
+            sdram_0_wire_dqm                        => DQM,   				                     --                                   .dqm
+            sdram_0_wire_ras_n                      => DRAM_RAS_N,			                     --                                   .ras_n
+            sdram_0_wire_we_n                       => DRAM_WE_N, 			                     --                                   .we_n
+
+            clk_clk                                 => CLOCK_50,                                	     --                                clk.clk
+
+            sram_0_external_interface_DQ            => SRAM_DQ,					             --          sram_0_external_interface.DQ
+            sram_0_external_interface_ADDR          => SRAM_ADDR,				             --                                   .ADDR
+            sram_0_external_interface_LB_N          => SRAM_LB_N,				             --                                   .LB_N
+            sram_0_external_interface_UB_N          => SRAM_UB_N,				             --                                   .UB_N
+            sram_0_external_interface_CE_N          => SRAM_CE_N,				             --                                   .CE_N
+            sram_0_external_interface_OE_N          => SRAM_OE_N,				             --                                   .OE_N
+            sram_0_external_interface_WE_N          => SRAM_WE_N				             --                                   .WE_N
         );
+
+end structure;
+
+-- Import packages
+use ieee.std_logic_1164.all;
+
+package DE2_CONSTANTS is
+	type DE2_LECD_DATA_BUS	is array(7 downto 0) of std_logic;
+	
+	type DE2_LED_GREEN	is array(7 downto 0) of std_logic;
+
+	type DE2_SRAM_ADDR_BUS	is array(17 downto 0) of std_logic;
+	type DE2_SRAM_DATA_BUS	is array(15 downto 0) of std_logic;
+
+	type DE2_SDRAM_ADDR_BUS	is array(11 downto 0) of std_logic;
+	type DE2_SDRAM_DATA_BUS is array(15 downto 0) of std_logic;
+
+end DE2_CONSTANTS;
 
