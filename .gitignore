@@ -39,3 +39,5 @@ impact_impact.xwbt
 /Quartus/.qsys_edit
 /Quartus/nios_system*
 /Quartus/output_files
+/Quartus/BioLock.jdi
+/Quartus/BioLock.qsf
