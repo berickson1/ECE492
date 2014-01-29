@@ -16,7 +16,6 @@
 *.exe
 *.out
 *.app
-*.elf
 
 *~
 *.swp
@@ -41,3 +40,14 @@ impact_impact.xwbt
 /Quartus/output_files
 /Quartus/BioLock.jdi
 /Quartus/BioLock.qsf
+
+#Ignore Software artifacts
+*.elf
+/Software/BioLock/obj/
+/Software/BioLock/BioLock.map
+/Software/BioLock/BioLock.objdump
+
+
+#Ignore bsp project
+/Software/BioLock_bsp/*
+/Software/.metadata/*
