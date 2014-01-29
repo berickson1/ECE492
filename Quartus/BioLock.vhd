@@ -1,10 +1,11 @@
 -- g9 - BioLock
 -- Top level system file
+
 library ieee;
 
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
-use ieee.VITAL_Primatives.all;
+use ieee.vital_primitives.all;
 use work.DE2_CONSTANTS.all;
 
 entity BioLock is
@@ -15,10 +16,10 @@ entity BioLock is
 
 
 		-- Off Chip
-		GPIO_0		: in std_logic_vector(0 downto 0);
+		GPIO_0		: out std_logic_vector(0 downto 0);
 
 		-- Switches
-		SW		: in std_logic_vector (16 downto 0); 
+		SW		: in std_logic_vector (17 downto 0); 
 
 		-- Green LEDs On Board
 		LEDG		: out DE2_LED_GREEN;
@@ -42,7 +43,7 @@ entity BioLock is
 		DRAM_CAS_N	: out std_logic;
 		DRAM_CKE	: out std_logic;
 		DRAM_CLK	: out std_logic;
-		DRAM_CD_N	: out std_logic;
+		DRAM_CS_N	: out std_logic;
 		DRAM_DQ		: inout DE2_SDRAM_DATA_BUS;
 		DRAM_LDQM	: out std_logic;
 		DRAM_UDQM	: out std_logic;
@@ -56,7 +57,7 @@ entity BioLock is
 		SRAM_OE_N	: out std_logic;
 		SRAM_UB_N	: out std_logic;
 		SRAM_LB_N	: out std_logic; 
-		SRAM_CE_N	: out std_logic;
+		SRAM_CE_N	: out std_logic
 	
 	);
 end BioLock;
@@ -64,9 +65,9 @@ end BioLock;
 
 architecture structure of BioLock is
 
-	component BioLock_System is
+	component nios_system is
 	port (
-	    clk_clk                                 : in    std_logic                     := 'X';             -- clk
+	         clk_clk                                 : in    std_logic                     := 'X';             -- clk
             reset_reset_n                           : in    std_logic                     := 'X';             -- reset_n
 
             gpio_external_connection_export         : out   std_logic;                                        -- export
@@ -87,7 +88,7 @@ architecture structure of BioLock is
             serial_external_connection_rxd          : in    std_logic                     := 'X';             -- rxd
             serial_external_connection_txd          : out   std_logic;                                        -- txd
             
-	    sdram_0_wire_addr                       : out   std_logic_vector(11 downto 0);                    -- addr
+	         sdram_0_wire_addr                       : out   std_logic_vector(11 downto 0);                    -- addr
             sdram_0_wire_ba                         : out   std_logic_vector(1 downto 0);                     -- ba
             sdram_0_wire_cas_n                      : out   std_logic;                                        -- cas_n
             sdram_0_wire_cke                        : out   std_logic;                                        -- cke
@@ -105,7 +106,7 @@ architecture structure of BioLock is
             sram_0_external_interface_OE_N          : out   std_logic;                                        -- OE_N
             sram_0_external_interface_WE_N          : out   std_logic                                         -- WE_N
         );
-    end component BioLock_System;
+    end component nios_system;
 
 	-- signals to match provided IP core to specific SDRAM chip of our system
 	signal BA	: std_logic_vector (1 downto 0);
@@ -117,7 +118,7 @@ begin
 	DRAM_UDQM <= DQM(1);
 	DRAM_LDQM <= DQM(0);
 
-    u0 : component BioLock_System
+    u0 : component nios_system
         port map (
             reset_reset_n                           => KEY(0),                           		     -- reset.reset_n
 
@@ -162,19 +163,24 @@ begin
 
 end structure;
 
--- Import packages
+library ieee;
+
+--DE2 Constants
+
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use ieee.vital_primitives.all;
 
 package DE2_CONSTANTS is
-	type DE2_LECD_DATA_BUS	is array(7 downto 0) of std_logic;
+	subtype DE2_LCD_DATA_BUS	is std_logic_vector(7 downto 0);
 	
-	type DE2_LED_GREEN	is array(7 downto 0) of std_logic;
+	subtype DE2_LED_GREEN	is std_logic_vector(7 downto 0);
 
-	type DE2_SRAM_ADDR_BUS	is array(17 downto 0) of std_logic;
-	type DE2_SRAM_DATA_BUS	is array(15 downto 0) of std_logic;
+	subtype DE2_SRAM_ADDR_BUS	is std_logic_vector(17 downto 0);
+	subtype DE2_SRAM_DATA_BUS	is std_logic_vector(15 downto 0);
 
-	type DE2_SDRAM_ADDR_BUS	is array(11 downto 0) of std_logic;
-	type DE2_SDRAM_DATA_BUS is array(15 downto 0) of std_logic;
+	subtype DE2_SDRAM_ADDR_BUS	is std_logic_vector(11 downto 0);
+	subtype DE2_SDRAM_DATA_BUS is std_logic_vector(15 downto 0);
 
 end DE2_CONSTANTS;
 
