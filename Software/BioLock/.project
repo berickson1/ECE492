@@ -3,6 +3,7 @@
 	<name>BioLock</name>
 	<comment></comment>
 	<projects>
+		<project>BioLock_bsp</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

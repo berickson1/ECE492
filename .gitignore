@@ -43,6 +43,7 @@ impact_impact.xwbt
 
 #Ignore Software artifacts
 *.elf
+/Software/BioLock/.settings/
 /Software/BioLock/obj/
 /Software/BioLock/BioLock.map
 /Software/BioLock/BioLock.objdump
