@@ -44,11 +44,15 @@ OS_STK    task2_stk[TASK_STACKSIZE];
 /* Prints "Hello World" and sleeps for three seconds */
 void task1(void* pdata)
 {
-  while (1)
+	FILE* fp = fopen (SERIAL_NAME, "r+"); //Open file for reading and writing
+  while (fp)
   { 
+	  char* msg = "Hello from task1";
     printf("Hello from task1\n");
-    OSTimeDlyHMSM(0, 0, 3, 0);
+	fwrite (msg, strlen (msg), 1, fp);
+    OSTimeDlyHMSM(0, 0, 0, 10);
   }
+	fclose (fp);
 }
 /* Prints "Hello World" and sleeps for three seconds */
 void task2(void* pdata)
