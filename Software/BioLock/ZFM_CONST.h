@@ -5,10 +5,6 @@
  *      Author: Brent.Erickson
  */
 
-#include <stdint.h>;
-#include <ctype.h>;
-#include <cfinter.h>;
-
 #ifndef ZFM_CONST_H_
 #define ZFM_CONST_H_
 
@@ -22,11 +18,11 @@ enum ZFM_PKG{
 };
 
 enum ZFM_ACK{
-	SUCCESS = 0,
+	SUCCESS = 0x0,
 	ERR_D_PKG,
 	ERR_NO_FINGER,
 	ERR_ENROLL,
-	ERR_CHAR_DISORDERLY = 6,
+	ERR_CHAR_DISORDERLY = 0x6,
 	ERR_CHAR_UNIQUENESS,
 	ERR_MATCH_FAIL,
 	ERR_MATCH_NOT_FOUND,
