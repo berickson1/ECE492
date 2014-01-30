@@ -6,9 +6,12 @@
    version="1.0"
    description=""
    tags=""
-   categories="" />
+   categories="System" />
  <parameter name="bonusData"><![CDATA[bonusData 
 {
+   element $${FILENAME}
+   {
+   }
    element altpll_0
    {
       datum _sortIndex
@@ -121,6 +124,14 @@
          type = "String";
       }
    }
+   element green_leds.s1
+   {
+      datum baseAddress
+      {
+         value = "17862736";
+         type = "String";
+      }
+   }
    element sdram_0.s1
    {
       datum baseAddress
@@ -145,6 +156,22 @@
          type = "String";
       }
    }
+   element onchip_memory2_0.s1
+   {
+      datum baseAddress
+      {
+         value = "17842176";
+         type = "String";
+      }
+   }
+   element serial.s1
+   {
+      datum baseAddress
+      {
+         value = "17862688";
+         type = "String";
+      }
+   }
    element switches.s1
    {
       datum _tags
@@ -155,30 +182,6 @@
       datum baseAddress
       {
          value = "17862752";
-         type = "String";
-      }
-   }
-   element onchip_memory2_0.s1
-   {
-      datum baseAddress
-      {
-         value = "17842176";
-         type = "String";
-      }
-   }
-   element green_leds.s1
-   {
-      datum baseAddress
-      {
-         value = "17862736";
-         type = "String";
-      }
-   }
-   element serial.s1
-   {
-      datum baseAddress
-      {
-         value = "17862688";
          type = "String";
       }
    }
@@ -247,10 +250,10 @@
  <parameter name="globalResetBus" value="false" />
  <parameter name="hdlLanguage" value="VERILOG" />
  <parameter name="maxAdditionalLatency" value="1" />
- <parameter name="projectName" value="" />
+ <parameter name="projectName" value="BioLock.qpf" />
  <parameter name="sopcBorderPoints" value="false" />
  <parameter name="systemHash" value="1" />
- <parameter name="timeStamp" value="1390851516770" />
+ <parameter name="timeStamp" value="1391107522519" />
  <parameter name="useTestBenchNamingPattern" value="false" />
  <instanceScript></instanceScript>
  <interface name="reset" internal="clk_0.clk_in_reset" type="reset" dir="end" />
@@ -733,7 +736,7 @@
   <parameter name="resetValue" value="0" />
   <parameter name="simDoTestBenchWiring" value="false" />
   <parameter name="simDrivenValue" value="0" />
-  <parameter name="width" value="1" />
+  <parameter name="width" value="8" />
  </module>
  <module kind="altera_up_avalon_sram" version="12.0" enabled="1" name="sram_0">
   <parameter name="board" value="DE2" />

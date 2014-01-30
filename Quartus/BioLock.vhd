@@ -16,7 +16,7 @@ entity BioLock is
 
 
 		-- Off Chip
-		GPIO_0		: out std_logic_vector(0 downto 0);
+		GPIO_0		: inout std_logic_vector(9 downto 0);
 
 		-- Switches
 		SW		: in std_logic_vector (17 downto 0); 
@@ -31,10 +31,6 @@ entity BioLock is
 		LCD_RS		: out std_logic;
 		LCD_EN		: out std_logic;
 		LCD_RW		: out std_logic;
-
-		-- Serial Connection
-		UART_RXD	: in std_logic;
-		UART_TXD	: out std_logic; 
 
 		-- SDRAM On Board
 		DRAM_ADDR	: out DE2_SDRAM_ADDR_BUS;
@@ -70,7 +66,7 @@ architecture structure of BioLock is
 	         clk_clk                                 : in    std_logic                     := 'X';             -- clk
             reset_reset_n                           : in    std_logic                     := 'X';             -- reset_n
 
-            gpio_external_connection_export         : out   std_logic;                                        -- export
+            gpio_external_connection_export         : out   std_logic_vector(7 downto 0);                                        -- export
 
             switches_external_connection_export     : in    std_logic_vector(17 downto 0) := (others => 'X'); -- export
 
@@ -122,7 +118,7 @@ begin
         port map (
             reset_reset_n                           => KEY(0),                           		     -- reset.reset_n
 
-            gpio_external_connection_export         => GPIO_0(0),         				     -- gpio_external_connection.export
+            gpio_external_connection_export         => GPIO_0(7 downto 0),         				     -- gpio_external_connection.export
 
             switches_external_connection_export     => SW(17 downto 0),     				     -- switches_external_connection.export
 
@@ -137,8 +133,8 @@ begin
 
             altpll_0_c0_clk                         => DRAM_CLK, 		                             --                        altpll_0_c0.clk
 
-            serial_external_connection_rxd          => UART_RXD,				             --         serial_external_connection.rxd
-            serial_external_connection_txd          => UART_TXD, 				             --                                   .txd
+            serial_external_connection_rxd          => GPIO_0(8),				             --         serial_external_connection.rxd
+            serial_external_connection_txd          => GPIO_0(9), 				             --                                   .txd
 
             sdram_0_wire_addr                       => DRAM_ADDR, 		 	                     --                       sdram_0_wire.addr
             sdram_0_wire_ba                         => BA,                         			     --                                   .ba
