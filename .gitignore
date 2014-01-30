@@ -39,7 +39,6 @@ impact_impact.xwbt
 /Quartus/nios_system*
 /Quartus/output_files
 /Quartus/BioLock.jdi
-/Quartus/BioLock.qsf
 
 #Ignore Software artifacts
 *.elf
