@@ -19,7 +19,9 @@ public:
 private:
 	int fd;
 	int writePacket(char* address, char* ptype, char* data, uint datalen);
-	int read (char* buffer, int bufferSize);
+	int readPacket(char* bufferHead, int bufferSize);
+	int getBytes(char* bufferHead, int bytesToRead, int bufferSize);
+	void reorderBytes(char* bufferHead, int dataSize);
 
 };
 

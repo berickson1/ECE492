@@ -49,9 +49,99 @@ int ZFMComm::writePacket(char* address, char* ptype, char* data, uint len){
 
 	retval = write(fd, buffer, pktSize);
 	free(buffer);
+	return retval;
 }
-int ZFMComm::read (char* buffer, int bufferSize){
-return -1;
+int ZFMComm::readPacket(char* bufferHead, int bufferSize){
+	char* buffer = bufferHead;
+	char swapTemp;
+	int bufferRemaining = bufferSize,
+			totalBytesRead = 0,
+			bytesRead,
+			bytesToRead = 0,
+			dataLen = 0;
+	//Header
+	bytesToRead = 2;
+	bytesRead = getBytes(buffer, bytesToRead, bufferRemaining);
+	if(bytesRead == -1){
+		return -1;
+	}
+	buffer += bytesRead;
+	totalBytesRead += bytesRead;
+	bufferRemaining -= bytesRead;
+
+	//Chip Address
+	bytesToRead = 4;
+	bytesRead = getBytes(buffer, bytesToRead, bufferRemaining);
+	if(bytesRead == -1){
+		return -1;
+	}
+	buffer += bytesRead;
+	totalBytesRead += bytesRead;
+	bufferRemaining -= bytesRead;
+
+	//Package Identifier
+	bytesToRead = 1;
+	bytesRead = getBytes(buffer, bytesToRead, bufferRemaining);
+	if(bytesRead == -1){
+		return -1;
+	}
+	buffer += bytesRead;
+	totalBytesRead += bytesRead;
+	bufferRemaining -= bytesRead;
+
+	//Package Length
+	bytesToRead = 2;
+	bytesRead = getBytes(buffer, bytesToRead, bufferRemaining);
+	if(bytesRead == -1){
+		return -1;
+	}
+	dataLen = *((unsigned short *) buffer);
+	buffer += bytesRead;
+	totalBytesRead += bytesRead;
+	bufferRemaining -= bytesRead;
+
+	//Data
+	bytesToRead = dataLen;
+	bytesRead = getBytes(buffer, bytesToRead, bufferRemaining);
+	if(bytesRead == -1){
+		return -1;
+	}
+	buffer += bytesRead;
+	totalBytesRead += bytesRead;
+	bufferRemaining -= bytesRead;
+
+	//Checksum
+	bytesToRead = 2;
+	bytesRead = getBytes(buffer, bytesToRead, bufferRemaining);
+	if(bytesRead == -1){
+		return -1;
+	}
+	buffer += bytesRead;
+	totalBytesRead += bytesRead;
+	bufferRemaining -= bytesRead;
+
+	return totalBytesRead;
+}
+
+int ZFMComm::getBytes(char* bufferHead, int bytesToRead, int bufferSize){
+	int bytesRead;
+	if(bytesToRead > bufferSize){
+		return -1;
+	}
+	bytesRead = read(fd, bufferHead, bytesToRead);
+	if (bytesRead != bytesToRead){
+		return -1;
+	}
+	reorderBytes(bufferHead, bytesRead);
+	return bytesRead;
+}
+void ZFMComm::reorderBytes(char* bufferHead, int dataSize){
+	char swapTemp;
+	for(int i = 0; i < dataSize / 2; i++){
+		swapTemp = *(bufferHead + i);
+		*(bufferHead + i) = *(bufferHead + dataSize - 1);
+		*(bufferHead + dataSize - 1) = swapTemp;
+	}
 }
 ZFMComm::~ZFMComm() {
 	// TODO Auto-generated destructor stub
