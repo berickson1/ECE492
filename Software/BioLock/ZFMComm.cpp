@@ -6,11 +6,30 @@
  */
 
 #include "ZFMComm.h"
-ZFMComm::ZFMComm(char* devName) {
-	// TODO Auto-generated constructor stub
-
+ZFMComm::ZFMComm() {
+	fd = -1;
 }
-int ZFMComm::writePacket(char* address, char* ptype, char* data, uint len){
+
+bool ZFMComm::init(char* devName){
+	fd = open(devName, O_RDWR);
+	if (fd == -1){
+		printf("Error Opening Sensor");
+		return false;
+	}
+	return true;
+}
+
+char ZFMComm::storeFinger(int id){
+	char address[4] = {0xFF, 0xFF, 0xFF, 0xFF};
+	writePacket(address, &ZFM_PKG_CMD, &ZFM_CMD_CAPTURE_FINGER, 1);
+	char reply[12];
+	if(readPacket(reply, 12) == -1){
+		return -1;
+	}
+	return reply[10];
+}
+
+int ZFMComm::writePacket(const char* address, const char* ptype, const char* data, uint len){
 	uint		pktSize = 11 + len;
 	char	*buffer = (char*)malloc(pktSize),
 			*bufferPtr = buffer;
@@ -47,13 +66,18 @@ int ZFMComm::writePacket(char* address, char* ptype, char* data, uint len){
 	*bufferPtr++ = (char) checksum >> 8;
 	*bufferPtr++ = (char) checksum;
 
+	if (fd == -1){
+		printf("Invalid Sensor FD");
+		//Prevent leak
+		free(buffer);
+		return -1;
+	}
 	retval = write(fd, buffer, pktSize);
 	free(buffer);
 	return retval;
 }
 int ZFMComm::readPacket(char* bufferHead, int bufferSize){
 	char* buffer = bufferHead;
-	char swapTemp;
 	int bufferRemaining = bufferSize,
 			totalBytesRead = 0,
 			bytesRead,
@@ -126,6 +150,10 @@ int ZFMComm::readPacket(char* bufferHead, int bufferSize){
 int ZFMComm::getBytes(char* bufferHead, int bytesToRead, int bufferSize){
 	int bytesRead;
 	if(bytesToRead > bufferSize){
+		return -1;
+	}
+	if (fd == -1){
+		printf("Invalid Sensor FD");
 		return -1;
 	}
 	bytesRead = read(fd, bufferHead, bytesToRead);

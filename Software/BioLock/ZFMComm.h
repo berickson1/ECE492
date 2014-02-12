@@ -10,15 +10,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include "ZFM_CONST.h"
 
 class ZFMComm {
 public:
-	ZFMComm(char* devName);
+	ZFMComm();
 	virtual ~ZFMComm();
+
+	bool init(char * devName);
+	char storeFinger(int id);
 private:
 	int fd;
-	int writePacket(char* address, char* ptype, char* data, uint datalen);
+	int writePacket(const char* address, const char* ptype, const char* data, uint len);
 	int readPacket(char* bufferHead, int bufferSize);
 	int getBytes(char* bufferHead, int bytesToRead, int bufferSize);
 	void reorderBytes(char* bufferHead, int dataSize);
