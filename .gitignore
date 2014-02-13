@@ -56,5 +56,5 @@ gen/
 /Software/BioLock_bsp/*
 /Software/.metadata/*
 
-#Ignore Mac DS_STORE
-.DS_STORE
+#Ignore Mac DS_Store
+.DS_Store
