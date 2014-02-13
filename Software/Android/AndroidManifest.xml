@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ca.ualberta.ece492.g9.biolock"
+<manifest package="ca.ualberta.ece492.g9.biolock"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -23,17 +22,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="ca.ualberta.ece492.g9.biolock.ItemListActivity"
-            android:label="@string/title_item_detail"
-            android:parentActivityName=".ItemListActivity" >
-        </activity>
-        <activity
-            android:name="ca.ualberta.ece492.g9.biolock.ItemDetailActivity"
-            android:label="@string/title_item_detail"
-            android:parentActivityName=".ItemListActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ItemListActivity" />
+            android:name="ca.ualberta.ece492.g9.biolock.MainActivity"
+            android:label="@string/title_activity_main" >
         </activity>
     </application>
 

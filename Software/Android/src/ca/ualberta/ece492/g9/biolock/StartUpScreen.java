@@ -19,7 +19,7 @@ public class StartUpScreen extends FragmentActivity {
 
             @Override
             public void run() {
-                Intent i = new Intent(StartUpScreen.this, ItemListActivity.class);
+                Intent i = new Intent(StartUpScreen.this, MainActivity.class);
                 startActivity(i);
  
                 // close this activity
