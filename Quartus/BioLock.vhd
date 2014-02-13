@@ -97,6 +97,7 @@ architecture structure of BioLock is
             character_lcd_0_external_interface_RW   : out   std_logic;                                        -- RW
 
             altpll_0_c0_clk                         : out   std_logic;                                        -- clk
+				altpll_0_c2_clk                         : out   std_logic;                                        -- clk
 
             serial_external_connection_rxd          : in    std_logic                     := 'X';             -- rxd
             serial_external_connection_txd          : out   std_logic;                                        -- txd
@@ -165,6 +166,7 @@ begin
             character_lcd_0_external_interface_RW   => LCD_RW, 						     --                                   .RW
 
             altpll_0_c0_clk                         => DRAM_CLK, 		                             --                        altpll_0_c0.clk
+				altpll_0_c2_clk                         => ENET_CLK, 		                             --                        altpll_0_c2.clk
 
             serial_external_connection_rxd          => GPIO_0(8),				             --         serial_external_connection.rxd
             serial_external_connection_txd          => GPIO_0(9), 				             --                                   .txd
@@ -196,7 +198,7 @@ begin
             dm9000a_if_0_s1_export_CS_N             => ENET_CS_N,             --                                   .CS_N
             dm9000a_if_0_s1_export_RST_N            => ENET_RST_N,            --                                   .RST_N
             dm9000a_if_0_s1_export_INT              => ENET_INT,              --                                   .INT
-            dm9000a_if_0_s1_export_CLK              => ENET_CLK,                                                       --                                   .CLK
+            --dm9000a_if_0_s1_export_CLK              => ENET_CLK,                                                       --                                   .CLK
 				
             tristate_conduit_bridge_0_out_generic_tristate_controller_0_tcm_read_n_out       => FL_OE_N,       --      tristate_conduit_bridge_0_out.generic_tristate_controller_0_tcm_read_n_out
             tristate_conduit_bridge_0_out_generic_tristate_controller_0_tcm_data_out         => FL_DQ,         --                                   .generic_tristate_controller_0_tcm_data_out

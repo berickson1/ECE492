@@ -161,35 +161,6 @@
          type = "String";
       }
    }
-   element timer_0.s1
-   {
-      datum baseAddress
-      {
-         value = "17862656";
-         type = "String";
-      }
-   }
-   element sdram_0.s1
-   {
-      datum baseAddress
-      {
-         value = "8388608";
-         type = "String";
-      }
-   }
-   element switches.s1
-   {
-      datum _tags
-      {
-         value = "";
-         type = "String";
-      }
-      datum baseAddress
-      {
-         value = "17862768";
-         type = "String";
-      }
-   }
    element onchip_memory2_0.s1
    {
       datum baseAddress
@@ -198,11 +169,11 @@
          type = "String";
       }
    }
-   element gpio.s1
+   element DM9000A_IF_0.s1
    {
       datum baseAddress
       {
-         value = "17862784";
+         value = "17862800";
          type = "String";
       }
    }
@@ -222,11 +193,40 @@
          type = "String";
       }
    }
-   element DM9000A_IF_0.s1
+   element sdram_0.s1
    {
       datum baseAddress
       {
-         value = "17862800";
+         value = "8388608";
+         type = "String";
+      }
+   }
+   element timer_0.s1
+   {
+      datum baseAddress
+      {
+         value = "17862656";
+         type = "String";
+      }
+   }
+   element gpio.s1
+   {
+      datum baseAddress
+      {
+         value = "17862784";
+         type = "String";
+      }
+   }
+   element switches.s1
+   {
+      datum _tags
+      {
+         value = "";
+         type = "String";
+      }
+      datum baseAddress
+      {
+         value = "17862768";
          type = "String";
       }
    }
@@ -322,7 +322,7 @@
  <parameter name="projectName" value="BioLock.qpf" />
  <parameter name="sopcBorderPoints" value="false" />
  <parameter name="systemHash" value="1" />
- <parameter name="timeStamp" value="1392312513779" />
+ <parameter name="timeStamp" value="1392327404408" />
  <parameter name="useTestBenchNamingPattern" value="false" />
  <instanceScript></instanceScript>
  <interface name="reset" internal="clk_0.clk_in_reset" type="reset" dir="end" />
@@ -369,6 +369,7 @@
    internal="tristate_conduit_bridge_0.out"
    type="conduit"
    dir="end" />
+ <interface name="altpll_0_c2" internal="altpll_0.c2" type="clock" dir="start" />
  <module kind="clock_source" version="12.1" enabled="1" name="clk_0">
   <parameter name="clockFrequency" value="50000000" />
   <parameter name="clockFrequencyKnown" value="true" />
@@ -824,7 +825,7 @@
   <parameter name="AUTO_DEVICE_FAMILY" value="Cyclone II" />
  </module>
  <module kind="DM9000A_IF" version="1.0" enabled="1" name="DM9000A_IF_0">
-  <parameter name="AUTO_S1_CLOCK_CLOCK_RATE" value="25000000" />
+  <parameter name="AUTO_S1_CLOCK_CLOCK_RATE" value="50000000" />
  </module>
  <module
    kind="altera_generic_tristate_controller"
@@ -876,7 +877,7 @@
   <parameter name="MODULE_ASSIGNMENT_VALUES">altera_avalon_lan91c111\,altera_avalon_cfi_flash,1,1,1</parameter>
   <parameter name="INTERFACE_ASSIGNMENT_KEYS">embeddedsw.configuration.isFlash,embeddedsw.configuration.isMemoryDevice,embeddedsw.configuration.isNonVolatileStorage</parameter>
   <parameter name="INTERFACE_ASSIGNMENT_VALUES" value="1,1,1" />
-  <parameter name="CLOCK_RATE" value="25000000" />
+  <parameter name="CLOCK_RATE" value="50000000" />
   <parameter name="AUTO_CLK_CLOCK_DOMAIN" value="5" />
   <parameter name="AUTO_CLK_RESET_DOMAIN" value="5" />
   <parameter name="AUTO_TRISTATECONDUIT_MASTERS" value="" />
@@ -889,7 +890,7 @@
    enabled="1"
    name="tristate_conduit_bridge_0">
   <parameter name="INTERFACE_INFO"><![CDATA[<info><slave name="tcs"><master name="tristate_conduit_pin_sharer_0.tcm"><pin role="" width="1" type="Invalid" output_name="" output_enable_name="" input_name="" /><pin role="generic_tristate_controller_0_tcm_address_out" width="22" type="Output" output_name="generic_tristate_controller_0_tcm_address_out" output_enable_name="" input_name="" /><pin role="generic_tristate_controller_0_tcm_write_n_out" width="1" type="Output" output_name="generic_tristate_controller_0_tcm_write_n_out" output_enable_name="" input_name="" /><pin role="generic_tristate_controller_0_tcm_chipselect_n_out" width="1" type="Output" output_name="generic_tristate_controller_0_tcm_chipselect_n_out" output_enable_name="" input_name="" /><pin role="generic_tristate_controller_0_tcm_data_out" width="8" type="Bidirectional" output_name="generic_tristate_controller_0_tcm_data_out" output_enable_name="generic_tristate_controller_0_tcm_data_outen" input_name="generic_tristate_controller_0_tcm_data_in" /><pin role="generic_tristate_controller_0_tcm_read_n_out" width="1" type="Output" output_name="generic_tristate_controller_0_tcm_read_n_out" output_enable_name="" input_name="" /></master></slave></info>]]></parameter>
-  <parameter name="AUTO_CLK_CLOCK_RATE" value="25000000" />
+  <parameter name="AUTO_CLK_CLOCK_RATE" value="50000000" />
   <parameter name="AUTO_DEVICE_FAMILY" value="Cyclone II" />
  </module>
  <module
@@ -902,7 +903,7 @@
   <parameter name="MODULE_ORIGIN_LIST">generic_tristate_controller_0.tcm,generic_tristate_controller_0.tcm,generic_tristate_controller_0.tcm,generic_tristate_controller_0.tcm,generic_tristate_controller_0.tcm</parameter>
   <parameter name="SIGNAL_ORIGIN_LIST">address,read_n,write_n,data,chipselect_n</parameter>
   <parameter name="SHARED_SIGNAL_LIST" value="" />
-  <parameter name="AUTO_CLK_CLOCK_RATE" value="25000000" />
+  <parameter name="AUTO_CLK_CLOCK_RATE" value="50000000" />
   <parameter name="AUTO_CLK_CLOCK_DOMAIN" value="5" />
   <parameter name="AUTO_CLK_RESET_DOMAIN" value="5" />
   <parameter name="AUTO_TRISTATECONDUIT_MASTERS"><![CDATA[<info><slave name="tcs0"><master name="generic_tristate_controller_0.tcm"><port role="write_n_out" direction="output" width="1" /><port role="read_n_out" direction="output" width="1" /><port role="chipselect_n_out" direction="output" width="1" /><port role="request" direction="output" width="1" /><port role="grant" direction="input" width="1" /><port role="address_out" direction="output" width="22" /><port role="data_out" direction="output" width="8" /><port role="data_outen" direction="output" width="1" /><port role="data_in" direction="input" width="8" /></master></slave></info>]]></parameter>
@@ -1255,26 +1256,6 @@
   <parameter name="irqNumber" value="1" />
  </connection>
  <connection
-   kind="clock"
-   version="12.1"
-   start="altpll_0.c2"
-   end="DM9000A_IF_0.s1_clock" />
- <connection
-   kind="clock"
-   version="12.1"
-   start="altpll_0.c2"
-   end="generic_tristate_controller_0.clk" />
- <connection
-   kind="clock"
-   version="12.1"
-   start="altpll_0.c2"
-   end="tristate_conduit_bridge_0.clk" />
- <connection
-   kind="clock"
-   version="12.1"
-   start="altpll_0.c2"
-   end="tristate_conduit_pin_sharer_0.clk" />
- <connection
    kind="tristate_conduit"
    version="12.1"
    start="generic_tristate_controller_0.tcm"
@@ -1330,4 +1311,24 @@
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x0000" />
  </connection>
+ <connection
+   kind="clock"
+   version="12.1"
+   start="altpll_0.c1"
+   end="generic_tristate_controller_0.clk" />
+ <connection
+   kind="clock"
+   version="12.1"
+   start="altpll_0.c1"
+   end="tristate_conduit_bridge_0.clk" />
+ <connection
+   kind="clock"
+   version="12.1"
+   start="altpll_0.c1"
+   end="tristate_conduit_pin_sharer_0.clk" />
+ <connection
+   kind="clock"
+   version="12.1"
+   start="altpll_0.c1"
+   end="DM9000A_IF_0.s1_clock" />
 </system>
