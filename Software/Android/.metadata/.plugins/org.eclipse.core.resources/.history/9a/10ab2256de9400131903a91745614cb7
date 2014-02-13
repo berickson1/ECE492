@@ -1,9 +1,0 @@
-title_item_detail<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <string name="app_name">BioLock</string>
-    <string name="title_item_detail">Devices</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="start_up_string">ECE 492 - Group 9</string>
-
-</resources>
