@@ -49,6 +49,8 @@ impact_impact.xwbt
 bin/
 gen/
 
+#Eclipse Ignores
+.metadata/
 
 #Ignore bsp project
 /Software/BioLock_bsp/*
