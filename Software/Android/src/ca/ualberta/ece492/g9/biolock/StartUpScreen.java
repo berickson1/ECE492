@@ -23,7 +23,7 @@ public class StartUpScreen extends FragmentActivity {
                 startActivity(i);
  
                 // close this activity
-                //finish();
+                finish();
             }
         }, SPLASHTIME);
     }
