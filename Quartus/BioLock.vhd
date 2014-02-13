@@ -53,7 +53,17 @@ entity BioLock is
 		SRAM_OE_N	: out std_logic;
 		SRAM_UB_N	: out std_logic;
 		SRAM_LB_N	: out std_logic; 
-		SRAM_CE_N	: out std_logic
+		SRAM_CE_N	: out std_logic;
+		
+		-- Ethernet
+		ENET_CLK		:	out std_logic;
+		ENET_CMD		:	out std_logic;
+		ENET_CS_N	:	out std_logic;
+		ENET_INT		:	in std_logic;
+		ENET_RD_N	: 	out std_logic;
+		ENET_WR_N	:	out std_logic;
+		ENET_RST_N	:	out std_logic;
+		ENET_DATA	: 	inout std_logic_vector(15 downto 0)
 	
 	);
 end BioLock;
@@ -100,7 +110,16 @@ architecture structure of BioLock is
             sram_0_external_interface_UB_N          : out   std_logic;                                        -- UB_N
             sram_0_external_interface_CE_N          : out   std_logic;                                        -- CE_N
             sram_0_external_interface_OE_N          : out   std_logic;                                        -- OE_N
-            sram_0_external_interface_WE_N          : out   std_logic                                         -- WE_N
+            sram_0_external_interface_WE_N          : out   std_logic;                                         -- WE_N
+			
+			dm9000a_if_0_s1_export_DATA             : inout std_logic_vector(15 downto 0) := (others => 'X'); -- DATA
+            dm9000a_if_0_s1_export_CMD              : out   std_logic;                                        -- CMD
+            dm9000a_if_0_s1_export_RD_N             : out   std_logic;                                        -- RD_N
+            dm9000a_if_0_s1_export_WR_N             : out   std_logic;                                        -- WR_N
+            dm9000a_if_0_s1_export_CS_N             : out   std_logic;                                        -- CS_N
+            dm9000a_if_0_s1_export_RST_N            : out   std_logic;                                        -- RST_N
+            dm9000a_if_0_s1_export_INT              : in    std_logic                     := 'X';             -- INT
+            dm9000a_if_0_s1_export_CLK              : out   std_logic    
         );
     end component nios_system;
 
@@ -154,7 +173,17 @@ begin
             sram_0_external_interface_UB_N          => SRAM_UB_N,				             --                                   .UB_N
             sram_0_external_interface_CE_N          => SRAM_CE_N,				             --                                   .CE_N
             sram_0_external_interface_OE_N          => SRAM_OE_N,				             --                                   .OE_N
-            sram_0_external_interface_WE_N          => SRAM_WE_N				             --                                   .WE_N
+            sram_0_external_interface_WE_N          => SRAM_WE_N,				             --                                   .WE_N
+			
+			dm9000a_if_0_s1_export_DATA             => ENET_DATA,             			--             dm9000a_if_0_s1_export.DATA
+            dm9000a_if_0_s1_export_CMD              => ENET_CMD,              --                                   .CMD
+            dm9000a_if_0_s1_export_RD_N             => ENET_RD_N,             --                                   .RD_N
+            dm9000a_if_0_s1_export_WR_N             => ENET_WR_N,             --                                   .WR_N
+            dm9000a_if_0_s1_export_CS_N             => ENET_CS_N,             --                                   .CS_N
+            dm9000a_if_0_s1_export_RST_N            => ENET_RST_N,            --                                   .RST_N
+            dm9000a_if_0_s1_export_INT              => ENET_INT,              --                                   .INT
+            dm9000a_if_0_s1_export_CLK              => ENET_CLK               --                                   .CLK
+
         );
 
 end structure;
