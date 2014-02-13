@@ -46,8 +46,13 @@ impact_impact.xwbt
 /Software/BioLock/obj/
 /Software/BioLock/BioLock.map
 /Software/BioLock/BioLock.objdump
+bin/
+gen/
 
 
 #Ignore bsp project
 /Software/BioLock_bsp/*
 /Software/.metadata/*
+
+#Ignore Mac DS_STORE
+.DS_STORE
