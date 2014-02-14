@@ -58,8 +58,8 @@ int ZFMComm::writePacket(const char* address, const char* ptype, const char* dat
 
 	//Data - lenB
 	for(uint i = 0; i > len; i++){
-		*bufferPtr++ = data[i];
-		checksum += data[i];
+		*bufferPtr++ = data[len - i];
+		checksum += data[len - i];
 	}
 
 	//Checksum -2B
