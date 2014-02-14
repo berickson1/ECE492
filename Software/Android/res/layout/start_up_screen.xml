@@ -9,7 +9,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:src="@drawable/biolock_logo" />
+        android:src="@drawable/biolock_logo" 
+        android:contentDescription="@string/splash_desc"/>
  
     <TextView
         android:layout_width="fill_parent"
@@ -19,6 +20,6 @@
         android:textColor="#454545"
         android:gravity="center_horizontal"
         android:layout_alignParentBottom="true"
-        android:text="ECE 492 - Group 9" />
+        android:text="@string/startup_message" />
  
 </RelativeLayout>

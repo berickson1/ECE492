@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Window;
 import android.view.WindowManager;
 
+// Splash screen displaying BitLock logo for 2 seconds
 public class StartUpScreen extends FragmentActivity {
 	
 	private static final int SPLASHTIME = 2000;
@@ -15,20 +16,19 @@ public class StartUpScreen extends FragmentActivity {
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// Full screen without title bar
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.start_up_screen);  
+		setContentView(R.layout.start_up_screen);  
         
         new Handler().postDelayed(new Runnable() {
 
             @Override
             public void run() {
-            	// Runs splash screen
+            	// Runs MainActivity
                 Intent i = new Intent(StartUpScreen.this, MainActivity.class);
                 startActivity(i);
  
-                // close this activity
+                // Close this activity
                 finish();
             }
         }, SPLASHTIME);

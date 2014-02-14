@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="ca.ualberta.ece492.g9.biolock"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="ca.ualberta.ece492.g9.biolock"
     android:versionCode="1"
-    android:versionName="1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+    android:versionName="1.0" >
 
     <uses-sdk
         android:minSdkVersion="14"
@@ -23,8 +24,15 @@
         </activity>
         <activity
             android:name="ca.ualberta.ece492.g9.biolock.MainActivity"
-            android:label="@string/title_activity_main" >
+            android:label="@string/device_title" >
+        </activity>
+        <activity
+            android:name="ca.ualberta.ece492.g9.biolock.AdminLogin"
+            android:label="@string/request_print" >
+        </activity>
+        <activity
+            android:name="ca.ualberta.ece492.g9.biolock.NewDevice"
+            android:label="@string/enter_ip" >
         </activity>
     </application>
-
 </manifest>

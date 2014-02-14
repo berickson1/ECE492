@@ -2,9 +2,12 @@
 <resources>
 
     <string name="app_name">BioLock</string>
-    <string name="title_item_detail">Item Detail</string>
-    <string name="title_activity_main">MainActivity</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="device_title">Devices</string>
+    <string name="request_print">Place Finger on Sensor</string>
+    <string name="new_device">New Device</string>
+    <string name="startup_message">ECE 492 - Group 9</string>
+    <string name="splash_desc">BioLock Logo</string>
+    <string name="enter_ip">Enter IP Address</string>
 
 </resources>
