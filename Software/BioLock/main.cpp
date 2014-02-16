@@ -47,7 +47,6 @@ extern "C" {
 #define   TASK_STACKSIZE       2048
 OS_STK task1_stk[TASK_STACKSIZE];
 OS_STK task2_stk[TASK_STACKSIZE];
-OS_STK task3_stk[TASK_STACKSIZE];
 
 OS_EVENT *fingerprintMailbox;
 OS_EVENT *fingerprintSem;
@@ -57,7 +56,6 @@ OS_EVENT *databaseSemaphore;
 
 #define TASK1_PRIORITY      6
 #define TASK2_PRIORITY      7
-#define TASK3_PRIORITY		11
 
 int getCurrentFingerprintId() {
 	INT8U err;
@@ -86,17 +84,30 @@ void task1(void* pdata) {
 					sendToMailbox = OSSemAccept(fingerprintSem) > 0;
 				}
 			}
-			if (enroll){
+			char* address = (char*) SWITCHES_BASE;
+			if ((*address) & 1<<0){
+				int storeId = 0;
+				printf("Enter ID to store print at:\n");
+				scanf("%d", &storeId);
+				printf("Scan finger again\n");
 				while (!fingerprintSensor.scanFinger()
 						|| !fingerprintSensor.storeImage(2)) {
 					//Sleep for a second and try again
 					OSTimeDlyHMSM(0, 0, 1, 0);
 				}
-				int storeId = 0;
-				printf("Enter ID to store print at:\n");
-				scanf("%d", &storeId);
 				if(fingerprintSensor.storeFingerprint(storeId)){
 					printf("Stored fingerprint at %d\n", storeId);
+					Database dbAccess(databaseSemaphore);
+					User newUser;
+					newUser.enabled = true;
+					newUser.id = storeId;
+					newUser.name = "Mavis Chan";
+					newUser.startDate = newUser.enabled = 5;
+					dbAccess.insertUser(newUser);
+					UserPrint userPrint;
+					userPrint.fid = storeId;
+					userPrint.uid = storeId;
+					dbAccess.insertUserPrint(userPrint);
 				} else {
 					printf("Unable to store fingerprint at %d\n", storeId);
 				}
@@ -145,34 +156,47 @@ void task1(void* pdata) {
 						if (jsonReader.parse(dbAccess.findUserRole(uid), roleRoot)) {
 						//Todo: Finish checking if user has role
 						//Success, unlock door!
+							char * ledBase = (char*) GREEN_LEDS_BASE;
+							for (int i = 0; i < GREEN_LEDS_DATA_WIDTH; i++){
+								*ledBase = 1 << i;
+								OSTimeDlyHMSM(0, 0, 0, 100);
+							}
+							*ledBase = 0;
 							printf("Open up!!!\n\n");
-						continue;
+							continue;
 						}
 					}
 
 				}
 			}
+			//Fallthrough error case. Notify owner!
 			printf("Failed to verify print!\n\n");
-			//Fallthrough error if (uriString.compare(0, 7,. Notify owner!
+			{
+				Audio sound(databaseSemaphore);
+				for (int i = 0; i < 3; i++){
+					sound.play();
+				}
+			}
 		}
 	}
 }
 void task2(void* pdata) {
 	while (1) {
-		{
-			//Database db(databaseSemaphore);
-			//db.testPopulate();
+		if (*((char*) SWITCHES_BASE) & 1 << 1) {
+			// Clearing database
+			{
+				Database db(databaseSemaphore);
+				db.clearAll();
+			}
+			printf("Database has been cleared\n");
+			if (*((char*) SWITCHES_BASE) & 1 << 2) {
+				// Populate database
+				Database db(databaseSemaphore);
+				db.testPopulate();
+				printf("Database has been populated\n");
+			}
 		}
-		OSTimeDlyHMSM(0, 0, 1, 0);
 
-		printf("Finished populating test database\n");
-	}
-}
-void task3(void* pdata) {
-	// Currently makes one small beep noise per loop
-	Audio sound(databaseSemaphore);
-	while (true) {
-		sound.play();
 		OSTimeDlyHMSM(0, 0, 1, 0);
 	}
 }
@@ -202,6 +226,7 @@ const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 		*isImage = true;
 		char * imgData = Camera::getBMP(len);
 		retString.append(imgData, *len);
+		free(imgData);
 	} else {
 		*len = 0;
 		return NULL;
@@ -218,9 +243,6 @@ void startTasks() {
 #endif
 	OSTaskCreateExt(task2, NULL, &task2_stk[TASK_STACKSIZE - 1], TASK2_PRIORITY,
 			TASK2_PRIORITY, task2_stk, TASK_STACKSIZE, NULL, 0);
-
-	OSTaskCreateExt(task3, NULL, &task3_stk[TASK_STACKSIZE - 1], TASK3_PRIORITY,
-			TASK3_PRIORITY, task3_stk, TASK_STACKSIZE, NULL, 0);
 }
 /* The main function creates two task and starts multi-tasking */
 int main(void) {

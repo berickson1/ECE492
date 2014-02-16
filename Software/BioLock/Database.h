@@ -34,12 +34,12 @@ public:
 	string listAll(char *path);
 	int createTable(char *tableName);
 
-	int insertRole(int rid, Role value);
-	int insertUser(int uid, User value);
-	int insertRoleSched(int id, RoleSchedule value);
-	int insertUserRole(int id, UserRole value);
-	int insertUserPrint(int id, UserPrint value);
-	int insertHistory(int id, History value);
+	int insertRole(Role value);
+	int insertUser(User value);
+	int insertRoleSched(RoleSchedule value);
+	int insertUserRole(UserRole value);
+	int insertUserPrint(UserPrint value);
+	int insertHistory(History value);
 
 	string findEntry(const char *path, int id);
 	string findRole(int rid);
@@ -50,17 +50,17 @@ public:
 	string findUserPrint(int id);
 	string findHistory(int id);
 
-	int editRole(int rid, Role value);
-	int editUser(int uid, User value);
-	int editRoleSched(int id, RoleSchedule value);
-	int editUserRole(int id, UserRole value);
-	int editUserPrint(int id, UserPrint value);
+	int editRole(Role value);
+	int editUser(User value);
+	int editRoleSched(RoleSchedule value);
+	int editUserRole(UserRole value);
+	int editUserPrint(UserPrint value);
 
 	int deleteRole(int rid);
 	int deleteRoleSchedule(int id);
 	int deleteUserRole(int id);
 	int deleteUserPrint(int id);
-
+	void clearAll();
 	int enableUser(int uid, bool enable);
 
 	void testPopulate();
@@ -69,6 +69,7 @@ public:
 private:
 	OS_EVENT *m_databaseSemaphore;
 	EmbeddedFileSystem db;
+	int deleteEntry(char *path, int id);
 };
 
 #endif
