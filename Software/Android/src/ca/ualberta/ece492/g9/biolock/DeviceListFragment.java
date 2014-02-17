@@ -1,4 +1,4 @@
-// Clean up this file for dummy content
+// Clean up this file for dummy content with actual list
 
 package ca.ualberta.ece492.g9.biolock;
 

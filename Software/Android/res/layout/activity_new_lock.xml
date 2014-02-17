@@ -8,36 +8,50 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".ScanPrint" >
+    tools:context=".NewDevice" >
 
     <TextView
-        android:id="@+id/adminLoginTitle"
+        android:id="@+id/newLockTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="30sp"
         android:layout_marginTop="70sp"
         android:gravity="center_horizontal"
-        android:text="@string/request_print"
+        android:text="@string/enter_ip"
         android:textSize="35sp" />
 
+    <EditText
+        android:id="@+id/ip_address"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50sp"
+        android:ems="20"
+        android:gravity="center"
+        android:hint="@string/sample_ip"
+        android:inputType="phone" />
+
     <TextView
-        android:id="@+id/print_detected"
+        android:id="@+id/detect_lock"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="50sp"
-        android:text="@string/print_detected"
-        android:textColor="#000000"
-        android:textSize="20sp"
-        android:visibility="invisible" />
+        android:clickable="true"
+        android:onClick="searchLock"
+        android:text="@string/detect_lock"
+        android:textColor="@color/selector"
+        android:textSize="25sp" />
 
-    <Button
-        android:id="@+id/button1"
+    <TextView
+        android:id="@+id/lock_detected"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="120sp"
-        android:onClick="tempPrintDetected"
-        android:text="TempButton - print detected" />
+        android:layout_marginTop="50sp"
+        android:text="@string/lock_detected"
+        android:textColor="#000000"
+        android:textSize="20sp" 
+        android:visibility="invisible" />
 
 </LinearLayout>

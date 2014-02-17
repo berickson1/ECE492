@@ -19,7 +19,7 @@
         android:gravity="center"
         android:text="@string/device_title"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="30sp" />
+        android:textSize="35sp" />
 
     <fragment
         android:id="@+id/devicelist_fragment"
@@ -31,16 +31,16 @@
         android:layout_marginTop="20dp" />
 
     <TextView
-        android:id="@+id/new_device"
+        android:id="@+id/new_lock"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="70dp"
         android:clickable="true"
-        android:onClick="newDevice"
-        android:text="@string/new_device"
+        android:onClick="newLock"
+        android:text="@string/new_lock"
         android:textColor="@color/selector"
-        android:textSize="20sp" />
+        android:textSize="25sp" />
 
 </RelativeLayout>

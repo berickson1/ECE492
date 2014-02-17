@@ -24,15 +24,24 @@
         </activity>
         <activity
             android:name="ca.ualberta.ece492.g9.biolock.MainActivity"
-            android:label="@string/device_title" >
+            android:label="@+id/mainActivityTitle" >
         </activity>
         <activity
             android:name="ca.ualberta.ece492.g9.biolock.AdminLogin"
-            android:label="@string/request_print" >
+            android:label="@+id/adminLoginTitle" >
         </activity>
         <activity
-            android:name="ca.ualberta.ece492.g9.biolock.NewDevice"
-            android:label="@string/enter_ip" >
+            android:name="ca.ualberta.ece492.g9.biolock.NewLock"
+            android:label="@+id/newLockTitle" >
+        </activity>
+        <activity
+            android:name="ca.ualberta.ece492.g9.biolock.Manage"
+            android:label="@+id/manageTitle" >
+        </activity>
+        <activity
+            android:name="ca.ualberta.ece492.g9.biolock.Users"
+            android:label="@+id/manageUsers" >
         </activity>
     </application>
+
 </manifest>

@@ -1,5 +1,8 @@
-// Need to implement two-pane mode for large tablet size, may be necessary
+// Need to implement two-pane mode for large tablet size, may not be necessary
 // Need to remove one hard coded value
+// Check if device is authorized already - skip the AdminLogin screen
+
+
 package ca.ualberta.ece492.g9.biolock;
 
 import android.content.Intent;
@@ -32,18 +35,19 @@ public class MainActivity extends FragmentActivity implements
 
 	// Callback method indicating which device was selected and passes result to
 	// next activity
+	// TODO: Check if device  is authorized - skip AdminLogin screen
 	@Override
 	public void onDeviceSelected(String id) {
-		Intent deviceSelected = new Intent(this, AdminLogin.class);
-		// item_id should be referenced in AdminLogin fragment
+		Intent deviceSelected = new Intent(MainActivity.this, AdminLogin.class);
+		// TODO: item_id should be referenced in AdminLogin fragment
 		deviceSelected.putExtra("item_id", id);
 		startActivity(deviceSelected);
 	}
 
-	// User selected to add new device
-	public void newDevice(View v) {
-		Intent newDevice = new Intent(this, NewDevice.class);
-		startActivity(newDevice);
+	// User selected to add new lock
+	public void newLock(View v) {
+		Intent newLock = new Intent(MainActivity.this, NewLock.class);
+		startActivity(newLock);
 
 	}
 }

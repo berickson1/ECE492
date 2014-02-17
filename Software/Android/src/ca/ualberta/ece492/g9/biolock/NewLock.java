@@ -1,38 +1,37 @@
-// Set up communication with board - fingerprint communication
+// Set up communication with board - check if valid ip
 
 package ca.ualberta.ece492.g9.biolock;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-//From MainActivity - user has selected their device
-public class AdminLogin extends FragmentActivity {
+// From MainActivity - user requests to add new lock
+public class NewLock extends Activity {
+	private static final int DELAY = 1000;
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		setContentView(R.layout.activity_admin_login);
+		setContentView(R.layout.activity_new_lock);
 	}
 
-	// TODO: Display result of fingerprint detection once board replies with
-	// result
+	// User has entered ip address for lock - will request for communication
+	// with declared ip address
+	public void searchLock(View v) {
+		// TODO: Check if ip address is valid before displaying result -
+		// detected or not detected
 
-	// Temp button to simulate fingerprint detected & accepted
-	public void tempPrintDetected(View v) {
-		
-		int DELAY = 1000;
-		
-		// Displays text stating print is found (or not found)
-		TextView printStatus = (TextView) findViewById(R.id.print_detected);
-		printStatus.setVisibility(View.VISIBLE);
+		// Displays text stating lock is found (or not found)
+		TextView lockStatus = (TextView) findViewById(R.id.lock_detected);
+		lockStatus.setVisibility(View.VISIBLE);
 
 		// Jumps to AdminLogin screen after 1 second delay
 		new Handler().postDelayed(new Runnable() {
@@ -40,7 +39,7 @@ public class AdminLogin extends FragmentActivity {
 			@Override
 			public void run() {
 				// Runs AdminLogin
-				Intent i = new Intent(AdminLogin.this, Manage.class);
+				Intent i = new Intent(NewLock.this, AdminLogin.class);
 				startActivity(i);
 
 				// Close this activity
