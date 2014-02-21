@@ -31,13 +31,36 @@
         android:textSize="20sp"
         android:visibility="invisible" />
 
+    <EditText
+        android:id="@+id/printName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="40sp"
+        android:editable="false"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="@string/fingerprint_name" >
+
+        <requestFocus />
+    </EditText>
+
     <Button
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="120sp"
+        android:layout_marginTop="40sp"
         android:onClick="tempPrintDetected"
         android:text="TempButton - print detected" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50sp"
+        android:onClick="tempNewUser"
+        android:text="TempButton - print detected and is new user" />
 
 </LinearLayout>

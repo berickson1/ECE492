@@ -42,6 +42,18 @@
             android:name="ca.ualberta.ece492.g9.biolock.Users"
             android:label="@+id/manageUsers" >
         </activity>
+        <activity
+            android:name="ca.ualberta.ece492.g9.biolock.NewUser"
+            android:label="@+id/manageUsers" >
+        </activity>
+        <activity
+            android:name="ca.ualberta.ece492.g9.biolock.Roles"
+            android:label="@+id/manageUsers" >
+        </activity>
+        <activity
+            android:name="ca.ualberta.ece492.g9.biolock.Log"
+            android:label="@+id/manageUsers" >
+        </activity>
     </application>
 
 </manifest>

@@ -24,22 +24,24 @@ public class AdminLogin extends FragmentActivity {
 
 	// TODO: Display result of fingerprint detection once board replies with
 	// result
+	// TODO: Jumps to manage or newUser screen depending on status
+	// TODO: Enable editText if new print
 
 	// Temp button to simulate fingerprint detected & accepted
 	public void tempPrintDetected(View v) {
-		
+
 		int DELAY = 1000;
-		
+
 		// Displays text stating print is found (or not found)
 		TextView printStatus = (TextView) findViewById(R.id.print_detected);
 		printStatus.setVisibility(View.VISIBLE);
 
-		// Jumps to AdminLogin screen after 1 second delay
+		// Jumps to Manage screen after 1 second delay
 		new Handler().postDelayed(new Runnable() {
 
 			@Override
 			public void run() {
-				// Runs AdminLogin
+				// Runs Manage
 				Intent i = new Intent(AdminLogin.this, Manage.class);
 				startActivity(i);
 
@@ -47,5 +49,13 @@ public class AdminLogin extends FragmentActivity {
 				finish();
 			}
 		}, DELAY);
+	}
+
+	// Temp button to simulate fingerprint detected & accepted
+	public void tempNewUser(View v) {
+
+		Intent i = new Intent(AdminLogin.this, NewUser.class);
+		startActivity(i);
+
 	}
 }

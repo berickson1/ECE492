@@ -5,12 +5,12 @@
     <string name="action_settings">Settings</string>
     <string name="device_title">Devices</string>
     <string name="request_print">Place Finger on Sensor</string>
-    <string name="new_lock">New Lock</string>
+    <string name="new_lock"><u>New Lock</u></string>
     <string name="startup_message">ECE 492 - Group 9</string>
     <string name="splash_desc">BioLock Logo</string>
     <string name="enter_ip">Enter IP Address</string>
     <string name="sample_ip">0.0.0.0</string>
-    <string name="detect_lock">Search For Lock</string>
+    <string name="detect_lock"><u>Search For Lock</u></string>
     <string name="lock_detected">Lock Detected</string>
     <string name="print_detected">Fingerprint Detected</string>
     <string name="manage">Manage</string>
@@ -18,5 +18,14 @@
     <string name="display_roles">Roles</string>
     <string name="display_log">Log</string>
     <string name="unlock">Unlock</string>
+    <string name="display_userInfo">User Info</string>
+    <string name="userName">Name</string>
+    <string name="sampleName">Firstname Lastname</string>
+    <string name="enabled">Enabled</string>
+    <string name="fingerprint">Fingerprints</string>
+    <string name="fingerprint_name">Fingerprint Name</string>
+    <string name="enroll_print"><u>Enroll New Print</u></string>
+    <string name="delete"><u>Delete</u></string>
+    <string name="update"><u>Update</u></string>
 
 </resources>

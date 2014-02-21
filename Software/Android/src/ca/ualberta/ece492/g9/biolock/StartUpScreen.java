@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Window;
 import android.view.WindowManager;
 
-// Splash screen displaying BitLock logo for 2 seconds
+// Splash screen displaying BioLock logo for 2 seconds
 public class StartUpScreen extends FragmentActivity {
 	
 	private static final int SPLASHTIME = 2000;

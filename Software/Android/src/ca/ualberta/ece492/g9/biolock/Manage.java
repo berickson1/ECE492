@@ -17,20 +17,27 @@ public class Manage extends Activity {
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_manage);
 	}
-
+	
+	// Jumps to Users screen
 	public void displayUsers(View v) {
 		Intent showUsers = new Intent(Manage.this, Users.class);
 		startActivity(showUsers);
 	}
 
+	// Jumps to Roles screen
 	public void displayRoles(View v) {
-		System.out.println("Display roles");
+		Intent showRoles = new Intent(Manage.this, Roles.class);
+		startActivity(showRoles);
 	}
 	
+	// Jumps to Log screen
 	public void displayLog(View v) {
-		System.out.println("Display log");
+		Intent showLog = new Intent(Manage.this, Log.class);
+		startActivity(showLog);
 	}
 	
+	// Unlocks door lock
+	// TODO: Implement unlocking
 	public void unlockDoor(View v) {
 		System.out.println("Unlock door");
 	}

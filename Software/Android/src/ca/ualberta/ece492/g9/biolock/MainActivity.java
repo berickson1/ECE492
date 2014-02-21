@@ -2,7 +2,6 @@
 // Need to remove one hard coded value
 // Check if device is authorized already - skip the AdminLogin screen
 
-
 package ca.ualberta.ece492.g9.biolock;
 
 import android.content.Intent;

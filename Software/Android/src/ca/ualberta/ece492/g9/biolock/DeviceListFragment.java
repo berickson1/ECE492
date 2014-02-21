@@ -14,10 +14,10 @@ import ca.ualberta.ece492.g9.biolock.dummy.DummyContent;
 public class DeviceListFragment extends ListFragment {
 
 	// The serialization (saved instance state) Bundle key representing the
-	// activated item position. Only used on tablets. private static final
+	// activated item position. Only used on tablets.
 	private static final String STATE_ACTIVATED_POSITION = "activated_position";
 
-	// The current activated item position. Only used on tablets. private int
+	// The current activated item position. Only used on tablets.
 	private int deviceActivatedPosition = ListView.INVALID_POSITION;
 
 	// Fragment's callback object - notified which device was clicked
@@ -45,7 +45,7 @@ public class DeviceListFragment extends ListFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// TODO: replace with a device list adapter.
+		// TODO: replace with a device list.
 		// Populates list of current devices
 		setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
 				android.R.layout.simple_list_item_activated_1,
