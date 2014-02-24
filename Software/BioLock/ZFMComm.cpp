@@ -34,7 +34,7 @@ bool ZFMComm::scanFinger(){
 }
 
 bool ZFMComm::storeImage(int buffer){
-	if (buffer != 0 || buffer != 1){
+	if (buffer != 1 || buffer != 2){
 		return false;
 	}
 	const char data[ZFM_CMD_STORE_TO_BUFFER_LEN] = {ZFM_CMD_STORE_TO_BUFFER, (char) buffer};
@@ -66,7 +66,53 @@ bool ZFMComm::storeFingerprint(int id){
 		return false;
 	}
 	return isSuccessPacket(reply);
+}
 
+bool ZFMComm::checkFingerprint(int id){
+	if(!scanFinger() ||
+			!storeImage(1) ||
+			!loadSavedFingerprint(id, 2)){
+		return false;
+	}
+	const char data[ZFM_CMD_MATCH_BUFFERS_LEN] = {ZFM_CMD_MATCH_BUFFERS};
+	writePacket(&ZFM_PKG_CMD, data, ZFM_CMD_GENERATE_TEMPLATE_LEN);
+	char reply[ZFM_MATCHACKPACKETLENGTH];
+	if(readPacket(reply, ZFM_MATCHACKPACKETLENGTH) == -1){
+		return false;
+	}
+	//TODO: deal with matching score
+	return isSuccessPacket(reply);
+}
+
+bool ZFMComm::loadSavedFingerprint(int id, int buffer){
+	if (buffer != 1 || buffer != 2){
+		return false;
+	}
+	const char data[ZFM_CMD_LOAD_BUFFER_LEN] = {ZFM_CMD_LOAD_BUFFER, (char) buffer, (char) (id << 8), (char) id};
+	writePacket(&ZFM_PKG_CMD, data, ZFM_CMD_LOAD_BUFFER_LEN);
+	char reply[ZFM_ACKPACKETLENGTH];
+	if(readPacket(reply, ZFM_ACKPACKETLENGTH) == -1){
+		return false;
+	}
+	return isSuccessPacket(reply);
+}
+
+int ZFMComm::findFingerprint(int buffer){
+	//TODO: double check values here
+	const char data[ZFM_CMD_SEARCH_LEN] = {ZFM_CMD_SEARCH, (char) buffer, 0, 0, 0, 0};
+	writePacket(&ZFM_PKG_CMD, data, ZFM_CMD_SEARCH_LEN);
+	char reply[ZFM_ACKPACKETLENGTH];
+	if(readPacket(reply, ZFM_MATCHACKPACKETLENGTH) == -1){
+		return -1;
+	}
+	if (!isSuccessPacket(reply)){
+		return -1;
+	}
+	int retval = 0;
+	//TODO: remove magic numbers
+	retval += reply[10] >> 8;
+	retval += reply[11];
+	return retval;
 }
 
 int ZFMComm::writePacket(const char* ptype, const char* data, uint len){
@@ -187,7 +233,7 @@ int ZFMComm::readPacket(char* bufferHead, int bufferSize){
 
 	return totalBytesRead;
 #else
-	return 1
+	return 1;
 #endif
 }
 

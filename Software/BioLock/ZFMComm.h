@@ -25,12 +25,15 @@ public:
 	bool scanFinger();
 	bool storeImage(int buffer);
 	bool storeFingerprint(int id);
+	bool checkFingerprint(int id);
+	int findFingerprint(int buffer);
 	bool hasError();
 private:
 	int fd;
 	int writePacket(const char* ptype, const char* data, uint len);
 	int readPacket(char* bufferHead, int bufferSize);
 	int getBytes(char* bufferHead, int bytesToRead, int bufferSize);
+	bool loadSavedFingerprint(int id, int buffer);
 	bool isSuccessPacket(char * buffer);
 	void reorderBytes(char* bufferHead, int dataSize);
 
