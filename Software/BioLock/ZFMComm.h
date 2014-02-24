@@ -23,6 +23,7 @@ public:
 
 	bool init(char * devName);
 	bool scanFinger();
+	bool hasError();
 private:
 	int fd;
 	int writePacket(const char* ptype, const char* data, uint len);

@@ -19,6 +19,10 @@ bool ZFMComm::init(char* devName){
 	return true;
 }
 
+bool ZFMComm::hasError(){
+	return (fd == -1);
+}
+
 bool ZFMComm::scanFinger(){
 	writePacket(&ZFM_PKG_CMD, &ZFM_CMD_CAPTURE_FINGER, 1);
 	char reply[12];

@@ -47,9 +47,9 @@ void task1(void* pdata)
 {
   ZFMComm fingerprintSensor;
   fingerprintSensor.init(SERIAL_NAME);
-  while (true)
+  while (!fingerprintSensor.hasError())
   {
-    fingerprintSensor.storeFinger(2);
+    fingerprintSensor.scanFinger();
     OSTimeDlyHMSM(0, 0, 1, 0);
   }
 }
