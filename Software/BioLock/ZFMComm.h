@@ -25,9 +25,10 @@ public:
 	char storeFinger(int id);
 private:
 	int fd;
-	int writePacket(const char* address, const char* ptype, const char* data, uint len);
+	int writePacket(const char* ptype, const char* data, uint len);
 	int readPacket(char* bufferHead, int bufferSize);
 	int getBytes(char* bufferHead, int bytesToRead, int bufferSize);
+	bool isSuccessPacket(char * buffer)
 	void reorderBytes(char* bufferHead, int dataSize);
 
 };

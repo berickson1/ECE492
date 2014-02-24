@@ -29,7 +29,7 @@ char ZFMComm::storeFinger(int id){
 	return 1;//reply[10];
 }
 
-int ZFMComm::writePacket(const char* address, const char* ptype, const char* data, uint len){
+int ZFMComm::writePacket(const char* ptype, const char* data, uint len){
 	uint		pktSize = ZFMFIXEDPACKETSIZE + len;
 	char	*buffer = (char*)malloc(pktSize),
 			*bufferPtr = buffer;
@@ -40,10 +40,10 @@ int ZFMComm::writePacket(const char* address, const char* ptype, const char* dat
 	*bufferPtr++ = ZFM_HEADER[0];
 
 	//Address - 4B
-	*bufferPtr++ = address[3];
-	*bufferPtr++ = address[2];
-	*bufferPtr++ = address[1];
-	*bufferPtr++ = address[0];
+	*bufferPtr++ = ZFM_ADDRESS[3];
+	*bufferPtr++ = ZFM_ADDRESS[2];
+	*bufferPtr++ = ZFM_ADDRESS[1];
+	*bufferPtr++ = ZFM_ADDRESS[0];
 
 	//Packet Type - 1B
 	*bufferPtr++ = *ptype;
@@ -77,6 +77,7 @@ int ZFMComm::writePacket(const char* address, const char* ptype, const char* dat
 	return retval;
 }
 int ZFMComm::readPacket(char* bufferHead, int bufferSize){
+#ifndef NOSENSOR
 	char* buffer = bufferHead;
 	int bufferRemaining = bufferSize,
 			totalBytesRead = 0,
@@ -145,6 +146,9 @@ int ZFMComm::readPacket(char* bufferHead, int bufferSize){
 	bufferRemaining -= bytesRead;
 
 	return totalBytesRead;
+#else
+	return 1
+#endif
 }
 
 int ZFMComm::getBytes(char* bufferHead, int bytesToRead, int bufferSize){
@@ -163,6 +167,7 @@ int ZFMComm::getBytes(char* bufferHead, int bytesToRead, int bufferSize){
 	reorderBytes(bufferHead, bytesRead);
 	return bytesRead;
 }
+
 void ZFMComm::reorderBytes(char* bufferHead, int dataSize){
 	char swapTemp;
 	for(int i = 0; i < dataSize / 2; i++){
