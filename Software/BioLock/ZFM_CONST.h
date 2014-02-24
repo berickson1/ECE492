@@ -17,6 +17,7 @@
 	static const char ZFM_PKG_END = 0x08;
 
 
+	static const int ZFM_ACKPACKETLENGTH = 12;
 	static const char ZFM_ACK_SUCCESS = 0x00;
 	static const char ZFM_ACK_ERR_D_PKG = 0x01;
 	static const char ZFM_ACK_ZFM_ACK_ERR_NO_FINGER= 0x02;
@@ -62,6 +63,28 @@
 	static const char ZFM_CMD_WRITE_DATA = 0x18;			//WriteNotepad
 	static const char ZFM_CMD_READ_DATA = 0x19;			//ReadNotepad
 	static const char ZFM_CMD_READ_TEMPLATE = 0x1D;		//TemplateNum
+
+	static const int ZFM_CMD_CAPTURE_FINGER_LEN = 1;		//GenImage
+	static const int ZFM_CMD_STORE_TO_BUFFER_LEN = 2;		//Img2Tz
+	static const int ZFM_CMD_MATCH_BUFFERS_LEN = 1;		//Match
+	static const int ZFM_CMD_SEARCH_LEN = 6;				//Search
+	static const int ZFM_CMD_GENERATE_TEMPLATE_LEN = 1;	//RegModel
+	static const int ZFM_CMD_STORE_LEN = 4;				//Store
+	static const int ZFM_CMD_LOAD_BUFFER_LEN = 4;			//LoadChar
+	static const int ZFM_CMD_UPLOAD_BUFFER_LEN = 2;		//UpChar
+	static const int ZFM_CMD_DOWNLOAD_BUFFER_LEN = 2;		//DownChar
+	static const int ZFM_CMD_UPLOAD_IMAGE_LEN = 1;		//UpImage
+	static const int ZFM_CMD_DOWNLOAD_IMAGE_LEN = 1;		//DownImage
+	static const int ZFM_CMD_DELETE_STORED_LEN = 5;		//DeleteChar
+	static const int ZFM_CMD_DELETE_ALL_LEN = 1;			//Empty
+	static const int ZFM_CMD_SET_SYS_PARAMETER_LEN = 3;	//SetSysPara
+	static const int ZFM_CMD_READ_SYS_PARAMETER_LEN = 1;	//ReadSysPara
+	static const int ZFM_CMD_GET_RAND_LEN = 1;			//GetRandomCode
+	static const int ZFM_CMD_SET_ADDRESS_LEN = 5;			//SetAddr
+	static const int ZFM_CMD_HANDSHAKE_LEN = 2;			//Handshake
+	static const int ZFM_CMD_WRITE_DATA_LEN = 34;			//WriteNotepad
+	static const int ZFM_CMD_READ_DATA_LEN = 2;			//ReadNotepad
+	static const int ZFM_CMD_READ_TEMPLATE_LEN = 1;		//TemplateNum
 
 
 
