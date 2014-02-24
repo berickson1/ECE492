@@ -22,7 +22,7 @@ public:
 	virtual ~ZFMComm();
 
 	bool init(char * devName);
-	char storeFinger(int id);
+	bool scanFinger();
 private:
 	int fd;
 	int writePacket(const char* ptype, const char* data, uint len);

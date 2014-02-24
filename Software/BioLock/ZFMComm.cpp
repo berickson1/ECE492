@@ -19,14 +19,13 @@ bool ZFMComm::init(char* devName){
 	return true;
 }
 
-char ZFMComm::storeFinger(int id){
-	char address[4] = {0xFF, 0xFF, 0xFF, 0xFF};
-	writePacket(address, &ZFM_PKG_CMD, &ZFM_CMD_CAPTURE_FINGER, 1);
+bool ZFMComm::scanFinger(){
+	writePacket(&ZFM_PKG_CMD, &ZFM_CMD_CAPTURE_FINGER, 1);
 	char reply[12];
-	//if(readPacket(reply, 12) == -1){
-	//	return -1;
-	//}
-	return 1;//reply[10];
+	if(readPacket(reply, 12) == -1){
+		return false;
+	}
+	return isSuccessPacket(reply);
 }
 
 int ZFMComm::writePacket(const char* ptype, const char* data, uint len){
@@ -176,6 +175,16 @@ void ZFMComm::reorderBytes(char* bufferHead, int dataSize){
 		*(bufferHead + dataSize - 1) = swapTemp;
 	}
 }
+
+bool ZFMComm::isSuccessPacket(char * buffer){
+#ifndef NOSENSOR
+	if (buffer[10] != ZFM_ACK_SUCCESS){
+		return false;
+	}
+#endif
+	return true;
+}
+
 ZFMComm::~ZFMComm() {
 	// TODO Auto-generated destructor stub
 }
