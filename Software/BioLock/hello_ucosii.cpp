@@ -29,8 +29,8 @@
 
 
 #include <stdio.h>
-#include <string.h>
 #include "includes.h"
+#include "ZFMComm.h"
 
 /* Definition of Task Stacks */
 #define   TASK_STACKSIZE       2048
@@ -45,15 +45,13 @@ OS_STK    task2_stk[TASK_STACKSIZE];
 /* Prints "Hello World" and sleeps for three seconds */
 void task1(void* pdata)
 {
-	FILE* fp = fopen (SERIAL_NAME, "r+"); //Open file for reading and writing
-  while (fp)
-  { 
-	  char* msg = "Hello from task1";
-    printf("Hello from task1\n");
-	fwrite (msg, strlen (msg), 1, fp);
-    OSTimeDlyHMSM(0, 0, 0, 10);
+  ZFMComm fingerprintSensor;
+  fingerprintSensor.init(SERIAL_NAME);
+  while (true)
+  {
+    fingerprintSensor.storeFinger(2);
+    OSTimeDlyHMSM(0, 0, 1, 0);
   }
-	fclose (fp);
 }
 /* Prints "Hello World" and sleeps for three seconds */
 void task2(void* pdata)
