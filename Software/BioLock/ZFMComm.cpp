@@ -24,12 +24,49 @@ bool ZFMComm::hasError(){
 }
 
 bool ZFMComm::scanFinger(){
-	writePacket(&ZFM_PKG_CMD, &ZFM_CMD_CAPTURE_FINGER, 1);
-	char reply[12];
-	if(readPacket(reply, 12) == -1){
+	const char data[ZFM_CMD_STORE_TO_BUFFER_LEN] = {ZFM_CMD_CAPTURE_FINGER};
+	writePacket(&ZFM_PKG_CMD, data, ZFM_CMD_CAPTURE_FINGER_LEN);
+	char reply[ZFM_ACKPACKETLENGTH];
+	if(readPacket(reply, ZFM_ACKPACKETLENGTH) == -1){
 		return false;
 	}
 	return isSuccessPacket(reply);
+}
+
+bool ZFMComm::storeImage(int buffer){
+	if (buffer != 0 || buffer != 1){
+		return false;
+	}
+	const char data[ZFM_CMD_STORE_TO_BUFFER_LEN] = {ZFM_CMD_STORE_TO_BUFFER, (char) buffer};
+	writePacket(&ZFM_PKG_CMD, data, ZFM_CMD_STORE_TO_BUFFER_LEN);
+	char reply[ZFM_ACKPACKETLENGTH];
+	if(readPacket(reply, ZFM_ACKPACKETLENGTH) == -1){
+		return false;
+	}
+	return isSuccessPacket(reply);
+}
+
+bool ZFMComm::storeFingerprint(int id){
+	{
+		const char data[ZFM_CMD_GENERATE_TEMPLATE_LEN] = {ZFM_CMD_GENERATE_TEMPLATE};
+		writePacket(&ZFM_PKG_CMD, data, ZFM_CMD_GENERATE_TEMPLATE_LEN);
+		char reply[ZFM_ACKPACKETLENGTH];
+		if(readPacket(reply, ZFM_ACKPACKETLENGTH) == -1){
+			return false;
+		}
+		if (!isSuccessPacket(reply)){
+			return false;
+		}
+	}
+	//Store result from buffer 1
+	const char data[ZFM_CMD_STORE_LEN] = {ZFM_CMD_STORE, (char) 1, (char)(id << 8), (char) id};
+	writePacket(&ZFM_PKG_CMD, data, ZFM_CMD_STORE_LEN);
+	char reply[ZFM_ACKPACKETLENGTH];
+	if(readPacket(reply, ZFM_ACKPACKETLENGTH) == -1){
+		return false;
+	}
+	return isSuccessPacket(reply);
+
 }
 
 int ZFMComm::writePacket(const char* ptype, const char* data, uint len){
