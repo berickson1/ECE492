@@ -7,6 +7,9 @@
 #ifndef ZFMCOMM_H_
 #define ZFMCOMM_H_
 
+#define ZFMFIXEDPACKETSIZE 11
+#define ZFMCHECKSUMSIZE 2
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>

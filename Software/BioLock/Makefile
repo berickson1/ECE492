@@ -142,8 +142,9 @@ ACDS_VERSION := 12.1sp1
 ELF := BioLock.elf
 
 # Paths to C, C++, and assembly source files.
-C_SRCS := hello_ucosii.c
-CXX_SRCS := ZFMComm.cpp
+C_SRCS :=
+CXX_SRCS += ZFMComm.cpp
+CXX_SRCS += hello_ucosii.cpp
 ASM_SRCS :=
 
 

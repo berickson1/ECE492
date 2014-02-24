@@ -23,14 +23,14 @@ char ZFMComm::storeFinger(int id){
 	char address[4] = {0xFF, 0xFF, 0xFF, 0xFF};
 	writePacket(address, &ZFM_PKG_CMD, &ZFM_CMD_CAPTURE_FINGER, 1);
 	char reply[12];
-	if(readPacket(reply, 12) == -1){
-		return -1;
-	}
-	return reply[10];
+	//if(readPacket(reply, 12) == -1){
+	//	return -1;
+	//}
+	return 1;//reply[10];
 }
 
 int ZFMComm::writePacket(const char* address, const char* ptype, const char* data, uint len){
-	uint		pktSize = 11 + len;
+	uint		pktSize = ZFMFIXEDPACKETSIZE + len;
 	char	*buffer = (char*)malloc(pktSize),
 			*bufferPtr = buffer;
 	int retval;
@@ -51,15 +51,15 @@ int ZFMComm::writePacket(const char* address, const char* ptype, const char* dat
 
 	//Data Length - 2B
 	//Add 2 because len does not include checksum
-	*bufferPtr++ = (char) len+2 >> 8;
-	checksum += (char) len+2 >> 8;
-	*bufferPtr++ = (char) len+2;
-	checksum += (char) len+2;
+	*bufferPtr++ = (char) ((len + ZFMCHECKSUMSIZE) >> 8);
+	checksum += (char) ((len + ZFMCHECKSUMSIZE) >> 8);
+	*bufferPtr++ = (char) (len + ZFMCHECKSUMSIZE);
+	checksum += (char) (len + ZFMCHECKSUMSIZE);
 
 	//Data - lenB
-	for(uint i = 0; i > len; i++){
-		*bufferPtr++ = data[len - i];
-		checksum += data[len - i];
+	for(uint i = 0; i < len; i++){
+		*bufferPtr++ = data[len - 1 - i];
+		checksum += data[len - 1 - i];
 	}
 
 	//Checksum -2B
