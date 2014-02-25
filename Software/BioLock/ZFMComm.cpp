@@ -8,6 +8,7 @@
 #include "ZFMComm.h"
 ZFMComm::ZFMComm() {
 	fd = -1;
+	lastError = 0;
 }
 
 bool ZFMComm::init(char* devName){
@@ -31,6 +32,14 @@ bool ZFMComm::verifyPassword(){
 
 bool ZFMComm::hasError(){
 	return (fd == -1);
+}
+
+int ZFMComm::getLastError(){
+	return lastError;
+}
+
+void ZFMComm::clearError(){
+	lastError = 0;
 }
 
 bool ZFMComm::scanFinger(){
@@ -107,6 +116,26 @@ bool ZFMComm::loadSavedFingerprint(int id, int buffer){
 	return isSuccessPacket(reply);
 }
 
+bool ZFMComm::deleteFingerprint(int id){
+	const char data[ZFM_CMD_DELETE_STORED_LEN] = {ZFM_CMD_DELETE_STORED, (char) (id << 8), (char) id, (char) 0, (char) 1};
+	writePacket(&ZFM_PKG_CMD, data, ZFM_CMD_DELETE_STORED_LEN);
+	char reply[ZFM_ACKPACKETLENGTH];
+	if(readPacket(reply, ZFM_ACKPACKETLENGTH) == -1){
+		return false;
+	}
+	return isSuccessPacket(reply);
+}
+
+bool ZFMComm::deleteAllFingerprints(){
+	const char data[ZFM_CMD_DELETE_ALL_LEN] = {ZFM_CMD_DELETE_ALL};
+	writePacket(&ZFM_PKG_CMD, data, ZFM_CMD_DELETE_ALL_LEN);
+	char reply[ZFM_ACKPACKETLENGTH];
+	if(readPacket(reply, ZFM_ACKPACKETLENGTH) == -1){
+		return false;
+	}
+	return isSuccessPacket(reply);
+}
+
 int ZFMComm::findFingerprint(int buffer){
 	//TODO: double check values here
 	const char data[ZFM_CMD_SEARCH_LEN] = {ZFM_CMD_SEARCH, (char) buffer, 0, 0, 0, 0};
@@ -174,6 +203,7 @@ int ZFMComm::writePacket(const char* ptype, const char* data, uint len){
 }
 int ZFMComm::readPacket(char* bufferHead, int bufferSize){
 #ifndef NOSENSOR
+	clearError();
 	char* buffer = bufferHead;
 	int bufferRemaining = bufferSize,
 			totalBytesRead = 0,
@@ -184,6 +214,7 @@ int ZFMComm::readPacket(char* bufferHead, int bufferSize){
 	bytesToRead = 2;
 	bytesRead = getBytes(buffer, bytesToRead, bufferRemaining);
 	if(bytesRead == -1){
+		lastError = ZFM_ACK_ERR_DATA_RECEIVE;
 		return -1;
 	}
 	buffer += bytesRead;
@@ -194,6 +225,7 @@ int ZFMComm::readPacket(char* bufferHead, int bufferSize){
 	bytesToRead = 4;
 	bytesRead = getBytes(buffer, bytesToRead, bufferRemaining);
 	if(bytesRead == -1){
+		lastError = ZFM_ACK_ERR_DATA_RECEIVE;
 		return -1;
 	}
 	buffer += bytesRead;
@@ -204,6 +236,7 @@ int ZFMComm::readPacket(char* bufferHead, int bufferSize){
 	bytesToRead = 1;
 	bytesRead = getBytes(buffer, bytesToRead, bufferRemaining);
 	if(bytesRead == -1){
+		lastError = ZFM_ACK_ERR_DATA_RECEIVE;
 		return -1;
 	}
 	buffer += bytesRead;
@@ -214,6 +247,7 @@ int ZFMComm::readPacket(char* bufferHead, int bufferSize){
 	bytesToRead = 2;
 	bytesRead = getBytes(buffer, bytesToRead, bufferRemaining);
 	if(bytesRead == -1){
+		lastError = ZFM_ACK_ERR_DATA_RECEIVE;
 		return -1;
 	}
 	dataLen = *((unsigned short *) buffer);
@@ -225,6 +259,7 @@ int ZFMComm::readPacket(char* bufferHead, int bufferSize){
 	bytesToRead = dataLen;
 	bytesRead = getBytes(buffer, bytesToRead, bufferRemaining);
 	if(bytesRead == -1){
+		lastError = ZFM_ACK_ERR_DATA_RECEIVE;
 		return -1;
 	}
 	buffer += bytesRead;
@@ -235,6 +270,7 @@ int ZFMComm::readPacket(char* bufferHead, int bufferSize){
 	bytesToRead = 2;
 	bytesRead = getBytes(buffer, bytesToRead, bufferRemaining);
 	if(bytesRead == -1){
+		lastError = ZFM_ACK_ERR_DATA_RECEIVE;
 		return -1;
 	}
 	buffer += bytesRead;
@@ -260,29 +296,25 @@ int ZFMComm::getBytes(char* bufferHead, int bytesToRead, int bufferSize){
 	if (bytesRead != bytesToRead){
 		return -1;
 	}
-	reorderBytes(bufferHead, bytesRead);
 	return bytesRead;
 }
-
-void ZFMComm::reorderBytes(char* bufferHead, int dataSize){
-	char swapTemp;
-	for(int i = 0; i < dataSize / 2; i++){
-		swapTemp = *(bufferHead + i);
-		*(bufferHead + i) = *(bufferHead + dataSize - 1);
-		*(bufferHead + dataSize - 1) = swapTemp;
-	}
-}
-
+/**
+ * Checks if an ACK packet is a success packet
+ * @param buffer pointer to the head of a packet
+ * @return true if the packet is a success packet
+ */
 bool ZFMComm::isSuccessPacket(char * buffer){
 #ifndef NOSENSOR
 	if (buffer[10] != ZFM_ACK_SUCCESS){
+		lastError = (int) buffer[10];
 		return false;
 	}
 #endif
+	clearError();
 	return true;
 }
 
 ZFMComm::~ZFMComm() {
-	// TODO Auto-generated destructor stub
+	close(fd);
 }
 
