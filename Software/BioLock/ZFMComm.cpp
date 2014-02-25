@@ -320,14 +320,13 @@ int ZFMComm::readPacket(char* bufferHead, int bufferSize){
 		return -1;
 	}
 	dataLen = 0;
-	dataLen += (char)(*buffer << 8);
-	dataLen += (char)(*buffer);
-	buffer += bytesRead;
+	dataLen += (char)(*buffer++ << 8);
+	dataLen += (char)(*buffer++);
 	totalBytesRead += bytesRead;
 	bufferRemaining -= bytesRead;
 
 	//Data
-	bytesToRead = dataLen;
+	bytesToRead = dataLen - 2;
 	bytesRead = getBytes(buffer, bytesToRead, bufferRemaining);
 	if(bytesRead == -1){
 		lastError = ZFM_ACK_ERR_DATA_RECEIVE;
@@ -382,7 +381,7 @@ int ZFMComm::getBytes(char* bufferHead, int bytesToRead, int bufferSize){
  */
 bool ZFMComm::isSuccessPacket(char * buffer){
 #ifndef NOSENSOR
-	if (buffer[10] != ZFM_ACK_SUCCESS){
+	if (buffer[9] != ZFM_ACK_SUCCESS){
 		lastError = (int) buffer[10];
 		return false;
 	}
