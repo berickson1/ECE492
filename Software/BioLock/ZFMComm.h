@@ -30,6 +30,7 @@ public:
 	bool hasError();
 private:
 	int fd;
+	bool verifyPassword();
 	int writePacket(const char* ptype, const char* data, uint len);
 	int readPacket(char* bufferHead, int bufferSize);
 	int getBytes(char* bufferHead, int bytesToRead, int bufferSize);

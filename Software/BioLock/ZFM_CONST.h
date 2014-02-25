@@ -58,6 +58,7 @@
 	static const char ZFM_CMD_DELETE_ALL = 0x0D;			//Empty
 	static const char ZFM_CMD_SET_SYS_PARAMETER = 0x0E;	//SetSysPara
 	static const char ZFM_CMD_READ_SYS_PARAMETER = 0x0F;	//ReadSysPara
+	static const char ZFM_CMD_VERIFY_PASSWORD = 0x1;		//VfyPwd
 	static const char ZFM_CMD_GET_RAND = 0x14;			//GetRandomCode
 	static const char ZFM_CMD_SET_ADDRESS = 0x15;			//SetAddr
 	static const char ZFM_CMD_HANDSHAKE = 0x17;			//Handshake
@@ -80,6 +81,7 @@
 	static const int ZFM_CMD_DELETE_ALL_LEN = 1;			//Empty
 	static const int ZFM_CMD_SET_SYS_PARAMETER_LEN = 3;	//SetSysPara
 	static const int ZFM_CMD_READ_SYS_PARAMETER_LEN = 1;	//ReadSysPara
+	static const int ZFM_CMD_VERIFY_PASSWORD_LEN = 5;		//VfyPwd
 	static const int ZFM_CMD_GET_RAND_LEN = 1;			//GetRandomCode
 	static const int ZFM_CMD_SET_ADDRESS_LEN = 5;			//SetAddr
 	static const int ZFM_CMD_HANDSHAKE_LEN = 2;			//Handshake

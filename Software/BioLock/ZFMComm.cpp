@@ -4,7 +4,7 @@
  *  Created on: Jan 29, 2014
  *      Author: Brent.Erickson
  */
-
+#define NOSENSOR
 #include "ZFMComm.h"
 ZFMComm::ZFMComm() {
 	fd = -1;
@@ -16,7 +16,17 @@ bool ZFMComm::init(char* devName){
 		printf("Error Opening Sensor");
 		return false;
 	}
-	return true;
+	return verifyPassword();
+}
+
+bool ZFMComm::verifyPassword(){
+	const char data[ZFM_CMD_VERIFY_PASSWORD_LEN] = {ZFM_CMD_VERIFY_PASSWORD, 0, 0, 0, 0};
+	writePacket(&ZFM_PKG_CMD, data, ZFM_CMD_VERIFY_PASSWORD_LEN);
+	char reply[ZFM_ACKPACKETLENGTH];
+	if(readPacket(reply, ZFM_ACKPACKETLENGTH) == -1){
+		return false;
+	}
+	return isSuccessPacket(reply);
 }
 
 bool ZFMComm::hasError(){
@@ -122,14 +132,14 @@ int ZFMComm::writePacket(const char* ptype, const char* data, uint len){
 	int retval;
 	uint checksum = 0;
 	//Header - 2B
-	*bufferPtr++ = ZFM_HEADER[1];
 	*bufferPtr++ = ZFM_HEADER[0];
+	*bufferPtr++ = ZFM_HEADER[1];
 
 	//Address - 4B
-	*bufferPtr++ = ZFM_ADDRESS[3];
-	*bufferPtr++ = ZFM_ADDRESS[2];
-	*bufferPtr++ = ZFM_ADDRESS[1];
 	*bufferPtr++ = ZFM_ADDRESS[0];
+	*bufferPtr++ = ZFM_ADDRESS[1];
+	*bufferPtr++ = ZFM_ADDRESS[2];
+	*bufferPtr++ = ZFM_ADDRESS[3];
 
 	//Packet Type - 1B
 	*bufferPtr++ = *ptype;
@@ -144,8 +154,8 @@ int ZFMComm::writePacket(const char* ptype, const char* data, uint len){
 
 	//Data - lenB
 	for(uint i = 0; i < len; i++){
-		*bufferPtr++ = data[len - 1 - i];
-		checksum += data[len - 1 - i];
+		*bufferPtr++ = data[i];
+		checksum += data[i];
 	}
 
 	//Checksum -2B
