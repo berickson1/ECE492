@@ -4,7 +4,6 @@
  *  Created on: Jan 29, 2014
  *      Author: Brent.Erickson
  */
-#define NOSENSOR
 #include "ZFMComm.h"
 ZFMComm::ZFMComm() {
 	fd = -1;
@@ -321,7 +320,7 @@ int ZFMComm::readPacket(char* bufferHead, int bufferSize){
 		return -1;
 	}
 	dataLen = 0;
-	dataLen += (char)()*buffer << 8);
+	dataLen += (char)(*buffer << 8);
 	dataLen += (char)(*buffer);
 	buffer += bytesRead;
 	totalBytesRead += bytesRead;
