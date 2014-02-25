@@ -111,7 +111,7 @@ bool ZFMComm::storeFingerprint(int id){
 		}
 	}
 	//Store result from buffer 1
-	const char data[ZFM_CMD_STORE_LEN] = {ZFM_CMD_STORE, (char) 1, (char)(id << 8), (char) id};
+	const char data[ZFM_CMD_STORE_LEN] = {ZFM_CMD_STORE, (char) 1, (char)(id >> 8), (char) id};
 	writePacket(&ZFM_PKG_CMD, data, ZFM_CMD_STORE_LEN);
 	char reply[ZFM_ACKPACKETLENGTH];
 	if(readPacket(reply, ZFM_ACKPACKETLENGTH) == -1){
@@ -151,7 +151,7 @@ bool ZFMComm::loadSavedFingerprint(int id, int buffer){
 	if (buffer != 1 || buffer != 2){
 		return false;
 	}
-	const char data[ZFM_CMD_LOAD_BUFFER_LEN] = {ZFM_CMD_LOAD_BUFFER, (char) buffer, (char) (id << 8), (char) id};
+	const char data[ZFM_CMD_LOAD_BUFFER_LEN] = {ZFM_CMD_LOAD_BUFFER, (char) buffer, (char) (id >> 8), (char) id};
 	writePacket(&ZFM_PKG_CMD, data, ZFM_CMD_LOAD_BUFFER_LEN);
 	char reply[ZFM_ACKPACKETLENGTH];
 	if(readPacket(reply, ZFM_ACKPACKETLENGTH) == -1){
@@ -166,7 +166,7 @@ bool ZFMComm::loadSavedFingerprint(int id, int buffer){
  * @return true if the operation was successful
  */
 bool ZFMComm::deleteFingerprint(int id){
-	const char data[ZFM_CMD_DELETE_STORED_LEN] = {ZFM_CMD_DELETE_STORED, (char) (id << 8), (char) id, (char) 0, (char) 1};
+	const char data[ZFM_CMD_DELETE_STORED_LEN] = {ZFM_CMD_DELETE_STORED, (char) (id >> 8), (char) id, (char) 0, (char) 1};
 	writePacket(&ZFM_PKG_CMD, data, ZFM_CMD_DELETE_STORED_LEN);
 	char reply[ZFM_ACKPACKETLENGTH];
 	if(readPacket(reply, ZFM_ACKPACKETLENGTH) == -1){
@@ -320,7 +320,9 @@ int ZFMComm::readPacket(char* bufferHead, int bufferSize){
 		lastError = ZFM_ACK_ERR_DATA_RECEIVE;
 		return -1;
 	}
-	dataLen = *((unsigned short *) buffer);
+	dataLen = 0;
+	dataLen += (char)()*buffer << 8);
+	dataLen += (char)(*buffer);
 	buffer += bytesRead;
 	totalBytesRead += bytesRead;
 	bufferRemaining -= bytesRead;
