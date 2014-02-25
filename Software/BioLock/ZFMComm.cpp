@@ -11,6 +11,11 @@ ZFMComm::ZFMComm() {
 	lastError = 0;
 }
 
+/**
+ * Initializes the fingerprint sensor
+ * @param devName Name of the device to open
+ * @return true if the operation was successful
+ */
 bool ZFMComm::init(char* devName){
 	fd = open(devName, O_RDWR);
 	if (fd == -1){
@@ -20,6 +25,10 @@ bool ZFMComm::init(char* devName){
 	return verifyPassword();
 }
 
+/**
+ * Sends password to the device to unlock the device
+ * @return true if the operation was successful
+ */
 bool ZFMComm::verifyPassword(){
 	const char data[ZFM_CMD_VERIFY_PASSWORD_LEN] = {ZFM_CMD_VERIFY_PASSWORD, 0, 0, 0, 0};
 	writePacket(&ZFM_PKG_CMD, data, ZFM_CMD_VERIFY_PASSWORD_LEN);
@@ -30,18 +39,33 @@ bool ZFMComm::verifyPassword(){
 	return isSuccessPacket(reply);
 }
 
+/**
+ *
+ * @return true if there is an error
+ */
 bool ZFMComm::hasError(){
-	return (fd == -1);
+	return (fd == -1) || lastError != 0;
 }
 
+/**
+ * Retrieves last stored error
+ * @return last stored error
+ */
 int ZFMComm::getLastError(){
 	return lastError;
 }
 
+/**
+ * Clears stored error
+ */
 void ZFMComm::clearError(){
 	lastError = 0;
 }
 
+/**
+ * Scans a fingerprint and stores the image in the device image buffer
+ * @return true if a fingerprint was scanned
+ */
 bool ZFMComm::scanFinger(){
 	const char data[ZFM_CMD_STORE_TO_BUFFER_LEN] = {ZFM_CMD_CAPTURE_FINGER};
 	writePacket(&ZFM_PKG_CMD, data, ZFM_CMD_CAPTURE_FINGER_LEN);
@@ -52,6 +76,11 @@ bool ZFMComm::scanFinger(){
 	return isSuccessPacket(reply);
 }
 
+/**
+ * Stores image from image buffer to data buffer
+ * @param buffer buffer number to store image data to
+ * @return true if the operation was successful
+ */
 bool ZFMComm::storeImage(int buffer){
 	if (buffer != 1 || buffer != 2){
 		return false;
@@ -64,7 +93,11 @@ bool ZFMComm::storeImage(int buffer){
 	}
 	return isSuccessPacket(reply);
 }
-
+/**
+ * Stores fingerprint (stored in buffer 1 and 2) to given fingerprint id
+ * @param id id to store fingerprint to
+ * @return true if the operation was successful
+ */
 bool ZFMComm::storeFingerprint(int id){
 	{
 		const char data[ZFM_CMD_GENERATE_TEMPLATE_LEN] = {ZFM_CMD_GENERATE_TEMPLATE};
@@ -87,6 +120,11 @@ bool ZFMComm::storeFingerprint(int id){
 	return isSuccessPacket(reply);
 }
 
+/**
+ * Scans fingerprint and checks it against given fingerprint id
+ * @param id id to check scanned fingerprint against
+ * @return true if the fingerprint matches
+ */
 bool ZFMComm::checkFingerprint(int id){
 	if(!scanFinger() ||
 			!storeImage(1) ||
@@ -103,6 +141,12 @@ bool ZFMComm::checkFingerprint(int id){
 	return isSuccessPacket(reply);
 }
 
+/**
+ * Load fingerprint template with given id into given buffer
+ * @param id fingerprint id to find
+ * @param buffer buffer to load fingerprint template into
+ * @return true if the operation was successful
+ */
 bool ZFMComm::loadSavedFingerprint(int id, int buffer){
 	if (buffer != 1 || buffer != 2){
 		return false;
@@ -116,6 +160,11 @@ bool ZFMComm::loadSavedFingerprint(int id, int buffer){
 	return isSuccessPacket(reply);
 }
 
+/**
+ * Removes fingerprint with given id from the fingerprint sensor
+ * @param id id of fingerprint to remove
+ * @return true if the operation was successful
+ */
 bool ZFMComm::deleteFingerprint(int id){
 	const char data[ZFM_CMD_DELETE_STORED_LEN] = {ZFM_CMD_DELETE_STORED, (char) (id << 8), (char) id, (char) 0, (char) 1};
 	writePacket(&ZFM_PKG_CMD, data, ZFM_CMD_DELETE_STORED_LEN);
@@ -126,6 +175,10 @@ bool ZFMComm::deleteFingerprint(int id){
 	return isSuccessPacket(reply);
 }
 
+/**
+ * Removes all fingerprints from the fingerprint sensor
+ * @return true if the operation was successful
+ */
 bool ZFMComm::deleteAllFingerprints(){
 	const char data[ZFM_CMD_DELETE_ALL_LEN] = {ZFM_CMD_DELETE_ALL};
 	writePacket(&ZFM_PKG_CMD, data, ZFM_CMD_DELETE_ALL_LEN);
@@ -136,6 +189,11 @@ bool ZFMComm::deleteAllFingerprints(){
 	return isSuccessPacket(reply);
 }
 
+/**
+ * Search for an existing stored fingerprint from given image buffer id
+ * @param buffer buffer containing fingerprint to find
+ * @return fingerprint id in buffer
+ */
 int ZFMComm::findFingerprint(int buffer){
 	//TODO: double check values here
 	const char data[ZFM_CMD_SEARCH_LEN] = {ZFM_CMD_SEARCH, (char) buffer, 0, 0, 0, 0};
@@ -153,7 +211,13 @@ int ZFMComm::findFingerprint(int buffer){
 	retval += reply[11];
 	return retval;
 }
-
+/**
+ * Write a packet to the serial interface
+ * @param ptype packet type to be written
+ * @param data additional packet data to be written
+ * @param len length of packet data to be written
+ * @return
+ */
 int ZFMComm::writePacket(const char* ptype, const char* data, uint len){
 	uint		pktSize = ZFMFIXEDPACKETSIZE + len;
 	char	*buffer = (char*)malloc(pktSize),
@@ -201,6 +265,12 @@ int ZFMComm::writePacket(const char* ptype, const char* data, uint len){
 	free(buffer);
 	return retval;
 }
+/**
+ * Read packet from the serial interface
+ * @param bufferHead buffer to hold incoming packet
+ * @param bufferSize size of buffer
+ * @return number of bytes read into the buffer
+ */
 int ZFMComm::readPacket(char* bufferHead, int bufferSize){
 #ifndef NOSENSOR
 	clearError();
@@ -282,7 +352,13 @@ int ZFMComm::readPacket(char* bufferHead, int bufferSize){
 	return 1;
 #endif
 }
-
+/**
+ * Reads a given number of bytes from the serial interface
+ * @param bufferHead pointer to the head of the buffer
+ * @param bytesToRead number of bytes to read from ther serial interface
+ * @param bufferSize remaining size in the given buffer
+ * @return number of bytes read from the serial buffer
+ */
 int ZFMComm::getBytes(char* bufferHead, int bytesToRead, int bufferSize){
 	int bytesRead;
 	if(bytesToRead > bufferSize){
