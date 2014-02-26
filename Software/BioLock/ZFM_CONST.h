@@ -18,10 +18,10 @@
 
 
 	static const int ZFM_ACKPACKETLENGTH = 12;
-	static const int ZFM_MATCHACKPACKETLENGTH = ZFM_ACKPACKETLENGTH + 2;
+	static const int ZFM_MATCHACKPACKETLENGTH = ZFM_ACKPACKETLENGTH + 4;
 	static const char ZFM_ACK_SUCCESS = 0x00;
 	static const char ZFM_ACK_ERR_D_PKG = 0x01;
-	static const char ZFM_ACK_ZFM_ACK_ERR_NO_FINGER= 0x02;
+	static const char ZFM_ACK_ERR_NO_FINGER= 0x02;
 	static const char ZFM_ACK_ERR_ENROLL = 0x03;
 	static const char ZFM_ACK_ERR_CHAR_DISORDERLY = 0x06;
 	static const char ZFM_ACK_ERR_CHAR_UNIQUENESS = 0x07;

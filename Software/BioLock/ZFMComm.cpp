@@ -21,7 +21,7 @@ bool ZFMComm::init(char* devName){
 		printf("Error Opening Sensor");
 		return false;
 	}
-	return verifyPassword();
+	return true;//verifyPassword();
 }
 
 /**
@@ -81,7 +81,7 @@ bool ZFMComm::scanFinger(){
  * @return true if the operation was successful
  */
 bool ZFMComm::storeImage(int buffer){
-	if (buffer != 1 || buffer != 2){
+	if (buffer != 1 && buffer != 2){
 		return false;
 	}
 	const char data[ZFM_CMD_STORE_TO_BUFFER_LEN] = {ZFM_CMD_STORE_TO_BUFFER, (char) buffer};
@@ -147,7 +147,7 @@ bool ZFMComm::checkFingerprint(int id){
  * @return true if the operation was successful
  */
 bool ZFMComm::loadSavedFingerprint(int id, int buffer){
-	if (buffer != 1 || buffer != 2){
+	if (buffer != 1 && buffer != 2){
 		return false;
 	}
 	const char data[ZFM_CMD_LOAD_BUFFER_LEN] = {ZFM_CMD_LOAD_BUFFER, (char) buffer, (char) (id >> 8), (char) id};
@@ -195,7 +195,7 @@ bool ZFMComm::deleteAllFingerprints(){
  */
 int ZFMComm::findFingerprint(int buffer){
 	//TODO: double check values here
-	const char data[ZFM_CMD_SEARCH_LEN] = {ZFM_CMD_SEARCH, (char) buffer, 0, 0, 0, 0};
+	const char data[ZFM_CMD_SEARCH_LEN] = {ZFM_CMD_SEARCH, (char) buffer, 0, 0, 0x00, 0x78};
 	writePacket(&ZFM_PKG_CMD, data, ZFM_CMD_SEARCH_LEN);
 	char reply[ZFM_ACKPACKETLENGTH];
 	if(readPacket(reply, ZFM_MATCHACKPACKETLENGTH) == -1){
@@ -251,7 +251,7 @@ int ZFMComm::writePacket(const char* ptype, const char* data, uint len){
 	}
 
 	//Checksum -2B
-	*bufferPtr++ = (char) checksum >> 8;
+	*bufferPtr++ = (char) (checksum >> 8);
 	*bufferPtr++ = (char) checksum;
 
 	if (fd == -1){
@@ -382,7 +382,7 @@ int ZFMComm::getBytes(char* bufferHead, int bytesToRead, int bufferSize){
 bool ZFMComm::isSuccessPacket(char * buffer){
 #ifndef NOSENSOR
 	if (buffer[9] != ZFM_ACK_SUCCESS){
-		lastError = (int) buffer[10];
+		lastError = (int) buffer[9];
 		return false;
 	}
 #endif
