@@ -142,7 +142,12 @@ ACDS_VERSION := 12.1sp1
 ELF := BioLock.elf
 
 # Paths to C, C++, and assembly source files.
-C_SRCS :=
+C_SRCS += WebServer/alt_error_handler.c
+C_SRCS += WebServer/dm9000a.c
+C_SRCS += WebServer/http.c
+C_SRCS += WebServer/network_utilities.c
+C_SRCS += WebServer/srec_flash.c
+C_SRCS += WebServer/web_server.c
 CXX_SRCS += ZFMComm.cpp
 CXX_SRCS += main.cpp
 ASM_SRCS :=

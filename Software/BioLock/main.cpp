@@ -30,7 +30,9 @@
 #include <stdio.h>
 #include "includes.h"
 #include "ZFMComm.h"
-
+extern "C"{
+#include "WebServer\web_server.h"
+}
 /* Definition of Task Stacks */
 #define   TASK_STACKSIZE       2048
 OS_STK task1_stk[TASK_STACKSIZE];
@@ -38,8 +40,8 @@ OS_STK task2_stk[TASK_STACKSIZE];
 
 /* Definition of Task Priorities */
 
-#define TASK1_PRIORITY      1
-#define TASK2_PRIORITY      2
+#define TASK1_PRIORITY      5
+#define TASK2_PRIORITY      6
 
 /* Prints "Hello World" and sleeps for three seconds */
 void task1(void* pdata) {
@@ -81,7 +83,7 @@ void task2(void* pdata) {
 }
 /* The main function creates two task and starts multi-tasking */
 int main(void) {
-
+	startMain();
 	OSTaskCreateExt(task1, NULL, &task1_stk[TASK_STACKSIZE - 1], TASK1_PRIORITY,
 			TASK1_PRIORITY, task1_stk, TASK_STACKSIZE, NULL, 0);
 
