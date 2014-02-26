@@ -169,6 +169,38 @@
          type = "String";
       }
    }
+   element timer_0.s1
+   {
+      datum baseAddress
+      {
+         value = "26252288";
+         type = "String";
+      }
+   }
+   element DM9000A_IF_0.s1
+   {
+      datum baseAddress
+      {
+         value = "26252416";
+         type = "String";
+      }
+   }
+   element gpio.s1
+   {
+      datum baseAddress
+      {
+         value = "26252400";
+         type = "String";
+      }
+   }
+   element sdram_0.s1
+   {
+      datum baseAddress
+      {
+         value = "8388608";
+         type = "String";
+      }
+   }
    element switches.s1
    {
       datum _tags
@@ -182,43 +214,11 @@
          type = "String";
       }
    }
-   element sdram_0.s1
-   {
-      datum baseAddress
-      {
-         value = "8388608";
-         type = "String";
-      }
-   }
-   element gpio.s1
-   {
-      datum baseAddress
-      {
-         value = "26252400";
-         type = "String";
-      }
-   }
    element onchip_memory2_0.s1
    {
       datum baseAddress
       {
          value = "26230784";
-         type = "String";
-      }
-   }
-   element green_leds.s1
-   {
-      datum baseAddress
-      {
-         value = "26252368";
-         type = "String";
-      }
-   }
-   element timer_0.s1
-   {
-      datum baseAddress
-      {
-         value = "26252288";
          type = "String";
       }
    }
@@ -230,11 +230,11 @@
          type = "String";
       }
    }
-   element DM9000A_IF_0.s1
+   element green_leds.s1
    {
       datum baseAddress
       {
-         value = "26252416";
+         value = "26252368";
          type = "String";
       }
    }
@@ -346,7 +346,7 @@
  <parameter name="projectName" value="BioLock.qpf" />
  <parameter name="sopcBorderPoints" value="false" />
  <parameter name="systemHash" value="1" />
- <parameter name="timeStamp" value="1393370018878" />
+ <parameter name="timeStamp" value="1393398959937" />
  <parameter name="useTestBenchNamingPattern" value="false" />
  <instanceScript></instanceScript>
  <interface name="reset" internal="clk_0.clk_in_reset" type="reset" dir="end" />
@@ -463,7 +463,7 @@
   <parameter name="cpuID_stored" value="0" />
   <parameter name="breakOffset" value="32" />
   <parameter name="userDefinedSettings" value="" />
-  <parameter name="resetSlave" value="onchip_memory2_0.s1" />
+  <parameter name="resetSlave">generic_tristate_controller_0.uas</parameter>
   <parameter name="mmu_TLBMissExcSlave" value="" />
   <parameter name="exceptionSlave" value="onchip_memory2_0.s1" />
   <parameter name="breakSlave">nios2_qsys_0.jtag_debug_module</parameter>
@@ -550,7 +550,7 @@
    version="12.1"
    enabled="1"
    name="sysid_qsys_0">
-  <parameter name="id" value="-559038737" />
+  <parameter name="id" value="305419896" />
   <parameter name="timestamp" value="0" />
   <parameter name="AUTO_CLK_CLOCK_RATE" value="50000000" />
   <parameter name="AUTO_DEVICE_FAMILY" value="Cyclone II" />
