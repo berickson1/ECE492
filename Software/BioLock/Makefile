@@ -144,7 +144,7 @@ ELF := BioLock.elf
 # Paths to C, C++, and assembly source files.
 C_SRCS :=
 CXX_SRCS += ZFMComm.cpp
-CXX_SRCS += hello_ucosii.cpp
+CXX_SRCS += main.cpp
 ASM_SRCS :=
 
 

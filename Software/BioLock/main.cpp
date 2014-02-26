@@ -45,10 +45,31 @@ OS_STK task2_stk[TASK_STACKSIZE];
 void task1(void* pdata) {
 	ZFMComm fingerprintSensor;
 	fingerprintSensor.init(SERIAL_NAME);
+	fingerprintSensor.deleteAllFingerprints();
 	while (!fingerprintSensor.hasError()) {
 		printf("Checking for fingerprint\n");
-		fingerprintSensor.scanFinger();
+		while (!fingerprintSensor.scanFinger() || !fingerprintSensor.storeImage(1)){
+			OSTimeDlyHMSM(0, 0, 1, 0);
+		}
 		OSTimeDlyHMSM(0, 0, 1, 0);
+		while (!fingerprintSensor.scanFinger() || !fingerprintSensor.storeImage(2)) {
+			OSTimeDlyHMSM(0, 0, 1, 0);
+		}
+		if(fingerprintSensor.storeFingerprint(7)){
+			printf("Stored Fingerprint to 7\n");
+		} else {
+			printf("Failed to store fingerprint to 7\n");
+		}
+		OSTimeDlyHMSM(0, 0, 5, 0);
+		printf("Verify");
+		while(true){
+			while (!fingerprintSensor.scanFinger() || !fingerprintSensor.storeImage(1)) {
+				OSTimeDlyHMSM(0, 0, 1, 0);
+			}
+			int fid = fingerprintSensor.findFingerprint(1);
+			printf("Fingerprint ID: %d\n", fid);
+			OSTimeDlyHMSM(0, 0, 1, 0);
+		}
 	}
 }
 /* Prints "Hello World" and sleeps for three seconds */
