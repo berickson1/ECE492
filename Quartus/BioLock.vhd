@@ -136,10 +136,10 @@ architecture structure of BioLock is
             dm9000a_if_0_s1_export_INT              : in    std_logic                     := 'X';             -- INT
             dm9000a_if_0_s1_export_CLK              : out   std_logic;    
 				
-				sdcard_interface_conduit_end_b_SD_cmd     : inout std_logic   := 'X';             -- b_SD_cmd
-            sdcard_interface_conduit_end_b_SD_dat     : inout std_logic   := 'X';             -- b_SD_dat
-            sdcard_interface_conduit_end_b_SD_dat3    : inout std_logic   := 'X';             -- b_SD_dat3
-            sdcard_interface_conduit_end_o_SD_clock   : out   std_logic;                       -- o_SD_clock
+				sdcard_external_MISO                   : in    std_logic                     := 'X';             -- MISO
+            sdcard_external_MOSI                   : out   std_logic;                                        -- MOSI
+            sdcard_external_SCLK                   : out   std_logic;                                        -- SCLK
+            sdcard_external_SS_n                   : out   std_logic;                                         -- SS_n
 				
 				tristate_conduit_bridge_0_out_generic_tristate_controller_0_tcm_read_n_out       : out   std_logic_vector(0 downto 0);                     -- generic_tristate_controller_0_tcm_read_n_out
             tristate_conduit_bridge_0_out_generic_tristate_controller_0_tcm_data_out         : inout std_logic_vector(7 downto 0)  := (others => 'X'); -- generic_tristate_controller_0_tcm_data_out
@@ -212,12 +212,12 @@ begin
             dm9000a_if_0_s1_export_INT              => ENET_INT,              --                                   .INT
             --dm9000a_if_0_s1_export_CLK              => ENET_CLK,                                                       --                                   .CLK
 				
-				sdcard_interface_conduit_end_b_SD_cmd     => SD_CMD,                                            --       sdcard_interface_conduit_end.b_SD_cmd
-            sdcard_interface_conduit_end_b_SD_dat     => SD_DAT,                                            --                                   .b_SD_dat
-            sdcard_interface_conduit_end_b_SD_dat3    => SD_DAT3,                                           --                                   .b_SD_dat3
-            sdcard_interface_conduit_end_o_SD_clock   => SD_CLK,                                           --                                   .o_SD_clock
-				
-            tristate_conduit_bridge_0_out_generic_tristate_controller_0_tcm_read_n_out       => FL_OE_N,       --      tristate_conduit_bridge_0_out.generic_tristate_controller_0_tcm_read_n_out
+				sdcard_external_MISO          			 => SD_DAT,          --                    sdcard_external.MISO
+            sdcard_external_MOSI          			 => SD_CMD,          --                                   .MOSI
+            sdcard_external_SCLK          			 => SD_CLK,          --                                   .SCLK
+            sdcard_external_SS_n          			 => SD_DAT3,           --                                   .SS_n				
+            
+				tristate_conduit_bridge_0_out_generic_tristate_controller_0_tcm_read_n_out       => FL_OE_N,       --      tristate_conduit_bridge_0_out.generic_tristate_controller_0_tcm_read_n_out
             tristate_conduit_bridge_0_out_generic_tristate_controller_0_tcm_data_out         => FL_DQ,         --                                   .generic_tristate_controller_0_tcm_data_out
             tristate_conduit_bridge_0_out_generic_tristate_controller_0_tcm_chipselect_n_out => FL_CE_N, --                                   .generic_tristate_controller_0_tcm_chipselect_n_out
             tristate_conduit_bridge_0_out_generic_tristate_controller_0_tcm_write_n_out      => FL_WE_N,      --                                   .generic_tristate_controller_0_tcm_write_n_out
