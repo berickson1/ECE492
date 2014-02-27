@@ -11,7 +11,7 @@
 using namespace std;
 class RestAPI {
 public:
-	RestAPI();
+	RestAPI(int (*getFingerprintIdFunction)());
 	virtual ~RestAPI();
 	string getUsers();
 	string getUser(int uid);
@@ -26,6 +26,8 @@ public:
 	string getPrints();
 	string getPrint(int uid);
 	string scanPrint();
+private:
+	int (*getFingerprintId)();
 };
 
 #endif /* RESTAPI_H_ */

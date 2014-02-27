@@ -40,40 +40,60 @@ OS_STK task1_stk[TASK_STACKSIZE];
 OS_STK task2_stk[TASK_STACKSIZE];
 
 OS_EVENT *fingerprintMailbox;
+OS_EVENT *fingerprintMutex;
 
 /* Definition of Task Priorities */
 
 #define TASK1_PRIORITY      6
 #define TASK2_PRIORITY      7
 
-/* Prints "Hello World" and sleeps for three seconds */
+int getCurrentFingerprintId(){
+	INT8U err;
+	int *fid;
+	err = OSMutexPost(fingerprintMutex);
+	fid = (int*) OSMboxPend(fingerprintMailbox, 0, &err);
+	return *fid;
+}
+
+/* Checks for fingerprint */
 void task1(void* pdata) {
-	ZFMComm fingerprintSensor;
-	fingerprintSensor.init(SERIAL_NAME);
-	fingerprintSensor.deleteAllFingerprints();
-	while (!fingerprintSensor.hasError()) {
-		printf("Checking for fingerprint\n");
-		while (!fingerprintSensor.scanFinger() || !fingerprintSensor.storeImage(1)){
+	INT8U err;
+	//clear mutex!
+	OSMutexAccept(fingerprintMutex, &err);
+	while(true){
+		ZFMComm fingerprintSensor;
+		fingerprintSensor.init(SERIAL_NAME);
+		while (!fingerprintSensor.hasError()) {
 			OSTimeDlyHMSM(0, 0, 1, 0);
-		}
-		OSTimeDlyHMSM(0, 0, 1, 0);
-		while (!fingerprintSensor.scanFinger() || !fingerprintSensor.storeImage(2)) {
-			OSTimeDlyHMSM(0, 0, 1, 0);
-		}
-		if(fingerprintSensor.storeFingerprint(7)){
-			printf("Stored Fingerprint to 7\n");
-		} else {
-			printf("Failed to store fingerprint to 7\n");
-		}
-		OSTimeDlyHMSM(0, 0, 5, 0);
-		printf("Verify");
-		while(true){
-			while (!fingerprintSensor.scanFinger() || !fingerprintSensor.storeImage(1)) {
+			printf("Checking for fingerprint\n");
+			bool sendToMailbox = OSMutexAccept(fingerprintMutex, &err);
+			while (!fingerprintSensor.scanFinger() || !fingerprintSensor.storeImage(1)){
+				//Sleep for a second and try again
 				OSTimeDlyHMSM(0, 0, 1, 0);
 			}
+			printf("Fingerprint acquired, looking for fingerprint ID\n");
 			int fid = fingerprintSensor.findFingerprint(1);
-			printf("Fingerprint ID: %d\n", fid);
-			OSTimeDlyHMSM(0, 0, 1, 0);
+			printf("Fingerprint id:%d\n", fid);
+			if(sendToMailbox){
+				//We need to wait for the mailbox to empty before we do anything
+				while(true){
+					OS_MBOX_DATA mboxData;
+					OSMboxQuery(fingerprintMailbox,  &mboxData);
+					if (mboxData.OSMsg == NULL){
+						//We can add data to the mailbox now
+						break;
+					}
+					OSTimeDlyHMSM(0, 0, 1, 0);
+				}
+				err = OSMboxPost(fingerprintMailbox, &fid);
+				if (err != OS_NO_ERR){
+					printf("Error sending message to fingerprint mailbox");
+				}
+				//Restart loop
+				continue;
+			}
+
+			//Check if fingerprint is allowed access and unlock door
 		}
 	}
 }
@@ -86,7 +106,7 @@ void task2(void* pdata) {
 }
 
 const char * createHttpResponse(const char * URI){
-	RestAPI api;
+	RestAPI api(&getCurrentFingerprintId);
 	const char * retval = api.getUsers().c_str();
 	return retval;
 }
@@ -100,6 +120,17 @@ void startTasks(){
 }
 /* The main function creates two task and starts multi-tasking */
 int main(void) {
+	INT8U err;
+	fingerprintMutex = OSMutexCreate(1, &err);
+	if (err != OS_NO_ERR){
+		printf("Error initializing mutex");
+		return -1;
+	}
+	fingerprintMailbox = OSMboxCreate(NULL);
+	if (fingerprintMailbox == NULL){
+		printf("Error fingerprint mailbox");
+		return -1;
+	}
 	startWebServer(&startTasks, &createHttpResponse);
 	OSStart();
 	return 0;

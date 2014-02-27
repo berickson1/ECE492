@@ -7,7 +7,9 @@
 
 #include "RestAPI.h"
 using namespace std;
-RestAPI::RestAPI() {
+RestAPI::RestAPI(int (*getFingerprintIdFunction)()):
+	getFingerprintId(getFingerprintIdFunction)
+{
 	// TODO Auto-generated constructor stub
 
 }
@@ -21,7 +23,8 @@ string RestAPI::getUsers(){
 	Json::Value rootNode;
 	rootNode["1"]["name"] = "Brent";
 	rootNode["2"]["name"] = "Mavis";
-	rootNode["3"]["name"] = "Sydney";
+	rootNode["2"]["id"] = getFingerprintId();
+	rootNode["1"]["id"] = getFingerprintId();
 	return rootNode.toStyledString();
 }
 string RestAPI::getUser(int uid){
