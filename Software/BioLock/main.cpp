@@ -31,7 +31,7 @@
 #include "includes.h"
 #include "ZFMComm.h"
 extern "C"{
-#include "WebServer\web_server.h"
+#include "WebServer/web_server.h"
 }
 /* Definition of Task Stacks */
 #define   TASK_STACKSIZE       2048
@@ -81,6 +81,18 @@ void task2(void* pdata) {
 		OSTimeDlyHMSM(0, 0, 3, 0);
 	}
 }
+
+const char * createHttpResponse(const char * URI){
+	return "\
+			HTTP/1.0 200 OK\r\n\
+			Content-Type: text/html\r\n\
+			Content-Length: 272\r\n\r\n\
+			<HTML><HEAD><TITLE>BioLock Demo Page</TITLE></HEAD>\
+			<title>NicheStack on Nios II</title><BODY>\
+			<center><h2>BioLock Demo Page</h2>\
+			Here is a demo page. JSON should go here!</html>\
+			";
+}
 extern "C"{
 void startTasks(){
 	OSTaskCreateExt(task1, NULL, &task1_stk[TASK_STACKSIZE - 1], TASK1_PRIORITY,
@@ -91,8 +103,7 @@ void startTasks(){
 }
 /* The main function creates two task and starts multi-tasking */
 int main(void) {
-	void (*ptr)() = &startTasks;
-	startWebServer(ptr);
+	startWebServer(&startTasks, &createHttpResponse);
 	OSStart();
 	return 0;
 }

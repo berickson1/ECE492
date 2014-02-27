@@ -79,7 +79,7 @@ int http_find_file();
  * headers and HTML embedded into the single string.
  */
 static const char canned_http_response[] = {"\
-HTTP/1.0 404 Not Found\r\n\
+HTTP/1.0 200 OK\r\n\
 Content-Type: text/html\r\n\
 Content-Length: 272\r\n\r\n\
 <HTML><HEAD><TITLE>Nios II Web Server Demonstration</TITLE></HEAD>\
@@ -1042,7 +1042,12 @@ int http_find_file(http_conn* conn)
 int http_handle_get(http_conn* conn){
 	//Check conn->url for known uris
 	if (strcmp(conn->uri, "/users") == 0){
-		return http_find_file(conn);
+	      const char * retval = httpResponseFunction(conn);
+	      if (strlen(retval) > 0){
+	    	  send(conn->fd,(void*)retval,strlen(retval),0);
+	    	  conn->state = COMPLETE;
+	    	  return 0;
+	      }
 	}
 	return http_find_file(conn);
 

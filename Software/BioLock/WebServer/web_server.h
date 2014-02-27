@@ -30,7 +30,8 @@
  */
 void die_with_error(char err_msg[]);
 void (*callbackFunction)();
-int startWebServer (void (*callback)());
+const char * (*httpResponseFunction)(const char * URI);
+int startWebServer (void (*callback)(), const char * (*httpResponse)(const char * URI));
 
 /*
  * Mailbox to control board features 

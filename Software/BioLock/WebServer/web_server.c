@@ -209,9 +209,10 @@ OS_STK    BCTaskStk[TASK_STACKSIZE];
  */
 OS_EVENT *board_control_mbox;
 
-int startWebServer (void (*callback)())
+int startWebServer (void (*callback)(), const char * (*httpResponse)(const char * URI))
 {
 	callbackFunction = callback;
+	httpResponseFunction = httpResponse;
   /* Initialize the current flash block, for flash programming. */
 	DM9000A_INSTANCE( DM9000A_0, dm9000a_0 );
 	DM9000A_INIT( DM9000A_0, dm9000a_0 );
