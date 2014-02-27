@@ -204,11 +204,15 @@ int ZFMComm::findFingerprint(int buffer){
 	if (!isSuccessPacket(reply)){
 		return -1;
 	}
+#ifndef NOSENSOR
 	int retval = 0;
 	//TODO: remove magic numbers
 	retval += reply[10] >> 8;
 	retval += reply[11];
 	return retval;
+#else
+	return 22;
+#endif
 }
 /**
  * Write a packet to the serial interface
