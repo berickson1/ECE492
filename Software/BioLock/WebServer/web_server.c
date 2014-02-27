@@ -209,8 +209,9 @@ OS_STK    BCTaskStk[TASK_STACKSIZE];
  */
 OS_EVENT *board_control_mbox;
 
-int startMain (void)
+int startWebServer (void (*callback)())
 {
+	callbackFunction = callback;
   /* Initialize the current flash block, for flash programming. */
 	DM9000A_INSTANCE( DM9000A_0, dm9000a_0 );
 	DM9000A_INIT( DM9000A_0, dm9000a_0 );
@@ -241,6 +242,7 @@ int startMain (void)
 
 static void WSCreateTasks()
 {
+	(*callbackFunction)();
   INT8U error_code = OS_NO_ERR;
   
   /* Start LED Task. */

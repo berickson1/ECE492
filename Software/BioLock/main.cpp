@@ -40,8 +40,8 @@ OS_STK task2_stk[TASK_STACKSIZE];
 
 /* Definition of Task Priorities */
 
-#define TASK1_PRIORITY      5
-#define TASK2_PRIORITY      6
+#define TASK1_PRIORITY      6
+#define TASK2_PRIORITY      7
 
 /* Prints "Hello World" and sleeps for three seconds */
 void task1(void* pdata) {
@@ -81,16 +81,21 @@ void task2(void* pdata) {
 		OSTimeDlyHMSM(0, 0, 3, 0);
 	}
 }
-/* The main function creates two task and starts multi-tasking */
-int main(void) {
-	startMain();
+extern "C"{
+void startTasks(){
 	OSTaskCreateExt(task1, NULL, &task1_stk[TASK_STACKSIZE - 1], TASK1_PRIORITY,
 			TASK1_PRIORITY, task1_stk, TASK_STACKSIZE, NULL, 0);
 
 	OSTaskCreateExt(task2, NULL, &task2_stk[TASK_STACKSIZE - 1], TASK2_PRIORITY,
 			TASK2_PRIORITY, task2_stk, TASK_STACKSIZE, NULL, 0);
+}
+/* The main function creates two task and starts multi-tasking */
+int main(void) {
+	void (*ptr)() = &startTasks;
+	startWebServer(ptr);
 	OSStart();
 	return 0;
+}
 }
 
 /******************************************************************************
