@@ -150,6 +150,10 @@ C_SRCS += WebServer/srec_flash.c
 C_SRCS += WebServer/web_server.c
 CXX_SRCS += ZFMComm.cpp
 CXX_SRCS += main.cpp
+CXX_SRCS += RestAPI.cpp
+CXX_SRCS += json/json_reader.cpp
+CXX_SRCS += json/json_value.cpp
+CXX_SRCS += json/json_writer.cpp
 ASM_SRCS :=
 
 

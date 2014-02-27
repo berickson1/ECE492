@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include "includes.h"
 #include "ZFMComm.h"
+#include "RestAPI.h"
 extern "C"{
 #include "WebServer/web_server.h"
 }
@@ -85,28 +86,9 @@ void task2(void* pdata) {
 }
 
 const char * createHttpResponse(const char * URI){
-	return "{\
-    \"glossary\": {\
-        \"title\": \"example glossary\",\
-		\"GlossDiv\": {\
-            \"title\": \"S\",\
-			\"GlossList\": {\
-                \"GlossEntry\": {\
-                    \"ID\": \"SGML\",\
-					\"SortAs\": \"SGML\",\
-					\"GlossTerm\": \"Standard Generalized Markup Language\",\
-					\"Acronym\": \"SGML\",\
-					\"Abbrev\": \"ISO 8879:1986\",\
-					\"GlossDef\": {\
-                        \"para\": \"A meta-markup language, used to create markup languages such as DocBook.\",\
-						\"GlossSeeAlso\": [\"GML\", \"XML\"]\
-                    },\
-					\"GlossSee\": \"markup\"\
-                }\
-            }\
-        }\
-    }\
-}";
+	RestAPI api;
+	const char * retval = api.getUsers().c_str();
+	return retval;
 }
 extern "C"{
 void startTasks(){
