@@ -1034,6 +1034,20 @@ int http_find_file(http_conn* conn)
   return ret_code;
 }
 
+/*
+ * http_handle_get()
+ *
+ * Handle incoming get requests.  Fall back to default handling if URL is not known
+ */
+int http_handle_get(http_conn* conn){
+	//Check conn->url for known uris
+	if (strcmp(conn->uri, "/users") == 0){
+		return http_find_file(conn);
+	}
+	return http_find_file(conn);
+
+}
+
 
 /*
  * http_send_file()
@@ -1123,7 +1137,7 @@ int http_prepare_response(http_conn* conn)
     case GET:
     {
       /* Find file from uri */
-      ret_code = http_find_file(conn);
+      ret_code = http_handle_get(conn);
       break;
     }
     case POST:
