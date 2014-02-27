@@ -841,6 +841,95 @@ int http_send_file_chunk(http_conn* conn)
  * Construct and send an HTTP header describing the now-opened file that is
  * about to be sent to the client.
  */
+int http_send_json(http_conn* conn, const char* json, int code)
+{
+  int     result = 0, ret_code = 0;
+  char* tx_wr_pos = conn->tx_buffer;
+
+  tx_wr_pos += sprintf(tx_wr_pos, HTTP_VERSION_STRING);
+
+  switch(code)
+  {
+    /* HTTP Code: "200 OK\r\n" (we have opened the file successfully) */
+    case HTTP_OK:
+    {
+      tx_wr_pos += sprintf(tx_wr_pos, HTTP_OK_STRING);
+      break;
+    }
+    /* HTTP Code: "404 Not Found\r\n" (couldn't find requested file) */
+    case HTTP_NOT_FOUND:
+    {
+      tx_wr_pos += sprintf(tx_wr_pos, HTTP_NOT_FOUND_STRING);
+      break;
+    }
+    default:
+    {
+      fprintf(stderr, "[http_send_file_header] Invalid HTTP code: %d\n", code);
+      conn->state = RESET;
+      return -1;
+      break;
+    }
+  }
+
+  /* Handle the various content types */
+  tx_wr_pos += sprintf(tx_wr_pos, HTTP_CONTENT_TYPE);
+  tx_wr_pos += sprintf(tx_wr_pos, HTTP_CONTENT_TYPE_JSON);
+
+  /* "Content-Length: <length bytes>\r\n" */
+  tx_wr_pos += sprintf(tx_wr_pos, HTTP_CONTENT_LENGTH);
+  tx_wr_pos += sprintf(tx_wr_pos, "%d\r\n", strlen(json));
+
+  /*
+   * 'close' will be set during header parsing if the client either specified
+   * that they wanted the connection closed ("Connection: Close"), or if they
+   * are using an HTTP version prior to 1.1. Otherwise, we will keep the
+   * connection alive.
+   *
+   * We send a specified number of files in a single keep-alive connection,
+   * we'll also close the connection. It's best to be polite and tell the client,
+   * though.
+   */
+  if(!conn->keep_alive_count)
+  {
+    conn->close = 1;
+  }
+
+  if(conn->close)
+  {
+    tx_wr_pos += sprintf(tx_wr_pos, HTTP_CLOSE);
+  }
+  else
+  {
+    tx_wr_pos += sprintf(tx_wr_pos, HTTP_KEEP_ALIVE);
+  }
+
+  /* "\r\n" (two \r\n's in a row means end of headers */
+  tx_wr_pos += sprintf(tx_wr_pos, HTTP_CR_LF);
+
+  /* Send the reply header */
+  result = send(conn->fd, conn->tx_buffer, (tx_wr_pos - conn->tx_buffer),
+                0);
+
+  if(result < 0)
+  {
+    fprintf(stderr, "[http_send_file] header send returned %d\n", result);
+    conn->state = RESET;
+    return result;
+  }
+  else
+  {
+    conn->activity_time = alt_nticks();
+  }
+
+  return ret_code;
+}
+
+/*
+ * http_send_file_header()
+ *
+ * Construct and send an HTTP header describing the now-opened file that is
+ * about to be sent to the client.
+ */
 int http_send_file_header(http_conn* conn, const char* name, int code)
 {
   int     result = 0, ret_code = 0;
@@ -1042,10 +1131,11 @@ int http_find_file(http_conn* conn)
 int http_handle_get(http_conn* conn){
 	//Check conn->url for known uris
 	if (strcmp(conn->uri, "/users") == 0){
-	      const char * retval = httpResponseFunction(conn);
+	      const char * retval = httpResponseFunction(conn->uri);
 	      if (strlen(retval) > 0){
-	    	  send(conn->fd,(void*)retval,strlen(retval),0);
-	    	  conn->state = COMPLETE;
+	    	  http_send_json(conn, retval, HTTP_OK);
+	    	  //Send JSON reply
+	    	  send(conn->fd, (void*)retval, strlen(retval), 0);
 	    	  return 0;
 	      }
 	}

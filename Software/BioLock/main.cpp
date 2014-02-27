@@ -38,6 +38,8 @@ extern "C"{
 OS_STK task1_stk[TASK_STACKSIZE];
 OS_STK task2_stk[TASK_STACKSIZE];
 
+OS_EVENT *fingerprintMailbox;
+
 /* Definition of Task Priorities */
 
 #define TASK1_PRIORITY      6
@@ -83,15 +85,28 @@ void task2(void* pdata) {
 }
 
 const char * createHttpResponse(const char * URI){
-	return "\
-			HTTP/1.0 200 OK\r\n\
-			Content-Type: text/html\r\n\
-			Content-Length: 272\r\n\r\n\
-			<HTML><HEAD><TITLE>BioLock Demo Page</TITLE></HEAD>\
-			<title>NicheStack on Nios II</title><BODY>\
-			<center><h2>BioLock Demo Page</h2>\
-			Here is a demo page. JSON should go here!</html>\
-			";
+	return "{\
+    \"glossary\": {\
+        \"title\": \"example glossary\",\
+		\"GlossDiv\": {\
+            \"title\": \"S\",\
+			\"GlossList\": {\
+                \"GlossEntry\": {\
+                    \"ID\": \"SGML\",\
+					\"SortAs\": \"SGML\",\
+					\"GlossTerm\": \"Standard Generalized Markup Language\",\
+					\"Acronym\": \"SGML\",\
+					\"Abbrev\": \"ISO 8879:1986\",\
+					\"GlossDef\": {\
+                        \"para\": \"A meta-markup language, used to create markup languages such as DocBook.\",\
+						\"GlossSeeAlso\": [\"GML\", \"XML\"]\
+                    },\
+					\"GlossSee\": \"markup\"\
+                }\
+            }\
+        }\
+    }\
+}";
 }
 extern "C"{
 void startTasks(){
