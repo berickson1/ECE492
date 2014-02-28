@@ -166,13 +166,13 @@ C_SRCS += Database/EFSL/plibc.c
 C_SRCS += Database/EFSL/sd.c
 C_SRCS += Database/EFSL/time.c
 C_SRCS += Database/EFSL/ui.c
-C_SRCS += Database/database.c
 CXX_SRCS += ZFMComm.cpp
 CXX_SRCS += main.cpp
 CXX_SRCS += RestAPI.cpp
 CXX_SRCS += json/json_reader.cpp
 CXX_SRCS += json/json_value.cpp
 CXX_SRCS += json/json_writer.cpp
+CXX_SRCS += Database/Database.cpp
 ASM_SRCS :=
 
 

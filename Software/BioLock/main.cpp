@@ -31,9 +31,10 @@
 #include "includes.h"
 #include "ZFMComm.h"
 #include "RestAPI.h"
+#include "Database/Database.h"
+
 extern "C"{
 #include "WebServer/web_server.h"
-#include "Database/database.h"
 }
 
 /* Definition of Task Stacks */
@@ -124,7 +125,12 @@ void startTasks(){
 int main(void) {
 	INT8U err;
 
-	fingerprintMutex = OSMutexCreate(1, &err);
+	Database database;
+
+	database.initDB();
+	database.listAll("/");
+
+	/*fingerprintMutex = OSMutexCreate(1, &err);
 	if (err != OS_NO_ERR){
 		printf("Error initializing mutex");
 		return -1;
@@ -134,7 +140,7 @@ int main(void) {
 		printf("Error fingerprint mailbox");
 		return -1;
 	}
-	startWebServer(&startTasks, &createHttpResponse);
+	startWebServer(&startTasks, &createHttpResponse);*/
 	OSStart();
 	return 0;
 }
