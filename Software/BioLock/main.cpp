@@ -33,7 +33,9 @@
 #include "RestAPI.h"
 extern "C"{
 #include "WebServer/web_server.h"
+#include "Database/database.h"
 }
+
 /* Definition of Task Stacks */
 #define   TASK_STACKSIZE       2048
 OS_STK task1_stk[TASK_STACKSIZE];
@@ -121,6 +123,7 @@ void startTasks(){
 /* The main function creates two task and starts multi-tasking */
 int main(void) {
 	INT8U err;
+
 	fingerprintMutex = OSMutexCreate(1, &err);
 	if (err != OS_NO_ERR){
 		printf("Error initializing mutex");

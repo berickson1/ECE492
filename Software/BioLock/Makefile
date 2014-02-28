@@ -148,6 +148,25 @@ C_SRCS += WebServer/http.c
 C_SRCS += WebServer/network_utilities.c
 C_SRCS += WebServer/srec_flash.c
 C_SRCS += WebServer/web_server.c
+C_SRCS += Database/EFSL/debug.c
+C_SRCS += Database/EFSL/dir.c
+C_SRCS += Database/EFSL/disc.c
+C_SRCS += Database/EFSL/efs.c
+C_SRCS += Database/EFSL/extract.c
+C_SRCS += Database/EFSL/fat.c
+C_SRCS += Database/EFSL/file.c
+C_SRCS += Database/EFSL/fs.c
+C_SRCS += Database/EFSL/ioman.c
+C_SRCS += Database/EFSL/ls.c
+C_SRCS += Database/EFSL/mkfs.c
+C_SRCS += Database/EFSL/nios2.c
+C_SRCS += Database/EFSL/nios2_ramdisk.c
+C_SRCS += Database/EFSL/partition.c
+C_SRCS += Database/EFSL/plibc.c
+C_SRCS += Database/EFSL/sd.c
+C_SRCS += Database/EFSL/time.c
+C_SRCS += Database/EFSL/ui.c
+C_SRCS += Database/database.c
 CXX_SRCS += ZFMComm.cpp
 CXX_SRCS += main.cpp
 CXX_SRCS += RestAPI.cpp
@@ -187,7 +206,7 @@ CRT0 :=
 SYS_LIB :=
 
 # Define path to the root of the BSP.
-BSP_ROOT_DIR := ../../Quartus/software/BioLock_bsp
+BSP_ROOT_DIR := ../BioLock_bsp
 
 # List of application specific include directories, library directories and library names
 APP_INCLUDE_DIRS :=
