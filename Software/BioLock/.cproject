@@ -230,6 +230,9 @@
 									<listOptionValue builtIn="false" value="__WCHAR_TYPE__"/>
 									<listOptionValue builtIn="false" value="__CHAR16_TYPE__"/>
 								</option>
+								<option id="gnu.cpp.compiler.option.include.paths.1502712807" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;C:\altera\12.1sp1\nios2eds\bin\gnu\nios2-elf\include\c++\4.1.2&quot;"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin.1921431406" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input.cygwin"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.base.849559104" name="Cygwin C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin.base">
