@@ -31,7 +31,7 @@
 #include "includes.h"
 #include "ZFMComm.h"
 #include "RestAPI.h"
-#include "Database/Database.h"
+#include "Database.h"
 
 extern "C"{
 #include "WebServer/web_server.h"
@@ -123,12 +123,6 @@ void startTasks(){
 }
 /* The main function creates two task and starts multi-tasking */
 int main(void) {
-
-	Database database;
-
-	database.initDB();
-	database.listAll("/");
-
 	fingerprintSem = OSSemCreate(0);
 	if (fingerprintSem == NULL){
 		printf("Error initializing semaphore");
@@ -140,6 +134,7 @@ int main(void) {
 		return -1;
 	}
 	startWebServer(&startTasks, &createHttpResponse);
+
 	OSStart();
 	return 0;
 }

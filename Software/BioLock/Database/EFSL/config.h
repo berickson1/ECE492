@@ -115,7 +115,7 @@
  * more information
 */
 
-#define LIST_MAXLENFILENAME 12
+#define LIST_MAXLENFILENAME 8
 
 
 /* Debugging configuration
