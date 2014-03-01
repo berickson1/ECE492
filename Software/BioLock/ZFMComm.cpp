@@ -211,7 +211,7 @@ int ZFMComm::findFingerprint(int buffer){
 	retval += reply[11];
 	return retval;
 #else
-	return rand();
+	return rand() % 200;
 #endif
 }
 /**
