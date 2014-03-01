@@ -43,7 +43,7 @@ OS_STK task1_stk[TASK_STACKSIZE];
 OS_STK task2_stk[TASK_STACKSIZE];
 
 OS_EVENT *fingerprintMailbox;
-OS_EVENT *fingerprintMutex;
+OS_EVENT *fingerprintSem;
 
 /* Definition of Task Priorities */
 
@@ -53,7 +53,7 @@ OS_EVENT *fingerprintMutex;
 int getCurrentFingerprintId(){
 	INT8U err;
 	int *fid;
-	err = OSMutexPost(fingerprintMutex);
+	err = OSSemPost(fingerprintSem);
 	fid = (int*) OSMboxPend(fingerprintMailbox, 0, &err);
 	return *fid;
 }
@@ -61,18 +61,19 @@ int getCurrentFingerprintId(){
 /* Checks for fingerprint */
 void task1(void* pdata) {
 	INT8U err;
-	//clear mutex!
-	OSMutexAccept(fingerprintMutex, &err);
 	while(true){
 		ZFMComm fingerprintSensor;
 		fingerprintSensor.init(SERIAL_NAME);
 		while (!fingerprintSensor.hasError()) {
 			OSTimeDlyHMSM(0, 0, 1, 0);
 			printf("Checking for fingerprint\n");
-			bool sendToMailbox = OSMutexAccept(fingerprintMutex, &err);
+			bool sendToMailbox = OSSemAccept(fingerprintSem) > 0;
 			while (!fingerprintSensor.scanFinger() || !fingerprintSensor.storeImage(1)){
 				//Sleep for a second and try again
 				OSTimeDlyHMSM(0, 0, 1, 0);
+				if(!sendToMailbox){
+					sendToMailbox = OSSemAccept(fingerprintSem) > 0;
+				}
 			}
 			printf("Fingerprint acquired, looking for fingerprint ID\n");
 			int fid = fingerprintSensor.findFingerprint(1);
@@ -100,7 +101,6 @@ void task1(void* pdata) {
 		}
 	}
 }
-/* Prints "Hello World" and sleeps for three seconds */
 void task2(void* pdata) {
 	while (1) {
 		printf("Hello from task2\n");
@@ -123,16 +123,15 @@ void startTasks(){
 }
 /* The main function creates two task and starts multi-tasking */
 int main(void) {
-	INT8U err;
 
 	Database database;
 
 	database.initDB();
 	database.listAll("/");
 
-	fingerprintMutex = OSMutexCreate(1, &err);
-	if (err != OS_NO_ERR){
-		printf("Error initializing mutex");
+	fingerprintSem = OSSemCreate(0);
+	if (fingerprintSem == NULL){
+		printf("Error initializing semaphore");
 		return -1;
 	}
 	fingerprintMailbox = OSMboxCreate(NULL);
