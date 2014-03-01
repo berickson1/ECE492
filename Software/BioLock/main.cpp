@@ -130,7 +130,7 @@ int main(void) {
 	database.initDB();
 	database.listAll("/");
 
-	/*fingerprintMutex = OSMutexCreate(1, &err);
+	fingerprintMutex = OSMutexCreate(1, &err);
 	if (err != OS_NO_ERR){
 		printf("Error initializing mutex");
 		return -1;
@@ -140,7 +140,7 @@ int main(void) {
 		printf("Error fingerprint mailbox");
 		return -1;
 	}
-	startWebServer(&startTasks, &createHttpResponse);*/
+	startWebServer(&startTasks, &createHttpResponse);
 	OSStart();
 	return 0;
 }
