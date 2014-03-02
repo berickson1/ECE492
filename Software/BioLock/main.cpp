@@ -123,12 +123,8 @@ void startTasks(){
 }
 /* The main function creates two task and starts multi-tasking */
 int main(void) {
-	Database db;
-	db.initDB();
-	db.insertRole(23);
-	db.close();
-	printf("done\n");
-	/*fingerprintSem = OSSemCreate(0);
+
+	fingerprintSem = OSSemCreate(0);
 	if (fingerprintSem == NULL){
 		printf("Error initializing semaphore");
 		return -1;
@@ -138,7 +134,7 @@ int main(void) {
 		printf("Error fingerprint mailbox");
 		return -1;
 	}
-	startWebServer(&startTasks, &createHttpResponse);*/
+	startWebServer(&startTasks, &createHttpResponse);
 
 	OSStart();
 	return 0;

@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "json/writer.h"
+#include "Database_CONST.h"
 
 
 extern "C" {
@@ -57,6 +58,7 @@ public:
 	void close();
 private:
 	EmbeddedFileSystem db;
+	string noRecord();
 	string tempJSON();
 };
 

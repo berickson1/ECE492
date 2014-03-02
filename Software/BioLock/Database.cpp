@@ -27,10 +27,15 @@ string Database::tempJSON() {
 	rootNode["enabled"] = "y";
 	return rootNode.toStyledString();
 }
+// JSON return value when no entry found in database
+string Database::noRecord(){
+	Json:: Value noRecord;
+	noRecord["id"] = -1;
+	noRecord["msg"] = "No Records Found";
+}
 
 // Initializes database for accessing -- must also unmount file system when finished
 int Database::initDB() {
-	DirList list;
 	int ret;
 	// Initialises the database on the SD card
 	ret = efs_init(&db, SDCARD_NAME);
