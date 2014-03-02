@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "Database_CONST.h"
 #include "json/writer.h"
 
 
@@ -26,7 +27,6 @@ extern "C" {
 using namespace std;
 class Database {
 public:
-	EmbeddedFileSystem db;
 	Database();
 	virtual ~Database();
 	int initDB();
@@ -56,8 +56,8 @@ public:
 	int deleteUserPrint(int id);
 	int deleteHistory(int id);
 	void close();
-
-
+private:
+	EmbeddedFileSystem db;
 	string tempJSON();
 };
 

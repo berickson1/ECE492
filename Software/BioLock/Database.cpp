@@ -72,7 +72,7 @@ int Database::insertRole(int rid) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "/ROLES/%d.txt", rid);
+	sprintf(filename, "%s%d.txt", ROLES, rid);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	if (ret == -2) {
 		printf("Role already exists\n");
@@ -97,7 +97,7 @@ int Database::insertUser(int uid) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "/USERS/%d.txt", uid);
+	sprintf(filename, "%s%d.txt", USERS, uid);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	if (ret == -2) {
 		printf("User already exists\n");
@@ -122,7 +122,7 @@ int Database::insertRoleSched(int id) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "/ROLESCHD/%d.txt", id);
+	sprintf(filename, "%s%d.txt", ROLE_SCHEDULE, id);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	if (ret == -2) {
 		printf("Role schedule already exists\n");
@@ -147,7 +147,7 @@ int Database::insertUserRole(int id) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "/USRROLES/%d.txt", id);
+	sprintf(filename, "%s%d.txt", USER_ROLES, id);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	if (ret == -2) {
 		printf("User role already exists\n");
@@ -171,7 +171,7 @@ int Database::insertUserPrint(int id) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "/USRPRINTS/%d.txt", id);
+	sprintf(filename, "%s%d.txt", USER_PRINTS, id);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	if (ret == -2) {
 		printf("User prints already exists\n");
@@ -195,7 +195,7 @@ int Database::insertHistory(int id) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "/HISTORY/%d.txt", id);
+	sprintf(filename, "%s%d.txt", HISTORY, id);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	if (ret == -2) {
 		printf("History already exists\n");
@@ -219,7 +219,7 @@ string Database::findRole(int rid) {
 	unsigned int sizeRead;
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "/ROLES/%d.txt", rid);
+	sprintf(filename, "%s%d.txt", ROLES, rid);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
 	if (ret == -1) {
 		printf("Role could not be found\n");
@@ -249,7 +249,7 @@ string Database::findUser(int uid) {
 	unsigned int sizeRead;
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "/USERS/%d.txt", uid);
+	sprintf(filename, "%s%d.txt", USERS, uid);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
 	if (ret == -1) {
 		printf("User could not be found\n");
@@ -279,7 +279,7 @@ string Database::findRoleSchedule(int id) {
 	unsigned int sizeRead;
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "/ROLESCHD/%d.txt", id);
+	sprintf(filename, "%s%d.txt", ROLE_SCHEDULE, id);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
 	if (ret == -1) {
 		printf("Role schedule could not be found\n");
@@ -309,7 +309,7 @@ string Database::findUserRole(int id) {
 	unsigned int sizeRead;
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "/USRROLES/%d.txt", id);
+	sprintf(filename, "%s%d.txt", USER_ROLES, id);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
 	if (ret == -1) {
 		printf("User role could not be found\n");
@@ -339,7 +339,7 @@ string Database::findUserPrint(int id) {
 	unsigned int sizeRead;
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "/USRPRINTS/%d.txt", id);
+	sprintf(filename, "%s%d.txt", USER_PRINTS, id);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
 	if (ret == -1) {
 		printf("User prints could not be found\n");
@@ -369,7 +369,7 @@ string Database::findHistory(int id) {
 	unsigned int sizeRead;
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "/HISTORY/%d.txt", id);
+	sprintf(filename, "%s%d.txt", HISTORY, id);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
 	if (ret == -1) {
 		printf("History could not be found\n");
@@ -396,7 +396,7 @@ string Database::findHistory(int id) {
 int Database::editRole(int rid) {
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "/ROLES/%d.txt", rid);
+	sprintf(filename, "%s%d.txt", ROLES, rid);
 	rmfile(&db.myFs, (euint8*) filename);
 	return insertRole(rid);
 }
@@ -406,7 +406,7 @@ int Database::editRole(int rid) {
 int Database::editUser(int uid) {
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "/USERS/%d.txt", uid);
+	sprintf(filename, "%s%d.txt", USERS, uid);
 	rmfile(&db.myFs, (euint8*) filename);
 	return insertUser(uid);
 }
@@ -416,7 +416,7 @@ int Database::editUser(int uid) {
 int Database::editRoleSched(int id) {
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "/ROLESCHED/%d.txt", id);
+	sprintf(filename, "%s%d.txt", ROLE_SCHEDULE, id);
 	rmfile(&db.myFs, (euint8*) filename);
 	return insertRoleSched(id);
 }
@@ -426,7 +426,7 @@ int Database::editRoleSched(int id) {
 int Database::editUserRole(int id) {
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "/USRROLES/%d.txt", id);
+	sprintf(filename, "%s%d.txt", USER_ROLES, id);
 	rmfile(&db.myFs, (euint8*) filename);
 	return insertUserRole(id);
 }
@@ -436,7 +436,7 @@ int Database::editUserRole(int id) {
 int Database::editUserPrint(int id) {
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "/USRPRINTS/%d.txt", id);
+	sprintf(filename, "%s%d.txt", USER_PRINTS, id);
 	rmfile(&db.myFs, (euint8*) filename);
 	return insertUserPrint(id);
 }
@@ -445,14 +445,14 @@ int Database::editUserPrint(int id) {
 int Database::deleteRole(int rid) {
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "/ROLES/%d.txt", rid);
+	sprintf(filename, "%s%d.txt", ROLES, rid);
 	rmfile(&db.myFs, (euint8*) filename);
 }
 
 int Database::deleteUser(int uid) {
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "/USERS/%d.txt", uid);
+	sprintf(filename, "%s%d.txt", USERS, uid);
 	rmfile(&db.myFs, (euint8*) filename);
 }
 
@@ -460,28 +460,28 @@ int Database::deleteUser(int uid) {
 int Database::deleteRoleSchedule(int id) {
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "/ROLESCHD/%d.txt", id);
+	sprintf(filename, "%s%d.txt", ROLE_SCHEDULE, id);
 	return rmfile(&db.myFs, (euint8*) filename);
 }
 
 int Database::deleteUserRole(int id) {
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "/USRROLES/%d.txt", id);
+	sprintf(filename, "%s%d.txt", USER_ROLES, id);
 	return rmfile(&db.myFs, (euint8*) filename);
 }
 
 int Database::deleteUserPrint(int id) {
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "/USRPRINTS/%d.txt", id);
+	sprintf(filename, "%s%d.txt", USER_PRINTS, id);
 	return rmfile(&db.myFs, (euint8*) filename);
 }
 
 int Database::deleteHistory(int id) {
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "/HISTORY/%d.txt", id);
+	sprintf(filename, "%s%d.txt", HISTORY, id);
 	return rmfile(&db.myFs, (euint8*) filename);
 }
 

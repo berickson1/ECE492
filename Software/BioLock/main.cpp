@@ -132,7 +132,7 @@ int main(void) {
 	if (fingerprintMailbox == NULL){
 		printf("Error fingerprint mailbox");
 		return -1;
-	}
+
 	startWebServer(&startTasks, &createHttpResponse);
 
 	OSStart();
