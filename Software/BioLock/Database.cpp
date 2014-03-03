@@ -9,6 +9,7 @@
  *  		Max file name is 8 characters - can be changed i think
  *  		Filenames are padded with '\0' until 8 characters long
  *  			eg: "23" becomes "23      "
+ *  		System has not been tested when subfolders exist
  *
  *  Issues/todos: add method to delete directories if needed
  */
@@ -86,7 +87,7 @@ int Database::createTable(char *tableName) {
 
 // TODO: check to make sure role doesn't have the same name as existing entry
 // Adds a tuple to the role table
-int Database::insertRole(int rid) {
+int Database::insertRole(int rid, string value) {
 
 	File tuple;
 	int ret;
@@ -94,15 +95,17 @@ int Database::insertRole(int rid) {
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLES, rid);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
+	// File already exists
 	if (ret == -2) {
 		printf("Role already exists\n");
 		return -1;
 	}
 
-	//Temp reference, change to JSON library reference
-	string newRole = tempJSON();
-	file_fwrite(&tuple, 0, newRole.length(), (euint8*) newRole.c_str());
-
+	ret = file_fwrite(&tuple, 0, value.length(), (euint8*) value.c_str());
+	if (ret == 0){
+		printf("Role could not be added");
+		return -1;
+	}
 	tuple.DirEntry.Attribute = rid;
 	file_fclose(&tuple);
 
@@ -111,7 +114,7 @@ int Database::insertRole(int rid) {
 
 // TODO: check to make sure user doesn't have the same name as existing entry
 // Adds a tuple to the user table
-int Database::insertUser(int uid) {
+int Database::insertUser(int uid, string value) {
 
 	File tuple;
 	int ret;
@@ -136,7 +139,7 @@ int Database::insertUser(int uid) {
 
 // TODO: check to make sure rid exists in roles
 // Adds a tuple to the role schedule table
-int Database::insertRoleSched(int id) {
+int Database::insertRoleSched(int id, string value) {
 
 	File tuple;
 	int ret;
@@ -161,7 +164,7 @@ int Database::insertRoleSched(int id) {
 
 // TODO: check to make sure rid exists in roles and uid exists in users
 // Adds a tuple to the user roles table
-int Database::insertUserRole(int id) {
+int Database::insertUserRole(int id, string value) {
 
 	File tuple;
 	int ret;
@@ -186,7 +189,7 @@ int Database::insertUserRole(int id) {
 
 // TODO: check to make sure uid exists in users
 // Adds a tuple to the user prints table
-int Database::insertUserPrint(int id) {
+int Database::insertUserPrint(int id, string value) {
 	File tuple;
 	int ret;
 	char filename[MAXBUF_LENGTH];
@@ -210,7 +213,7 @@ int Database::insertUserPrint(int id) {
 
 // TODO: check to make sure uid exists in users
 // Adds a tuple to the history table
-int Database::insertHistory(int id) {
+int Database::insertHistory(int id, string value) {
 	File tuple;
 	int ret;
 	char filename[MAXBUF_LENGTH];
@@ -418,7 +421,7 @@ int Database::editRole(int rid) {
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLES, rid);
 	rmfile(&db.myFs, (euint8*) filename);
-	return insertRole(rid);
+	return insertRole(rid, tempJSON());
 }
 
 // TODO: update user roles, user prints, and history to new uid
@@ -428,7 +431,7 @@ int Database::editUser(int uid) {
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USERS, uid);
 	rmfile(&db.myFs, (euint8*) filename);
-	return insertUser(uid);
+	return insertUser(uid, tempJSON());
 }
 
 // TODO: make sure rid exists
@@ -438,7 +441,7 @@ int Database::editRoleSched(int id) {
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLE_SCHEDULE, id);
 	rmfile(&db.myFs, (euint8*) filename);
-	return insertRoleSched(id);
+	return insertRoleSched(id, tempJSON());
 }
 
 // TODO: make sure rid and uid exists
@@ -448,7 +451,7 @@ int Database::editUserRole(int id) {
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_ROLES, id);
 	rmfile(&db.myFs, (euint8*) filename);
-	return insertUserRole(id);
+	return insertUserRole(id, tempJSON());
 }
 
 // TODO: make sure uid exists
@@ -458,7 +461,7 @@ int Database::editUserPrint(int id) {
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_PRINTS, id);
 	rmfile(&db.myFs, (euint8*) filename);
-	return insertUserPrint(id);
+	return insertUserPrint(id, tempJSON());
 }
 
 // The following functions delete the entries in accordance to each entry id

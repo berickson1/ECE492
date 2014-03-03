@@ -118,7 +118,7 @@ void task1(void* pdata) {
 					continue;
 				}
 			}
-			printf("Failed to verify print!")
+			printf("Failed to verify print!");
 			//Fallthrough error case. Notify owner!
 		}
 	}

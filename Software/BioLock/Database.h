@@ -30,12 +30,12 @@ public:
 	virtual ~Database();
 	string listAll(char *path);
 	int createTable(char *tableName);
-	int insertRole(int rid);
-	int insertUser(int uid);
-	int insertRoleSched(int id);
-	int insertUserRole(int id);
-	int insertUserPrint(int id);
-	int insertHistory(int id);
+	int insertRole(int rid, string value);
+	int insertUser(int uid, string value);
+	int insertRoleSched(int id, string value);
+	int insertUserRole(int id, string value);
+	int insertUserPrint(int id, string value);
+	int insertHistory(int id, string value);
 	string findRole(int rid);
 	string findUser(int uid);
 	string findRoleSchedule(int id);
