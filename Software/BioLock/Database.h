@@ -26,9 +26,9 @@ extern "C" {
 using namespace std;
 class Database {
 public:
-	Database(OS_EVENT * databaseSemaphore);
+	Database(OS_EVENT * databaseMutex);
 	virtual ~Database();
-	void listAll(char *path);
+	string listAll(char *path);
 	int createTable(char *tableName);
 	int insertRole(int rid);
 	int insertUser(int uid);
@@ -54,7 +54,7 @@ public:
 	int deleteUserPrint(int id);
 	int deleteHistory(int id);
 private:
-	OS_EVENT *m_databaseSemaphore;
+	OS_EVENT *m_databaseMutex;
 	EmbeddedFileSystem db;
 	string noRecord();
 	string tempJSON();

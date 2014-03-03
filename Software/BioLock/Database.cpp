@@ -15,22 +15,22 @@
 
 #include "Database.h"
 
-Database::Database(OS_EVENT *databaseSemaphore) : m_databaseSemaphore(databaseSemaphore) {
+Database::Database(OS_EVENT *databaseMutex) :
+		m_databaseMutex(databaseMutex) {
 	INT8U err = OS_NO_ERR;
 	int ret = 0;
 
 	//Blocking call
-	OSSemPend(m_databaseSemaphore, 0, &err);
+	OSMutexPend(m_databaseMutex, 0, &err);
 	if (err != OS_NO_ERR) {
-		printf("Database error. Check to ensure access is allowed.\n");
-		throw exception();
+		printf("Database error. Check to ensure access is allowed.");
 	}
 
 	// Initialises the database on the SD card
 	ret = efs_init(&db, SDCARD_NAME);
 	if (ret != 0) {
 		printf("Could not initialize database\n");
-		throw exception();
+		//We should handle an error here
 	}
 }
 
@@ -52,14 +52,25 @@ string Database::noRecord() {
 }
 
 // Lists all tables (folders) or tuplets (files) in directory specified
-void Database::listAll(char *path) {
+string Database::listAll(char *path) {
 	DirList list;
-	int ret;
+	int ret, file;
+	char results[MAXBUF_LENGTH];
+
 	ret = ls_openDir(&list, &db.myFs, path);
 	if (ret == -1)
 		printf("Could not open directory. Please check definition of path\n");
-	while (ls_getNext(&list) == 0)
-		printf("%s\n", list.currentEntry.FileName);
+	if (ls_getNext(&list) == 0) {
+		file = atoi((const char*) list.currentEntry.FileName);
+		string attr = findHistory(file);
+		strcpy(results, attr.c_str());
+	}
+	while (ls_getNext(&list) == 0) {
+		file = atoi((const char*) list.currentEntry.FileName);
+		string attr = findHistory(file);
+		strcat(results, attr.c_str());
+	}
+	return results;
 }
 
 // Creates new tables (folders)
@@ -496,5 +507,5 @@ int Database::deleteHistory(int id) {
 // Unmount the file system
 Database::~Database() {
 	fs_umount(&db.myFs);
-	OSSemPost(m_databaseSemaphore);
+	OSSemPost(m_databaseMutex);
 }
