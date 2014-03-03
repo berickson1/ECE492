@@ -252,7 +252,7 @@ int Database::insertUserRole(int id, UserRole value) {
 	}
 
 	tuple.DirEntry.Attribute = id;
-	file_fclose(&tuple);
+	ret = file_fclose(&tuple);
 	if (ret != 0) {
 		printf("User role could not be added");
 		return -1;
