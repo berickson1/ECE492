@@ -16,7 +16,6 @@
 #include "json/writer.h"
 #include "Database_CONST.h"
 
-
 extern "C" {
 #include "Database/EFSL/efs.h"
 #include "Database/EFSL/ls.h"
@@ -27,9 +26,8 @@ extern "C" {
 using namespace std;
 class Database {
 public:
-	Database();
+	Database(OS_EVENT * databaseMutex);
 	virtual ~Database();
-	int initDB();
 	void listAll(char *path);
 	int createTable(char *tableName);
 	int insertRole(int rid);
@@ -55,8 +53,8 @@ public:
 	int deleteUserRole(int id);
 	int deleteUserPrint(int id);
 	int deleteHistory(int id);
-	void close();
 private:
+	OS_EVENT *m_databaseMutex;
 	EmbeddedFileSystem db;
 	string noRecord();
 	string tempJSON();

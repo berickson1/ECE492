@@ -15,7 +15,22 @@
 
 #include "Database.h"
 
-Database::Database() {
+Database::Database(OS_EVENT *databaseMutex) : m_databaseMutex(databaseMutex) {
+	INT8U err = OS_NO_ERR;
+	int ret = 0;
+
+	//Blocking call
+	OSMutexPend(m_databaseMutex, 0, &err);
+	if (err != OS_NO_ERR) {
+		printf("Database error. Check to ensure access is allowed.");
+	}
+
+	// Initialises the database on the SD card
+	ret = efs_init(&db, SDCARD_NAME);
+	if (ret != 0) {
+		printf("Could not initialize database\n");
+		//We should handle an error here
+	}
 }
 
 // temp json value
@@ -28,23 +43,11 @@ string Database::tempJSON() {
 	return rootNode.toStyledString();
 }
 // JSON return value when no entry found in database
-string Database::noRecord(){
-	Json:: Value noRecord;
+string Database::noRecord() {
+	Json::Value noRecord;
 	noRecord["id"] = -1;
 	noRecord["msg"] = "No Records Found";
-}
-
-// Initializes database for accessing -- must also unmount file system when finished
-int Database::initDB() {
-	int ret;
-	// Initialises the database on the SD card
-	ret = efs_init(&db, SDCARD_NAME);
-	if (ret != 0) {
-		printf("Could not initialize database\n");
-		return -1;
-	}
-
-	return 1;
+	return noRecord.toStyledString();
 }
 
 // Lists all tables (folders) or tuplets (files) in directory specified
@@ -77,7 +80,7 @@ int Database::insertRole(int rid) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "%s%d.txt", ROLES, rid);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLES, rid);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	if (ret == -2) {
 		printf("Role already exists\n");
@@ -102,7 +105,7 @@ int Database::insertUser(int uid) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "%s%d.txt", USERS, uid);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USERS, uid);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	if (ret == -2) {
 		printf("User already exists\n");
@@ -127,7 +130,7 @@ int Database::insertRoleSched(int id) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "%s%d.txt", ROLE_SCHEDULE, id);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLE_SCHEDULE, id);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	if (ret == -2) {
 		printf("Role schedule already exists\n");
@@ -152,7 +155,7 @@ int Database::insertUserRole(int id) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "%s%d.txt", USER_ROLES, id);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_ROLES, id);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	if (ret == -2) {
 		printf("User role already exists\n");
@@ -176,7 +179,7 @@ int Database::insertUserPrint(int id) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "%s%d.txt", USER_PRINTS, id);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_PRINTS, id);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	if (ret == -2) {
 		printf("User prints already exists\n");
@@ -200,7 +203,7 @@ int Database::insertHistory(int id) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "%s%d.txt", HISTORY, id);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", HISTORY, id);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	if (ret == -2) {
 		printf("History already exists\n");
@@ -224,7 +227,7 @@ string Database::findRole(int rid) {
 	unsigned int sizeRead;
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "%s%d.txt", ROLES, rid);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLES, rid);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
 	if (ret == -1) {
 		printf("Role could not be found\n");
@@ -254,7 +257,7 @@ string Database::findUser(int uid) {
 	unsigned int sizeRead;
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "%s%d.txt", USERS, uid);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USERS, uid);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
 	if (ret == -1) {
 		printf("User could not be found\n");
@@ -284,7 +287,7 @@ string Database::findRoleSchedule(int id) {
 	unsigned int sizeRead;
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "%s%d.txt", ROLE_SCHEDULE, id);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLE_SCHEDULE, id);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
 	if (ret == -1) {
 		printf("Role schedule could not be found\n");
@@ -314,7 +317,7 @@ string Database::findUserRole(int id) {
 	unsigned int sizeRead;
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "%s%d.txt", USER_ROLES, id);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_ROLES, id);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
 	if (ret == -1) {
 		printf("User role could not be found\n");
@@ -344,7 +347,7 @@ string Database::findUserPrint(int id) {
 	unsigned int sizeRead;
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "%s%d.txt", USER_PRINTS, id);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_PRINTS, id);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
 	if (ret == -1) {
 		printf("User prints could not be found\n");
@@ -374,7 +377,7 @@ string Database::findHistory(int id) {
 	unsigned int sizeRead;
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "%s%d.txt", HISTORY, id);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", HISTORY, id);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
 	if (ret == -1) {
 		printf("History could not be found\n");
@@ -401,7 +404,7 @@ string Database::findHistory(int id) {
 int Database::editRole(int rid) {
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "%s%d.txt", ROLES, rid);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLES, rid);
 	rmfile(&db.myFs, (euint8*) filename);
 	return insertRole(rid);
 }
@@ -411,7 +414,7 @@ int Database::editRole(int rid) {
 int Database::editUser(int uid) {
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "%s%d.txt", USERS, uid);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USERS, uid);
 	rmfile(&db.myFs, (euint8*) filename);
 	return insertUser(uid);
 }
@@ -421,7 +424,7 @@ int Database::editUser(int uid) {
 int Database::editRoleSched(int id) {
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "%s%d.txt", ROLE_SCHEDULE, id);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLE_SCHEDULE, id);
 	rmfile(&db.myFs, (euint8*) filename);
 	return insertRoleSched(id);
 }
@@ -431,7 +434,7 @@ int Database::editRoleSched(int id) {
 int Database::editUserRole(int id) {
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "%s%d.txt", USER_ROLES, id);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_ROLES, id);
 	rmfile(&db.myFs, (euint8*) filename);
 	return insertUserRole(id);
 }
@@ -441,7 +444,7 @@ int Database::editUserRole(int id) {
 int Database::editUserPrint(int id) {
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "%s%d.txt", USER_PRINTS, id);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_PRINTS, id);
 	rmfile(&db.myFs, (euint8*) filename);
 	return insertUserPrint(id);
 }
@@ -450,51 +453,47 @@ int Database::editUserPrint(int id) {
 int Database::deleteRole(int rid) {
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "%s%d.txt", ROLES, rid);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLES, rid);
 	rmfile(&db.myFs, (euint8*) filename);
 }
 
 int Database::deleteUser(int uid) {
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "%s%d.txt", USERS, uid);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USERS, uid);
 	rmfile(&db.myFs, (euint8*) filename);
 }
-
 
 int Database::deleteRoleSchedule(int id) {
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "%s%d.txt", ROLE_SCHEDULE, id);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLE_SCHEDULE, id);
 	return rmfile(&db.myFs, (euint8*) filename);
 }
 
 int Database::deleteUserRole(int id) {
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "%s%d.txt", USER_ROLES, id);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_ROLES, id);
 	return rmfile(&db.myFs, (euint8*) filename);
 }
 
 int Database::deleteUserPrint(int id) {
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "%s%d.txt", USER_PRINTS, id);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_PRINTS, id);
 	return rmfile(&db.myFs, (euint8*) filename);
 }
 
 int Database::deleteHistory(int id) {
 	char filename[MAXBUF_LENGTH];
 
-	sprintf(filename, "%s%d.txt", HISTORY, id);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", HISTORY, id);
 	return rmfile(&db.myFs, (euint8*) filename);
 }
 
-// Unmount the file system -- must be called when finished with sd card
-void Database::close() {
-	fs_umount(&db.myFs);
-}
-
+// Unmount the file system
 Database::~Database() {
 	fs_umount(&db.myFs);
+	OSSemPost(m_databaseMutex);
 }

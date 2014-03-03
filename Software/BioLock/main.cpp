@@ -33,7 +33,7 @@
 #include "RestAPI.h"
 #include "Database.h"
 
-extern "C"{
+extern "C" {
 #include "WebServer/web_server.h"
 }
 
@@ -44,13 +44,14 @@ OS_STK task2_stk[TASK_STACKSIZE];
 
 OS_EVENT *fingerprintMailbox;
 OS_EVENT *fingerprintSem;
+OS_EVENT *databaseMutex;
 
 /* Definition of Task Priorities */
 
 #define TASK1_PRIORITY      6
 #define TASK2_PRIORITY      7
 
-int getCurrentFingerprintId(){
+int getCurrentFingerprintId() {
 	INT8U err;
 	int *fid;
 	err = OSSemPost(fingerprintSem);
@@ -61,36 +62,37 @@ int getCurrentFingerprintId(){
 /* Checks for fingerprint */
 void task1(void* pdata) {
 	INT8U err;
-	while(true){
+	while (true) {
 		ZFMComm fingerprintSensor;
 		fingerprintSensor.init(SERIAL_NAME);
 		while (!fingerprintSensor.hasError()) {
 			OSTimeDlyHMSM(0, 0, 1, 0);
 			printf("Checking for fingerprint\n");
 			bool sendToMailbox = OSSemAccept(fingerprintSem) > 0;
-			while (!fingerprintSensor.scanFinger() || !fingerprintSensor.storeImage(1)){
+			while (!fingerprintSensor.scanFinger()
+					|| !fingerprintSensor.storeImage(1)) {
 				//Sleep for a second and try again
 				OSTimeDlyHMSM(0, 0, 1, 0);
-				if(!sendToMailbox){
+				if (!sendToMailbox) {
 					sendToMailbox = OSSemAccept(fingerprintSem) > 0;
 				}
 			}
 			printf("Fingerprint acquired, looking for fingerprint ID\n");
 			int fid = fingerprintSensor.findFingerprint(1);
 			printf("Fingerprint id:%d\n", fid);
-			if(sendToMailbox){
+			if (sendToMailbox) {
 				//We need to wait for the mailbox to empty before we do anything
-				while(true){
+				while (true) {
 					OS_MBOX_DATA mboxData;
-					OSMboxQuery(fingerprintMailbox,  &mboxData);
-					if (mboxData.OSMsg == NULL){
+					OSMboxQuery(fingerprintMailbox, &mboxData);
+					if (mboxData.OSMsg == NULL) {
 						//We can add data to the mailbox now
 						break;
 					}
 					OSTimeDlyHMSM(0, 0, 1, 0);
 				}
 				err = OSMboxPost(fingerprintMailbox, &fid);
-				if (err != OS_NO_ERR){
+				if (err != OS_NO_ERR) {
 					printf("Error sending message to fingerprint mailbox");
 				}
 				//Restart loop
@@ -101,6 +103,7 @@ void task1(void* pdata) {
 		}
 	}
 }
+
 void task2(void* pdata) {
 	while (1) {
 		printf("Hello from task2\n");
@@ -108,13 +111,13 @@ void task2(void* pdata) {
 	}
 }
 
-const char * createHttpResponse(const char * URI){
+const char * createHttpResponse(const char * URI) {
 	RestAPI api(&getCurrentFingerprintId);
 	const char * retval = api.getUsers().c_str();
 	return retval;
 }
-extern "C"{
-void startTasks(){
+extern "C" {
+void startTasks() {
 	OSTaskCreateExt(task1, NULL, &task1_stk[TASK_STACKSIZE - 1], TASK1_PRIORITY,
 			TASK1_PRIORITY, task1_stk, TASK_STACKSIZE, NULL, 0);
 
@@ -123,15 +126,22 @@ void startTasks(){
 }
 /* The main function creates two task and starts multi-tasking */
 int main(void) {
+	INT8U err;
 
 	fingerprintSem = OSSemCreate(0);
-	if (fingerprintSem == NULL){
-		printf("Error initializing semaphore");
+	if (fingerprintSem == NULL) {
+		printf("Error initializing sensor semaphore");
 		return -1;
 	}
 	fingerprintMailbox = OSMboxCreate(NULL);
-	if (fingerprintMailbox == NULL){
+	if (fingerprintMailbox == NULL) {
 		printf("Error fingerprint mailbox");
+		return -1;
+	}
+
+	databaseMutex = OSMutexCreate(0, &err);
+	if (err != OS_NO_ERR) {
+		printf("Error initializing database semaphore");
 		return -1;
 	}
 	startWebServer(&startTasks, &createHttpResponse);
