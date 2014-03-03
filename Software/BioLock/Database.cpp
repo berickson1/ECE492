@@ -356,7 +356,7 @@ string Database::findEntry(char *path, int id) {
 		return "";
 	}
 
-	std::string attr = std::string((char *) fileBuffer);
+	string attr = string((char *) fileBuffer);
 	free(fileBuffer);
 	file_fclose(&tuple);
 
@@ -386,7 +386,7 @@ string Database::findRole(int rid) {
 		return "";
 	}
 
-	std::string roleAttr = std::string((char *) fileBuffer);
+	string roleAttr = string((char *) fileBuffer);
 	free(fileBuffer);
 	file_fclose(&tuple);
 
@@ -416,7 +416,7 @@ string Database::findUser(int uid) {
 		return "";
 	}
 
-	std::string userAttr = std::string((char *) fileBuffer);
+	string userAttr = string((char *) fileBuffer);
 	free(fileBuffer);
 	file_fclose(&tuple);
 
@@ -446,7 +446,7 @@ string Database::findRoleSchedule(int id) {
 		return "";
 	}
 
-	std::string roleSched = std::string((char *) fileBuffer);
+	string roleSched = string((char *) fileBuffer);
 	free(fileBuffer);
 	file_fclose(&tuple);
 
@@ -476,7 +476,7 @@ string Database::findUserRole(int id) {
 		return "";
 	}
 
-	std::string userRole = std::string((char *) fileBuffer);
+	string userRole = string((char *) fileBuffer);
 	free(fileBuffer);
 	file_fclose(&tuple);
 
@@ -506,7 +506,7 @@ string Database::findUserPrint(int id) {
 		return "";
 	}
 
-	std::string userPrint = std::string((char *) fileBuffer);
+	string userPrint = string((char *) fileBuffer);
 	free(fileBuffer);
 	file_fclose(&tuple);
 
@@ -536,7 +536,7 @@ string Database::findHistory(int id) {
 		return "";
 	}
 
-	std::string history = std::string((char *) fileBuffer);
+	string history = string((char *) fileBuffer);
 	free(fileBuffer);
 	file_fclose(&tuple);
 
