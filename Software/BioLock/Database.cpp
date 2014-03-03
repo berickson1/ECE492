@@ -12,6 +12,8 @@
  *  		System has not been tested when subfolders exist
  *
  *  Issues/todos: add method to delete directories if needed
+ *	
+ *	EFSL Manual: https://www.ualberta.ca/~delliott/local/ece492/appnotes/2013w/SD_card_interfacing/efsl/EFSL_manual.pdf
  */
 
 #include "Database.h"
@@ -121,7 +123,7 @@ int Database::insertRole(int rid, Role value) {
 		return -1;
 	}
 	tuple.DirEntry.Attribute = rid;
-	file_fclose(&tuple);
+	ret = file_fclose(&tuple);
 	if (ret != 0) {
 		printf("Role could not be added");
 		return -1;
@@ -164,7 +166,7 @@ int Database::insertUser(int uid, User value) {
 	}
 
 	tuple.DirEntry.Attribute = uid;
-	file_fclose(&tuple);
+	ret = file_fclose(&tuple);
 	if (ret != 0) {
 		printf("User could not be added");
 		return -1;
@@ -208,7 +210,7 @@ int Database::insertRoleSched(int id, RoleSchedule value) {
 	}
 
 	tuple.DirEntry.Attribute = id;
-	file_fclose(&tuple);
+	ret = file_fclose(&tuple);
 	if (ret != 0) {
 		printf("Role schedule could not be added");
 		return -1;
@@ -244,7 +246,7 @@ int Database::insertUserRole(int id, UserRole value) {
 	string jsonValue = nodeToInsert.toStyledString();
 
 	ret = file_fwrite(&tuple, 0, jsonValue.length(), (euint8*) jsonValue.c_str());
-	if (ret == 0) {
+	if (ret != 0) {
 		printf("User role could not be added");
 		return -1;
 	}
@@ -286,7 +288,7 @@ int Database::insertUserPrint(int id, UserPrint value) {
 	}
 
 	tuple.DirEntry.Attribute = id;
-	file_fclose(&tuple);
+	ret = file_fclose(&tuple);
 	if (ret != 0) {
 		printf("User print could not be added");
 		return -1;
