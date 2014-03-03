@@ -501,45 +501,81 @@ int Database::editUserPrint(int id, string value) {
 
 // The following functions delete the entries in accordance to each entry id
 int Database::deleteRole(int rid) {
+	int ret;
 	char filename[MAXBUF_LENGTH];
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLES, rid);
 	rmfile(&db.myFs, (euint8*) filename);
+	if (ret != 0) {
+		printf("Entry could not be deleted, please try again later");
+		return -1;
+	}
+	return 1;
 }
 
 int Database::deleteUser(int uid) {
+	int ret;
 	char filename[MAXBUF_LENGTH];
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USERS, uid);
 	rmfile(&db.myFs, (euint8*) filename);
+	if (ret != 0) {
+		printf("Entry could not be deleted, please try again later");
+		return -1;
+	}
+	return 1;
 }
 
 int Database::deleteRoleSchedule(int id) {
+	int ret;
 	char filename[MAXBUF_LENGTH];
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLE_SCHEDULE, id);
-	return rmfile(&db.myFs, (euint8*) filename);
+	rmfile(&db.myFs, (euint8*) filename);
+	if (ret != 0) {
+		printf("Entry could not be deleted, please try again later");
+		return -1;
+	}
+	return 1;
 }
 
 int Database::deleteUserRole(int id) {
+	int ret;
 	char filename[MAXBUF_LENGTH];
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_ROLES, id);
-	return rmfile(&db.myFs, (euint8*) filename);
+	rmfile(&db.myFs, (euint8*) filename);
+	if (ret != 0) {
+		printf("Entry could not be deleted, please try again later");
+		return -1;
+	}
+	return 1;
 }
 
 int Database::deleteUserPrint(int id) {
+	int ret;
 	char filename[MAXBUF_LENGTH];
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_PRINTS, id);
-	return rmfile(&db.myFs, (euint8*) filename);
+	rmfile(&db.myFs, (euint8*) filename);
+	if (ret != 0) {
+		printf("Entry could not be deleted, please try again later");
+		return -1;
+	}
+	return 1;
 }
 
 int Database::deleteHistory(int id) {
+	int ret;
 	char filename[MAXBUF_LENGTH];
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", HISTORY, id);
-	return rmfile(&db.myFs, (euint8*) filename);
+	rmfile(&db.myFs, (euint8*) filename);
+	if (ret != 0) {
+		printf("Entry could not be deleted, please try again later");
+		return -1;
+	}
+	return 1;
 }
 
 // Unmount the file system
