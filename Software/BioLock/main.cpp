@@ -32,6 +32,7 @@
 #include "ZFMComm.h"
 #include "RestAPI.h"
 #include "Database.h"
+#include "json/reader.h"
 
 extern "C" {
 #include "WebServer/web_server.h"
@@ -100,6 +101,25 @@ void task1(void* pdata) {
 			}
 
 			//Check if fingerprint is allowed access and unlock door
+			//After this point, we fall through to the error case
+			if (fid >= 0){
+				Json::Value userRoot;
+				Json::Value roleRoot;
+				Database dbAccess(databaseSem);
+				string userJSON = dbAccess.findUserPrint(fid);
+				Json::Reader jsonReader;
+				int uid;
+				//Todo: handle schedule lookup
+				if (jsonReader.parse(userJSON, userRoot) &&
+						(uid = userRoot.get("id", -1).asInt()) != -1 &&
+						jsonReader.parse(dbAccess.findUserRole(uid), roleRoot)){
+					//Todo: Finish checking if user has role
+					//Success, unlock door!
+					continue;
+				}
+			}
+			printf("Failed to verify print!")
+			//Fallthrough error case. Notify owner!
 		}
 	}
 }
