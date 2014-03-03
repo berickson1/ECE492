@@ -17,6 +17,7 @@ entity BioLock is
 
 		-- Off Chip
 		GPIO_0		: inout std_logic_vector(9 downto 0);
+		GPIO_1		: inout std_logic_vector(31 downto 0);
 
 		-- Switches
 		SW		: in std_logic_vector (17 downto 0); 
@@ -140,6 +141,11 @@ architecture structure of BioLock is
             sdcard_external_MOSI                   : out   std_logic;                                        -- MOSI
             sdcard_external_SCLK                   : out   std_logic;                                        -- SCLK
             sdcard_external_SS_n                   : out   std_logic;                                         -- SS_n
+				--Camera
+				d5m_decoder_external_interface_PIXEL_CLK                                         : in    std_logic                     := 'X';             -- PIXEL_CLK
+				d5m_decoder_external_interface_LINE_VALID                                        : in    std_logic                     := 'X';             -- LINE_VALID
+				d5m_decoder_external_interface_FRAME_VALID                                       : in    std_logic                     := 'X';             -- FRAME_VALID
+				d5m_decoder_external_interface_PIXEL_DATA                                        : in    std_logic_vector(11 downto 0) := (others => 'X'); -- PIXEL_DATA
 				
 				tristate_conduit_bridge_0_out_generic_tristate_controller_0_tcm_read_n_out       : out   std_logic_vector(0 downto 0);                     -- generic_tristate_controller_0_tcm_read_n_out
             tristate_conduit_bridge_0_out_generic_tristate_controller_0_tcm_data_out         : inout std_logic_vector(7 downto 0)  := (others => 'X'); -- generic_tristate_controller_0_tcm_data_out
@@ -152,7 +158,20 @@ architecture structure of BioLock is
 	-- signals to match provided IP core to specific SDRAM chip of our system
 	signal BA	: std_logic_vector (1 downto 0);
 	signal DQM	: std_logic_vector (1 downto 0);
+	signal CCD_DATA : std_logic_vector(11 downto 0);
 begin
+	CCD_DATA(0) <= GPIO_1(15);
+	CCD_DATA(1) <= GPIO_1(14);
+	CCD_DATA(2) <= GPIO_1(13);
+	CCD_DATA(3) <= GPIO_1(12);
+	CCD_DATA(4) <= GPIO_1(9);
+	CCD_DATA(5) <= GPIO_1(8);
+	CCD_DATA(6) <= GPIO_1(7);
+	CCD_DATA(7) <= GPIO_1(6);
+	CCD_DATA(8) <= GPIO_1(5);
+	CCD_DATA(9) <= GPIO_1(4);
+	CCD_DATA(10) <= GPIO_1(3);
+	CCD_DATA(11) <= GPIO_1(1);
 	DRAM_BA_1 <= BA(1);
 	DRAM_BA_0 <= BA(0);
 
@@ -221,7 +240,11 @@ begin
             tristate_conduit_bridge_0_out_generic_tristate_controller_0_tcm_data_out         => FL_DQ,         --                                   .generic_tristate_controller_0_tcm_data_out
             tristate_conduit_bridge_0_out_generic_tristate_controller_0_tcm_chipselect_n_out => FL_CE_N, --                                   .generic_tristate_controller_0_tcm_chipselect_n_out
             tristate_conduit_bridge_0_out_generic_tristate_controller_0_tcm_write_n_out      => FL_WE_N,      --                                   .generic_tristate_controller_0_tcm_write_n_out
-            tristate_conduit_bridge_0_out_generic_tristate_controller_0_tcm_address_out      => FL_ADDR       --                                   .generic_tristate_controller_0_tcm_address_out
+            tristate_conduit_bridge_0_out_generic_tristate_controller_0_tcm_address_out      => FL_ADDR,       --                                   .generic_tristate_controller_0_tcm_address_out
+				d5m_decoder_external_interface_PIXEL_CLK                                         => GPIO_1(0),                                         --     d5m_decoder_external_interface.PIXEL_CLK
+            d5m_decoder_external_interface_LINE_VALID                                        => GPIO_1(23),                                        --                                   .LINE_VALID
+            d5m_decoder_external_interface_FRAME_VALID                                       => GPIO_1(24),                                       --                                   .FRAME_VALID
+            d5m_decoder_external_interface_PIXEL_DATA                                        => CCD_DATA
         );
 
 end structure;
