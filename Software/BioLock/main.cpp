@@ -44,7 +44,7 @@ OS_STK task2_stk[TASK_STACKSIZE];
 
 OS_EVENT *fingerprintMailbox;
 OS_EVENT *fingerprintSem;
-OS_EVENT *databaseMutex;
+OS_EVENT *databaseSem;
 
 /* Definition of Task Priorities */
 
@@ -126,8 +126,6 @@ void startTasks() {
 }
 /* The main function creates two task and starts multi-tasking */
 int main(void) {
-	INT8U err;
-
 	fingerprintSem = OSSemCreate(0);
 	if (fingerprintSem == NULL) {
 		printf("Error initializing sensor semaphore");
@@ -139,8 +137,8 @@ int main(void) {
 		return -1;
 	}
 
-	databaseMutex = OSMutexCreate(0, &err);
-	if (err != OS_NO_ERR) {
+	databaseSem = OSSemCreate(1);
+	if (databaseSem == NULL) {
 		printf("Error initializing database semaphore");
 		return -1;
 	}
