@@ -63,12 +63,12 @@ string Database::listAll(char *path) {
 		printf("Could not open directory. Please check definition of path\n");
 	if (ls_getNext(&list) == 0) {
 		file = atoi((const char*) list.currentEntry.FileName);
-		string attr = findHistory(file);
+		string attr = findEntry(path, file);
 		strcpy(results, attr.c_str());
 	}
 	while (ls_getNext(&list) == 0) {
 		file = atoi((const char*) list.currentEntry.FileName);
-		string attr = findHistory(file);
+		string attr = findEntry(path, file);
 		strcat(results, attr.c_str());
 	}
 	return results;
@@ -267,6 +267,34 @@ int Database::insertHistory(int id, string value) {
 	}
 
 	return 1;
+}
+
+string Database::findEntry(char *path, int id) {
+	File tuple;
+	int ret;
+	unsigned int sizeRead;
+	char filename[MAXBUF_LENGTH];
+
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", path, id);
+	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
+	if (ret == -1) {
+		printf("Entry could not be found\n");
+		return "";
+	}
+
+	euint8 *fileBuffer = (euint8 *) malloc(tuple.FileSize * sizeof(euint8));
+
+	sizeRead = file_read(&tuple, tuple.FileSize, fileBuffer);
+	if (sizeRead == 0) {
+		printf("Attributes could not read\n");
+		return "";
+	}
+
+	std::string attr = std::string((char *) fileBuffer);
+	free(fileBuffer);
+	file_fclose(&tuple);
+
+	return attr.c_str();
 }
 
 // TODO: search by name

@@ -36,6 +36,7 @@ public:
 	int insertUserRole(int id, string value);
 	int insertUserPrint(int id, string value);
 	int insertHistory(int id, string value);
+	string findEntry(char *path, int id);
 	string findRole(int rid);
 	string findUser(int uid);
 	string findRoleSchedule(int id);
