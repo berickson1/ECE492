@@ -55,7 +55,7 @@ public:
 	int deleteUserPrint(int id);
 	int deleteHistory(int id);
 private:
-	OS_EVENT *m_databaseMutex;
+	OS_EVENT *m_databaseSemaphore;
 	EmbeddedFileSystem db;
 	string noRecord();
 	string tempJSON();
