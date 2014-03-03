@@ -15,6 +15,7 @@
  */
 
 #include "Database.h"
+using namespace std;
 
 Database::Database(OS_EVENT *databaseSemaphore) : m_databaseSemaphore(databaseSemaphore) {
 	INT8U err = OS_NO_ERR;
@@ -87,7 +88,7 @@ int Database::createTable(char *tableName) {
 
 // TODO: check to make sure role doesn't have the same name as existing entry
 // Adds a tuple to the role table
-int Database::insertRole(int rid, string value) {
+int Database::insertRole(int rid, Role value) {
 
 	File tuple;
 	int ret;
@@ -101,7 +102,20 @@ int Database::insertRole(int rid, string value) {
 		return -1;
 	}
 
-	ret = file_fwrite(&tuple, 0, value.length(), (euint8*) value.c_str());
+	Json::Value nodeToInsert;
+	nodeToInsert["id"] = value.id;
+	nodeToInsert["name"] = value.name;
+	nodeToInsert["admin"] = value.admin;
+	nodeToInsert["enabled"] = value.enabled;
+	ostringstream start, end;
+	start << static_cast<long int>(value.startDate);
+	end << static_cast<long int>(value.endDate);
+	nodeToInsert["startDate"] = start.str();
+	nodeToInsert["endDate"] = end.str();
+
+	string jsonValue = nodeToInsert.toStyledString();
+
+	ret = file_fwrite(&tuple, 0, jsonValue.length(), (euint8*) jsonValue.c_str());
 	if (ret == 0) {
 		printf("Role could not be added");
 		return -1;
@@ -118,7 +132,7 @@ int Database::insertRole(int rid, string value) {
 
 // TODO: check to make sure user doesn't have the same name as existing entry
 // Adds a tuple to the user table
-int Database::insertUser(int uid, string value) {
+int Database::insertUser(int uid, User value) {
 
 	File tuple;
 	int ret;
@@ -131,7 +145,19 @@ int Database::insertUser(int uid, string value) {
 		return -1;
 	}
 
-	ret = file_fwrite(&tuple, 0, value.length(), (euint8*) value.c_str());
+	Json::Value nodeToInsert;
+	nodeToInsert["id"] = value.id;
+	nodeToInsert["name"] = value.name;
+	nodeToInsert["enabled"] = value.enabled;
+	ostringstream start, end;
+	start << static_cast<long int>(value.startDate);
+	end << static_cast<long int>(value.endDate);
+	nodeToInsert["startDate"] = start.str();
+	nodeToInsert["endDate"] = end.str();
+
+	string jsonValue = nodeToInsert.toStyledString();
+
+	ret = file_fwrite(&tuple, 0, jsonValue.length(), (euint8*) jsonValue.c_str());
 	if (ret == 0) {
 		printf("User could not be added");
 		return -1;
@@ -149,7 +175,7 @@ int Database::insertUser(int uid, string value) {
 
 // TODO: check to make sure rid exists in roles
 // Adds a tuple to the role schedule table
-int Database::insertRoleSched(int id, string value) {
+int Database::insertRoleSched(int id, RoleSchedule value) {
 
 	File tuple;
 	int ret;
@@ -162,7 +188,20 @@ int Database::insertRoleSched(int id, string value) {
 		return -1;
 	}
 
-	ret = file_fwrite(&tuple, 0, value.length(), (euint8*) value.c_str());
+	Json::Value nodeToInsert;
+	nodeToInsert["rid"] = value.r_id;
+	nodeToInsert["startTime"] = value.startTime;
+	nodeToInsert["endTime"] = value.endTime;
+	nodeToInsert["days"] = value.days;
+	ostringstream start, end;
+	start << static_cast<long int>(value.startDate);
+	end << static_cast<long int>(value.endDate);
+	nodeToInsert["startDate"] = start.str();
+	nodeToInsert["endDate"] = end.str();
+
+	string jsonValue = nodeToInsert.toStyledString();
+
+	ret = file_fwrite(&tuple, 0, jsonValue.length(), (euint8*) jsonValue.c_str());
 	if (ret == 0) {
 		printf("Role schedule could not be added");
 		return -1;
@@ -180,7 +219,7 @@ int Database::insertRoleSched(int id, string value) {
 
 // TODO: check to make sure rid exists in roles and uid exists in users
 // Adds a tuple to the user roles table
-int Database::insertUserRole(int id, string value) {
+int Database::insertUserRole(int id, UserRole value) {
 
 	File tuple;
 	int ret;
@@ -193,7 +232,18 @@ int Database::insertUserRole(int id, string value) {
 		return -1;
 	}
 
-	ret = file_fwrite(&tuple, 0, value.length(), (euint8*) value.c_str());
+	Json::Value nodeToInsert;
+	nodeToInsert["uid"] = value.u_id;
+	nodeToInsert["rid"] = value.r_id;
+	ostringstream start, end;
+	start << static_cast<long int>(value.startDate);
+	end << static_cast<long int>(value.endDate);
+	nodeToInsert["startDate"] = start.str();
+	nodeToInsert["endDate"] = end.str();
+
+	string jsonValue = nodeToInsert.toStyledString();
+
+	ret = file_fwrite(&tuple, 0, jsonValue.length(), (euint8*) jsonValue.c_str());
 	if (ret == 0) {
 		printf("User role could not be added");
 		return -1;
@@ -211,7 +261,7 @@ int Database::insertUserRole(int id, string value) {
 
 // TODO: check to make sure uid exists in users
 // Adds a tuple to the user prints table
-int Database::insertUserPrint(int id, string value) {
+int Database::insertUserPrint(int id, UserPrint value) {
 	File tuple;
 	int ret;
 	char filename[MAXBUF_LENGTH];
@@ -223,7 +273,13 @@ int Database::insertUserPrint(int id, string value) {
 		return -1;
 	}
 
-	ret = file_fwrite(&tuple, 0, value.length(), (euint8*) value.c_str());
+	Json::Value nodeToInsert;
+	nodeToInsert["fid"] = value.f_id;
+	nodeToInsert["uid"] = value.u_id;
+
+	string jsonValue = nodeToInsert.toStyledString();
+
+	ret = file_fwrite(&tuple, 0, jsonValue.length(), (euint8*) jsonValue.c_str());
 	if (ret == 0) {
 		printf("User print could not be added");
 		return -1;
@@ -241,7 +297,7 @@ int Database::insertUserPrint(int id, string value) {
 
 // TODO: check to make sure uid exists in users
 // Adds a tuple to the history table
-int Database::insertHistory(int id, string value) {
+int Database::insertHistory(int id, History value) {
 	File tuple;
 	int ret;
 	char filename[MAXBUF_LENGTH];
@@ -253,7 +309,17 @@ int Database::insertHistory(int id, string value) {
 		return -1;
 	}
 
-	ret = file_fwrite(&tuple, 0, value.length(), (euint8*) value.c_str());
+	Json::Value nodeToInsert;
+	nodeToInsert["id"] = value.id;
+	nodeToInsert["uid"] = value.u_id;
+	nodeToInsert["success"] = value.success;
+	ostringstream time;
+	time << static_cast<long int>(value.time);
+	nodeToInsert["time"] = time.str();
+
+	string jsonValue = nodeToInsert.toStyledString();
+
+	ret = file_fwrite(&tuple, 0, jsonValue.length(), (euint8*) jsonValue.c_str());
 	if (ret == 0) {
 		printf("History could not be added");
 		return -1;
@@ -479,7 +545,7 @@ string Database::findHistory(int id) {
 
 // TODO: update role schedule, and user roles to new rid
 // Updates role by deleting entry and creating new entry
-int Database::editRole(int rid, string value) {
+int Database::editRole(int rid, Role value) {
 	char filename[MAXBUF_LENGTH];
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLES, rid);
@@ -489,7 +555,7 @@ int Database::editRole(int rid, string value) {
 
 // TODO: update user roles, user prints, and history to new uid
 // Updates user by deleting entry and creating new entry
-int Database::editUser(int uid, string value) {
+int Database::editUser(int uid, User value) {
 	char filename[MAXBUF_LENGTH];
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USERS, uid);
@@ -499,7 +565,7 @@ int Database::editUser(int uid, string value) {
 
 // TODO: make sure rid exists
 // Updates role sched by deleting entry and creating new entry
-int Database::editRoleSched(int id, string value) {
+int Database::editRoleSched(int id, RoleSchedule value) {
 	char filename[MAXBUF_LENGTH];
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLE_SCHEDULE, id);
@@ -509,7 +575,7 @@ int Database::editRoleSched(int id, string value) {
 
 // TODO: make sure rid and uid exists
 // Updates user role by deleting entry and creating new entry
-int Database::editUserRole(int id, string value) {
+int Database::editUserRole(int id, UserRole value) {
 	char filename[MAXBUF_LENGTH];
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_ROLES, id);
@@ -519,7 +585,7 @@ int Database::editUserRole(int id, string value) {
 
 // TODO: make sure uid exists
 // Updates user print by deleting entry and creating new entry
-int Database::editUserPrint(int id, string value) {
+int Database::editUserPrint(int id, UserPrint value) {
 	char filename[MAXBUF_LENGTH];
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_PRINTS, id);

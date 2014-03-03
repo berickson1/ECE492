@@ -12,9 +12,11 @@
 #include "includes.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string>
+#include <sstream>
 #include "json/writer.h"
 #include "Database_CONST.h"
+#include "DatabaseTableTypes.h"
 
 extern "C" {
 #include "Database/EFSL/efs.h"
@@ -30,12 +32,12 @@ public:
 	virtual ~Database();
 	string listAll(char *path);
 	int createTable(char *tableName);
-	int insertRole(int rid, string value);
-	int insertUser(int uid, string value);
-	int insertRoleSched(int id, string value);
-	int insertUserRole(int id, string value);
-	int insertUserPrint(int id, string value);
-	int insertHistory(int id, string value);
+	int insertRole(int rid, Role value);
+	int insertUser(int uid, User value);
+	int insertRoleSched(int id, RoleSchedule value);
+	int insertUserRole(int id, UserRole value);
+	int insertUserPrint(int id, UserPrint value);
+	int insertHistory(int id, History value);
 	string findEntry(char *path, int id);
 	string findRole(int rid);
 	string findUser(int uid);
@@ -43,11 +45,11 @@ public:
 	string findUserRole(int id);
 	string findUserPrint(int id);
 	string findHistory(int id);
-	int editRole(int rid, string value);
-	int editUser(int uid, string value);
-	int editRoleSched(int id, string value);
-	int editUserRole(int id, string value);
-	int editUserPrint(int id, string value);
+	int editRole(int rid, Role value);
+	int editUser(int uid, User value);
+	int editRoleSched(int id, RoleSchedule value);
+	int editUserRole(int id, UserRole value);
+	int editUserPrint(int id, UserPrint value);
 	int deleteRole(int rid);
 	int deleteUser(int uid);
 	int deleteRoleSchedule(int id);
