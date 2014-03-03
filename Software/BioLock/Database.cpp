@@ -102,12 +102,16 @@ int Database::insertRole(int rid, string value) {
 	}
 
 	ret = file_fwrite(&tuple, 0, value.length(), (euint8*) value.c_str());
-	if (ret == 0){
+	if (ret == 0) {
 		printf("Role could not be added");
 		return -1;
 	}
 	tuple.DirEntry.Attribute = rid;
 	file_fclose(&tuple);
+	if (ret != 0) {
+		printf("Role could not be added");
+		return -1;
+	}
 
 	return 1;
 }
@@ -127,12 +131,18 @@ int Database::insertUser(int uid, string value) {
 		return -1;
 	}
 
-	//Temp reference, change to JSON library reference
-	string newRole = tempJSON();
-	file_fwrite(&tuple, 0, newRole.length(), (euint8*) newRole.c_str());
+	ret = file_fwrite(&tuple, 0, value.length(), (euint8*) value.c_str());
+	if (ret == 0) {
+		printf("User could not be added");
+		return -1;
+	}
 
 	tuple.DirEntry.Attribute = uid;
 	file_fclose(&tuple);
+	if (ret != 0) {
+		printf("User could not be added");
+		return -1;
+	}
 
 	return 1;
 }
@@ -152,12 +162,18 @@ int Database::insertRoleSched(int id, string value) {
 		return -1;
 	}
 
-	//Temp reference, change to JSON library reference
-	string newRole = tempJSON();
-	file_fwrite(&tuple, 0, newRole.length(), (euint8*) newRole.c_str());
+	ret = file_fwrite(&tuple, 0, value.length(), (euint8*) value.c_str());
+	if (ret == 0) {
+		printf("Role schedule could not be added");
+		return -1;
+	}
 
 	tuple.DirEntry.Attribute = id;
 	file_fclose(&tuple);
+	if (ret != 0) {
+		printf("Role schedule could not be added");
+		return -1;
+	}
 
 	return 1;
 }
@@ -177,12 +193,18 @@ int Database::insertUserRole(int id, string value) {
 		return -1;
 	}
 
-	//Temp reference, change to JSON library reference
-	string newRole = tempJSON();
-	file_fwrite(&tuple, 0, newRole.length(), (euint8*) newRole.c_str());
+	ret = file_fwrite(&tuple, 0, value.length(), (euint8*) value.c_str());
+	if (ret == 0) {
+		printf("User role could not be added");
+		return -1;
+	}
 
 	tuple.DirEntry.Attribute = id;
 	file_fclose(&tuple);
+	if (ret != 0) {
+		printf("User role could not be added");
+		return -1;
+	}
 
 	return 1;
 }
@@ -201,12 +223,18 @@ int Database::insertUserPrint(int id, string value) {
 		return -1;
 	}
 
-	//Temp reference, change to JSON library reference
-	string newRole = tempJSON();
-	file_fwrite(&tuple, 0, newRole.length(), (euint8*) newRole.c_str());
+	ret = file_fwrite(&tuple, 0, value.length(), (euint8*) value.c_str());
+	if (ret == 0) {
+		printf("User print could not be added");
+		return -1;
+	}
 
 	tuple.DirEntry.Attribute = id;
 	file_fclose(&tuple);
+	if (ret != 0) {
+		printf("User print could not be added");
+		return -1;
+	}
 
 	return 1;
 }
@@ -225,11 +253,18 @@ int Database::insertHistory(int id, string value) {
 		return -1;
 	}
 
-	//Temp reference, change to JSON library reference
-	string newRole = tempJSON();
-	file_fwrite(&tuple, 0, newRole.length(), (euint8*) newRole.c_str());
+	ret = file_fwrite(&tuple, 0, value.length(), (euint8*) value.c_str());
+	if (ret == 0) {
+		printf("History could not be added");
+		return -1;
+	}
+
 	tuple.DirEntry.Attribute = id;
-	file_fclose(&tuple);
+	ret = file_fclose(&tuple);
+	if (ret != 0) {
+		printf("History could not be added");
+		return -1;
+	}
 
 	return 1;
 }
@@ -416,52 +451,52 @@ string Database::findHistory(int id) {
 
 // TODO: update role schedule, and user roles to new rid
 // Updates role by deleting entry and creating new entry
-int Database::editRole(int rid) {
+int Database::editRole(int rid, string value) {
 	char filename[MAXBUF_LENGTH];
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLES, rid);
 	rmfile(&db.myFs, (euint8*) filename);
-	return insertRole(rid, tempJSON());
+	return insertRole(rid, value);
 }
 
 // TODO: update user roles, user prints, and history to new uid
 // Updates user by deleting entry and creating new entry
-int Database::editUser(int uid) {
+int Database::editUser(int uid, string value) {
 	char filename[MAXBUF_LENGTH];
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USERS, uid);
 	rmfile(&db.myFs, (euint8*) filename);
-	return insertUser(uid, tempJSON());
+	return insertUser(uid, value);
 }
 
 // TODO: make sure rid exists
 // Updates role sched by deleting entry and creating new entry
-int Database::editRoleSched(int id) {
+int Database::editRoleSched(int id, string value) {
 	char filename[MAXBUF_LENGTH];
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLE_SCHEDULE, id);
 	rmfile(&db.myFs, (euint8*) filename);
-	return insertRoleSched(id, tempJSON());
+	return insertRoleSched(id, value);
 }
 
 // TODO: make sure rid and uid exists
 // Updates user role by deleting entry and creating new entry
-int Database::editUserRole(int id) {
+int Database::editUserRole(int id, string value) {
 	char filename[MAXBUF_LENGTH];
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_ROLES, id);
 	rmfile(&db.myFs, (euint8*) filename);
-	return insertUserRole(id, tempJSON());
+	return insertUserRole(id, value);
 }
 
 // TODO: make sure uid exists
 // Updates user print by deleting entry and creating new entry
-int Database::editUserPrint(int id) {
+int Database::editUserPrint(int id, string value) {
 	char filename[MAXBUF_LENGTH];
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_PRINTS, id);
 	rmfile(&db.myFs, (euint8*) filename);
-	return insertUserPrint(id, tempJSON());
+	return insertUserPrint(id, value);
 }
 
 // The following functions delete the entries in accordance to each entry id

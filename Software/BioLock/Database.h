@@ -42,11 +42,11 @@ public:
 	string findUserRole(int id);
 	string findUserPrint(int id);
 	string findHistory(int id);
-	int editRole(int rid);
-	int editUser(int uid);
-	int editRoleSched(int id);
-	int editUserRole(int id);
-	int editUserPrint(int id);
+	int editRole(int rid, string value);
+	int editUser(int uid, string value);
+	int editRoleSched(int id, string value);
+	int editUserRole(int id, string value);
+	int editUserPrint(int id, string value);
 	int deleteRole(int rid);
 	int deleteUser(int uid);
 	int deleteRoleSchedule(int id);
