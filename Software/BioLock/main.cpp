@@ -162,8 +162,11 @@ int main(void) {
 		printf("Error initializing database semaphore");
 		return -1;
 	}
+#ifndef NOWEBSERVER
 	startWebServer(&startTasks, &createHttpResponse);
-
+#else
+	startTasks();
+#endif
 	OSStart();
 	return 0;
 }
