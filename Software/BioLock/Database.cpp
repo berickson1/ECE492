@@ -9,6 +9,7 @@
  *  		Max file name is 8 characters - can be changed i think
  *  		Filenames are padded with '\0' until 8 characters long
  *  			eg: "23" becomes "23      "
+ *  			Used atoi => invalid filenames become 0, therefore, start id count at 1
  *  		System has not been tested when subfolders exist
  *
  *  Issues/todos: add method to delete directories if needed
@@ -19,12 +20,13 @@
 #include "Database.h"
 using namespace std;
 
-Database::Database(OS_EVENT *databaseSemaphore) : m_databaseSemaphore(databaseSemaphore) {
+Database::Database(OS_EVENT *databaseMutex) :
+		m_databaseMutex(databaseMutex) {
 	INT8U err = OS_NO_ERR;
 	int ret = 0;
 
 	//Blocking call
-	OSMutexPend(m_databaseSemaphore, 0, &err);
+	OSMutexPend(m_databaseMutex, 0, &err);
 	if (err != OS_NO_ERR) {
 		printf("Database error. Check to ensure access is allowed.\n");
 		throw exception();
@@ -66,11 +68,15 @@ string Database::listAll(char *path) {
 		printf("Could not open directory. Please check definition of path\n");
 	if (ls_getNext(&list) == 0) {
 		file = atoi((const char*) list.currentEntry.FileName);
+		if (file == 0)
+			return " ";
 		string attr = findEntry(path, file);
 		strcpy(results, attr.c_str());
 	}
 	while (ls_getNext(&list) == 0) {
 		file = atoi((const char*) list.currentEntry.FileName);
+		if (file == 0)
+			break;
 		string attr = findEntry(path, file);
 		strcat(results, attr.c_str());
 	}
@@ -88,7 +94,6 @@ int Database::createTable(char *tableName) {
 	return 1;
 }
 
-// TODO: check to make sure role doesn't have the same name as existing entry
 // Adds a tuple to the role table
 int Database::insertRole(int rid, Role value) {
 
@@ -117,7 +122,8 @@ int Database::insertRole(int rid, Role value) {
 
 	string jsonValue = nodeToInsert.toStyledString();
 
-	ret = file_fwrite(&tuple, 0, jsonValue.length(), (euint8*) jsonValue.c_str());
+	ret = file_fwrite(&tuple, 0, jsonValue.length(),
+			(euint8*) jsonValue.c_str());
 	if (ret == 0) {
 		printf("Role could not be added");
 		return -1;
@@ -132,7 +138,6 @@ int Database::insertRole(int rid, Role value) {
 	return 1;
 }
 
-// TODO: check to make sure user doesn't have the same name as existing entry
 // Adds a tuple to the user table
 int Database::insertUser(int uid, User value) {
 
@@ -159,7 +164,8 @@ int Database::insertUser(int uid, User value) {
 
 	string jsonValue = nodeToInsert.toStyledString();
 
-	ret = file_fwrite(&tuple, 0, jsonValue.length(), (euint8*) jsonValue.c_str());
+	ret = file_fwrite(&tuple, 0, jsonValue.length(),
+			(euint8*) jsonValue.c_str());
 	if (ret == 0) {
 		printf("User could not be added");
 		return -1;
@@ -175,7 +181,6 @@ int Database::insertUser(int uid, User value) {
 	return 1;
 }
 
-// TODO: check to make sure rid exists in roles
 // Adds a tuple to the role schedule table
 int Database::insertRoleSched(int id, RoleSchedule value) {
 
@@ -203,7 +208,8 @@ int Database::insertRoleSched(int id, RoleSchedule value) {
 
 	string jsonValue = nodeToInsert.toStyledString();
 
-	ret = file_fwrite(&tuple, 0, jsonValue.length(), (euint8*) jsonValue.c_str());
+	ret = file_fwrite(&tuple, 0, jsonValue.length(),
+			(euint8*) jsonValue.c_str());
 	if (ret == 0) {
 		printf("Role schedule could not be added");
 		return -1;
@@ -219,7 +225,6 @@ int Database::insertRoleSched(int id, RoleSchedule value) {
 	return 1;
 }
 
-// TODO: check to make sure rid exists in roles and uid exists in users
 // Adds a tuple to the user roles table
 int Database::insertUserRole(int id, UserRole value) {
 
@@ -245,7 +250,8 @@ int Database::insertUserRole(int id, UserRole value) {
 
 	string jsonValue = nodeToInsert.toStyledString();
 
-	ret = file_fwrite(&tuple, 0, jsonValue.length(), (euint8*) jsonValue.c_str());
+	ret = file_fwrite(&tuple, 0, jsonValue.length(),
+			(euint8*) jsonValue.c_str());
 	if (ret != 0) {
 		printf("User role could not be added");
 		return -1;
@@ -261,7 +267,6 @@ int Database::insertUserRole(int id, UserRole value) {
 	return 1;
 }
 
-// TODO: check to make sure uid exists in users
 // Adds a tuple to the user prints table
 int Database::insertUserPrint(int id, UserPrint value) {
 	File tuple;
@@ -281,7 +286,8 @@ int Database::insertUserPrint(int id, UserPrint value) {
 
 	string jsonValue = nodeToInsert.toStyledString();
 
-	ret = file_fwrite(&tuple, 0, jsonValue.length(), (euint8*) jsonValue.c_str());
+	ret = file_fwrite(&tuple, 0, jsonValue.length(),
+			(euint8*) jsonValue.c_str());
 	if (ret == 0) {
 		printf("User print could not be added");
 		return -1;
@@ -297,7 +303,6 @@ int Database::insertUserPrint(int id, UserPrint value) {
 	return 1;
 }
 
-// TODO: check to make sure uid exists in users
 // Adds a tuple to the history table
 int Database::insertHistory(int id, History value) {
 	File tuple;
@@ -321,7 +326,8 @@ int Database::insertHistory(int id, History value) {
 
 	string jsonValue = nodeToInsert.toStyledString();
 
-	ret = file_fwrite(&tuple, 0, jsonValue.length(), (euint8*) jsonValue.c_str());
+	ret = file_fwrite(&tuple, 0, jsonValue.length(),
+			(euint8*) jsonValue.c_str());
 	if (ret == 0) {
 		printf("History could not be added");
 		return -1;
@@ -337,7 +343,7 @@ int Database::insertHistory(int id, History value) {
 	return 1;
 }
 
-string Database::findEntry(char *path, int id) {
+string Database::findEntry(const char *path, int id) {
 	File tuple;
 	int ret;
 	unsigned int sizeRead;
@@ -365,7 +371,6 @@ string Database::findEntry(char *path, int id) {
 	return attr.c_str();
 }
 
-// TODO: search by name
 // Searches for a role by rid
 string Database::findRole(int rid) {
 	File tuple;
@@ -395,7 +400,6 @@ string Database::findRole(int rid) {
 	return roleAttr.c_str();
 }
 
-// TODO: search by name
 // Searches for a user by uid
 string Database::findUser(int uid) {
 	File tuple;
@@ -425,7 +429,6 @@ string Database::findUser(int uid) {
 	return userAttr.c_str();
 }
 
-// TODO: search by rid
 // Searches for a role schedule by id
 string Database::findRoleSchedule(int id) {
 	File tuple;
@@ -455,7 +458,6 @@ string Database::findRoleSchedule(int id) {
 	return roleSched.c_str();
 }
 
-// TODO: search by uid and rid
 // Searches for a role schedule by id
 string Database::findUserRole(int id) {
 	File tuple;
@@ -485,7 +487,6 @@ string Database::findUserRole(int id) {
 	return userRole.c_str();
 }
 
-// TODO: search by uid and fid
 // Searches for a role schedule by id
 string Database::findUserPrint(int id) {
 	File tuple;
@@ -515,7 +516,6 @@ string Database::findUserPrint(int id) {
 	return userPrint.c_str();
 }
 
-// TODO: search by uid
 // Searches for a history by id
 string Database::findHistory(int id) {
 	File tuple;
@@ -545,7 +545,6 @@ string Database::findHistory(int id) {
 	return history.c_str();
 }
 
-// TODO: update role schedule, and user roles to new rid
 // Updates role by deleting entry and creating new entry
 int Database::editRole(int rid, Role value) {
 	char filename[MAXBUF_LENGTH];
@@ -555,7 +554,6 @@ int Database::editRole(int rid, Role value) {
 	return insertRole(rid, value);
 }
 
-// TODO: update user roles, user prints, and history to new uid
 // Updates user by deleting entry and creating new entry
 int Database::editUser(int uid, User value) {
 	char filename[MAXBUF_LENGTH];
@@ -565,7 +563,6 @@ int Database::editUser(int uid, User value) {
 	return insertUser(uid, value);
 }
 
-// TODO: make sure rid exists
 // Updates role sched by deleting entry and creating new entry
 int Database::editRoleSched(int id, RoleSchedule value) {
 	char filename[MAXBUF_LENGTH];
@@ -575,7 +572,6 @@ int Database::editRoleSched(int id, RoleSchedule value) {
 	return insertRoleSched(id, value);
 }
 
-// TODO: make sure rid and uid exists
 // Updates user role by deleting entry and creating new entry
 int Database::editUserRole(int id, UserRole value) {
 	char filename[MAXBUF_LENGTH];
@@ -585,7 +581,6 @@ int Database::editUserRole(int id, UserRole value) {
 	return insertUserRole(id, value);
 }
 
-// TODO: make sure uid exists
 // Updates user print by deleting entry and creating new entry
 int Database::editUserPrint(int id, UserPrint value) {
 	char filename[MAXBUF_LENGTH];
@@ -595,80 +590,136 @@ int Database::editUserPrint(int id, UserPrint value) {
 	return insertUserPrint(id, value);
 }
 
-// The following functions delete the entries in accordance to each entry id
+// Deletes role entry with corresponding rid
 int Database::deleteRole(int rid) {
-	int ret;
+	Json::Reader reader;
+	Json::Value attr;
+	DirList list;
+	int ret, file;
 	char filename[MAXBUF_LENGTH];
 
+	// Delete role
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLES, rid);
-	rmfile(&db.myFs, (euint8*) filename);
+	ret = rmfile(&db.myFs, (euint8*) filename);
 	if (ret != 0) {
-		printf("Entry could not be deleted, please try again later");
+		printf("Role could not be deleted, please try again later");
 		return -1;
 	}
+
+	// Delete role schedule with same rid
+	ret = ls_openDir(&list, &db.myFs, (eint8 *) ROLE_SCHEDULE);
+	if (ret == -1)
+		printf("Could not open directory.\n");
+	while (ls_getNext(&list) == 0) {
+		file = atoi((const char*) list.currentEntry.FileName);
+		if (file == 0)
+			break;
+		string roleSched = findEntry(ROLE_SCHEDULE, file);
+		reader.parse(roleSched, attr, true);
+		if (attr["r_id"] == rid) {
+			ret = deleteRoleSchedule(file);
+			if (ret == -1){
+				printf("Role schedule: %d could not be deleted", file);
+				return -1;
+			}
+		}
+	}
+
+	// Delete user roles with same rid
+	ret = ls_openDir(&list, &db.myFs, (eint8 *) USER_ROLES);
+	if (ret == -1)
+		printf("Could not open directory.\n");
+	while (ls_getNext(&list) == 0) {
+		file = atoi((const char*) list.currentEntry.FileName);
+		if (file == 0)
+			break;
+		string userRole = findEntry(USER_ROLES, file);
+		reader.parse(userRole, attr, true);
+		if (attr["r_id"] == rid) {
+			deleteUserRole(file);
+			if (ret == -1){
+				printf("User role: %d could not be deleted", file);
+				return -1;
+			}
+		}
+	}
+
 	return 1;
 }
 
-int Database::deleteUser(int uid) {
+// Enables/disables user entry with corresponding uid
+int Database::enableUser(int uid, bool enable) {
+	Json::Reader reader;
+	Json::Value userAttr;
+	User updatedUser;
+	File tuple;
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
+	string user = findUser(uid);
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USERS, uid);
-	rmfile(&db.myFs, (euint8*) filename);
+	ret = rmfile(&db.myFs, (euint8*) filename);
 	if (ret != 0) {
-		printf("Entry could not be deleted, please try again later");
+		printf("User enable status could not be changed, please try again later");
 		return -1;
 	}
+	reader.parse(user, userAttr, true);
+	userAttr["enabled"] = enable;
+	string jsonValue = userAttr.toStyledString();
+	file_fopen(&tuple, &db.myFs, filename, 'w');
+	ret = file_fwrite(&tuple, 0, jsonValue.length(),
+			(euint8*) jsonValue.c_str());
+	if (ret == 0) {
+		printf("User could not be disabled");
+		return -1;
+	}
+	tuple.DirEntry.Attribute = uid;
+	ret = file_fclose(&tuple);
+	if (ret != 0) {
+		printf("User enable status could not be changed");
+		return -1;
+	}
+
 	return 1;
 }
 
+// Deletes role schedule entry with corresponding id
 int Database::deleteRoleSchedule(int id) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLE_SCHEDULE, id);
-	rmfile(&db.myFs, (euint8*) filename);
+	ret = rmfile(&db.myFs, (euint8*) filename);
 	if (ret != 0) {
-		printf("Entry could not be deleted, please try again later");
+		printf("Role schedule could not be deleted, please try again later");
 		return -1;
 	}
 	return 1;
 }
 
+// Deletes user role entry with corresponding id
 int Database::deleteUserRole(int id) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_ROLES, id);
-	rmfile(&db.myFs, (euint8*) filename);
+	ret = rmfile(&db.myFs, (euint8*) filename);
 	if (ret != 0) {
-		printf("Entry could not be deleted, please try again later");
+		printf("User role could not be deleted, please try again later");
 		return -1;
 	}
 	return 1;
 }
 
+// Deletes user print entry with corresponding id
 int Database::deleteUserPrint(int id) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_PRINTS, id);
-	rmfile(&db.myFs, (euint8*) filename);
+	ret = rmfile(&db.myFs, (euint8*) filename);
 	if (ret != 0) {
-		printf("Entry could not be deleted, please try again later");
-		return -1;
-	}
-	return 1;
-}
-
-int Database::deleteHistory(int id) {
-	int ret;
-	char filename[MAXBUF_LENGTH];
-
-	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", HISTORY, id);
-	rmfile(&db.myFs, (euint8*) filename);
-	if (ret != 0) {
-		printf("Entry could not be deleted, please try again later");
+		printf("User print could not be deleted, please try again later");
 		return -1;
 	}
 	return 1;
@@ -677,5 +728,5 @@ int Database::deleteHistory(int id) {
 // Unmount the file system
 Database::~Database() {
 	fs_umount(&db.myFs);
-	OSSemPost(m_databaseSemaphore);
+	OSSemPost(m_databaseMutex);
 }
