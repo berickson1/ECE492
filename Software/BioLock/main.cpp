@@ -45,7 +45,7 @@ OS_STK task2_stk[TASK_STACKSIZE];
 
 OS_EVENT *fingerprintMailbox;
 OS_EVENT *fingerprintSem;
-OS_EVENT *databaseMutex;
+OS_EVENT *databaseSemaphore;
 
 /* Definition of Task Priorities */
 
@@ -105,7 +105,7 @@ void task1(void* pdata) {
 			if (fid >= 0){
 				Json::Value userRoot;
 				Json::Value roleRoot;
-				Database dbAccess(databaseMutex);
+				Database dbAccess(databaseSemaphore);
 				string userJSON = dbAccess.findUserPrint(fid);
 				Json::Reader jsonReader;
 				int uid;
@@ -159,11 +159,12 @@ int main(void) {
 		return -1;
 	}
 
-	databaseMutex = OSMutexCreate(0, &err);
-	if (err !=  OS_ERR_NONE ) {
-		printf("Error initializing database mutex");
+	databaseSemaphore = OSSemCreate(1);
+	if (databaseSemaphore ==  NULL ) {
+		printf("Error initializing database semaphore");
 		return -1;
 	}
+
 #ifndef NOWEBSERVER
 	startWebServer(&startTasks, &createHttpResponse);
 #else

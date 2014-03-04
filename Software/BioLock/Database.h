@@ -29,7 +29,7 @@ extern "C" {
 using namespace std;
 class Database {
 public:
-	Database(OS_EVENT * databaseMutex);
+	Database(OS_EVENT * databaseSemaphore);
 	virtual ~Database();
 	string listAll(char *path);
 	int createTable(char *tableName);
@@ -63,7 +63,7 @@ public:
 	int enableUser(int uid, bool enable);
 
 private:
-	OS_EVENT *m_databaseMutex;
+	OS_EVENT *m_databaseSemaphore;
 	EmbeddedFileSystem db;
 	string noRecord();
 	string tempJSON();

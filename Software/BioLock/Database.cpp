@@ -20,13 +20,13 @@
 #include "Database.h"
 using namespace std;
 
-Database::Database(OS_EVENT *databaseMutex) :
-		m_databaseMutex(databaseMutex) {
+Database::Database(OS_EVENT *databaseSemaphore) :
+		m_databaseSemaphore(databaseSemaphore) {
 	INT8U err = OS_NO_ERR;
 	int ret = 0;
 
 	//Blocking call
-	OSMutexPend(m_databaseMutex, 0, &err);
+	OSSemPend(m_databaseSemaphore, 0, &err);
 	if (err != OS_NO_ERR) {
 		printf("Database error. Check to ensure access is allowed.\n");
 		throw exception();
@@ -728,5 +728,5 @@ int Database::deleteUserPrint(int id) {
 // Unmount the file system
 Database::~Database() {
 	fs_umount(&db.myFs);
-	OSSemPost(m_databaseMutex);
+	OSSemPost(m_databaseSemaphore);
 }
