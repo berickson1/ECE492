@@ -128,8 +128,6 @@ void task1(void* pdata) {
 void task2(void* pdata) {
 	//while (1) {
 	{
-#define NOWEBSERVER
-#define NOSENSOR
 		printf("Database will now start\n");
 		Database db(databaseSemaphore);
 		db.testPopulate();
