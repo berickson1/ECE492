@@ -140,8 +140,23 @@ void task2(void* pdata) {
 }
 
 const char * createHttpResponse(const char * URI) {
+
+	string uriString(URI), retString;
 	RestAPI api(&getCurrentFingerprintId);
-	const char * retval = api.getUsers().c_str();
+	if (uriString.compare(0, 6, "/users") == 0){
+		retString = api.getUsers();
+	} else if (uriString.compare(0, 6, "/roles") == 0){
+		retString = api.getRoles();
+	} else if (uriString.compare(0, 14, "/roleSchedules") == 0){
+		retString = api.getRoleSchedule();
+	} else if (uriString.compare(0, 8, "/history") == 0){
+		retString = api.getHistory();
+	} else if (uriString.compare(0, 7, "/prints") == 0){
+		retString = api.getPrints();
+	} else {
+		retString = Database::noRecord();
+	}
+	const char * retval = retString.c_str();
 	return retval;
 }
 extern "C" {

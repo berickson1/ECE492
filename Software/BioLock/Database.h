@@ -63,11 +63,11 @@ public:
 	int enableUser(int uid, bool enable);
 
 	void testPopulate();
+	static string noRecord();
 
 private:
 	OS_EVENT *m_databaseSemaphore;
 	EmbeddedFileSystem db;
-	string noRecord();
 };
 
 #endif
