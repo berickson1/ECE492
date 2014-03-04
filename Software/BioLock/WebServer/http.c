@@ -1070,57 +1070,8 @@ int http_send_file_header(http_conn* conn, const char* name, int code)
  */
 int http_find_file(http_conn* conn)
 {
-  char  filename[256];
-  int     ret_code = 0;
-
-  strncpy( filename, ALTERA_RO_ZIPFS_NAME, strlen(ALTERA_RO_ZIPFS_NAME));
-
-  /* URI of "/" means get the default, usually index.html */
-  if ( (conn->uri[0] == '/') && (conn->uri[1] == '\0') )
-  {
-    strcpy(filename+strlen(ALTERA_RO_ZIPFS_NAME), HTTP_DEFAULT_FILE);
-  }
-  else
-  {
-    strcpy( filename+strlen(ALTERA_RO_ZIPFS_NAME), conn->uri);
-  }
-  
-  /* Try to open the file */
-  printf("\nFetching file:  %s.\n", filename );
-  conn->file_handle = fopen(filename, "r");
-  
-  /* Can't find the requested file? Try for a 404-page. */
-  if (conn->file_handle == NULL)
-  {
-    strcpy(filename, ALTERA_RO_ZIPFS_NAME);
-    strcpy(filename+strlen(ALTERA_RO_ZIPFS_NAME), HTTP_NOT_FOUND_FILE);
-    conn->file_handle = fopen(filename, "r");
-    
-    /* We located the specified "404: Not-Found" page */
-    if (conn->file_handle != NULL)
-    {
-      ALT_DEBUG_ASSERT(fd != NULL);
-      ret_code = http_send_file_header(conn, filename, HTTP_NOT_FOUND);
-    }
-    /* Can't find the 404 page: This likely means there is no file system */
-    else
-    {
-      fprintf(stderr, "Can't open the 404 File Not Found error page.\n");
-      fprintf(stderr, "Have you programmed the filing system into flash?\n");
-      send(conn->fd,(void*)canned_http_response,strlen(canned_http_response),0);
-      
-      fclose(conn->file_handle);
-      conn->state = RESET;
-      return -1;  
-    }
-  }
-  /* We've found the requested file; send its header and move on. */  
-  else
-  {
-    ret_code = http_send_file_header(conn, filename, HTTP_OK);
-  }
-
-  return ret_code;
+	fprintf(stderr, "Can't open the 404 File Not Found error page.\n");
+	fprintf(stderr, "Have you programmed the filing system into flash?\n");
 }
 
 /*

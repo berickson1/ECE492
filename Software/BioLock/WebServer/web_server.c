@@ -58,10 +58,6 @@
   #error This Web Server requires the UCOS II IP Software Component.
 #endif
 
-#ifndef  RO_ZIPFS
-  #error This Web Server requires the Altera Read only Zip file system.
-#endif
-
 #ifdef LCD_DISPLAY_NAME  
 FILE* lcdDevice;
 #endif /* LCD_DISPLAY_NAME */
