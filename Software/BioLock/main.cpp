@@ -102,7 +102,7 @@ void task1(void* pdata) {
 
 			//Check if fingerprint is allowed access and unlock door
 			//After this point, we fall through to the error case
-			if (fid >= 0){
+			if (fid >= 0) {
 				Json::Value userRoot;
 				Json::Value roleRoot;
 				Database dbAccess(databaseSemaphore);
@@ -110,9 +110,10 @@ void task1(void* pdata) {
 				Json::Reader jsonReader;
 				int uid;
 				//Todo: handle schedule lookup
-				if (jsonReader.parse(userJSON, userRoot) &&
-						(uid = userRoot.get("id", -1).asInt()) != -1 &&
-						jsonReader.parse(dbAccess.findUserRole(uid), roleRoot)){
+				if (jsonReader.parse(userJSON, userRoot)
+						&& (uid = userRoot.get("id", -1).asInt()) != -1
+						&& jsonReader.parse(dbAccess.findUserRole(uid),
+								roleRoot)) {
 					//Todo: Finish checking if user has role
 					//Success, unlock door!
 					continue;
@@ -125,10 +126,17 @@ void task1(void* pdata) {
 }
 
 void task2(void* pdata) {
-	while (1) {
-		printf("Hello from task2\n");
-		OSTimeDlyHMSM(0, 0, 3, 0);
+	//while (1) {
+	{
+#define NOWEBSERVER
+#define NOSENSOR
+		printf("Database will now start\n");
+		Database db(databaseSemaphore);
+		db.testPopulate();
 	}
+	printf("Finished populating test database\n");
+
+	//}
 }
 
 const char * createHttpResponse(const char * URI) {
@@ -138,9 +146,10 @@ const char * createHttpResponse(const char * URI) {
 }
 extern "C" {
 void startTasks() {
-	OSTaskCreateExt(task1, NULL, &task1_stk[TASK_STACKSIZE - 1], TASK1_PRIORITY,
-			TASK1_PRIORITY, task1_stk, TASK_STACKSIZE, NULL, 0);
-
+	#ifndef NOSENSOR
+		OSTaskCreateExt(task1, NULL, &task1_stk[TASK_STACKSIZE - 1], TASK1_PRIORITY,
+				TASK1_PRIORITY, task1_stk, TASK_STACKSIZE, NULL, 0);
+	#endif
 	OSTaskCreateExt(task2, NULL, &task2_stk[TASK_STACKSIZE - 1], TASK2_PRIORITY,
 			TASK2_PRIORITY, task2_stk, TASK_STACKSIZE, NULL, 0);
 }
@@ -160,7 +169,7 @@ int main(void) {
 	}
 
 	databaseSemaphore = OSSemCreate(1);
-	if (databaseSemaphore ==  NULL ) {
+	if (databaseSemaphore == NULL) {
 		printf("Error initializing database semaphore");
 		return -1;
 	}

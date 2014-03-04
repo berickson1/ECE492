@@ -62,11 +62,12 @@ public:
 
 	int enableUser(int uid, bool enable);
 
+	void testPopulate();
+
 private:
 	OS_EVENT *m_databaseSemaphore;
 	EmbeddedFileSystem db;
 	string noRecord();
-	string tempJSON();
 };
 
 #endif

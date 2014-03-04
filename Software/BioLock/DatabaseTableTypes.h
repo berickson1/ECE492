@@ -23,7 +23,7 @@ typedef struct User{
 } User;
 
 typedef struct UserPrint{
-	int u_id, f_id;
+	int id, u_id, f_id;
 } UserPrint;
 
 typedef struct Role{
@@ -34,12 +34,12 @@ typedef struct Role{
 } Role;
 
 typedef struct UserRole{
-	int u_id, r_id;
+	int id, u_id, r_id;
 	time_t startDate, endDate;
 } UserRole;
 
 typedef struct RoleSchedule{
-	int r_id, startTime, endTime, days;
+	int id, r_id, startTime, endTime, days;
 	time_t startDate, endDate;
 } RoleSchedule;
 

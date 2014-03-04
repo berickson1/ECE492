@@ -28,7 +28,7 @@ Database::Database(OS_EVENT *databaseSemaphore) :
 	//Blocking call
 	OSSemPend(m_databaseSemaphore, 0, &err);
 	if (err != OS_NO_ERR) {
-		printf("Database error. Check to ensure access is allowed.\n");
+		printf("Database error. Check to ensure access is allowed\n");
 		throw exception();
 	}
 
@@ -40,15 +40,6 @@ Database::Database(OS_EVENT *databaseSemaphore) :
 	}
 }
 
-// temp json value
-string Database::tempJSON() {
-	Json::Value rootNode;
-	rootNode["id"] = "id";
-	rootNode["name"] = "test name";
-	rootNode["admin"] = "y";
-	rootNode["enabled"] = "y";
-	return rootNode.toStyledString();
-}
 // JSON return value when no entry found in database
 string Database::noRecord() {
 	Json::Value noRecord;
@@ -125,13 +116,13 @@ int Database::insertRole(int rid, Role value) {
 	ret = file_fwrite(&tuple, 0, jsonValue.length(),
 			(euint8*) jsonValue.c_str());
 	if (ret == 0) {
-		printf("Role could not be added");
+		printf("Role could not be added\n");
 		return -1;
 	}
 	tuple.DirEntry.Attribute = rid;
 	ret = file_fclose(&tuple);
 	if (ret != 0) {
-		printf("Role could not be added");
+		printf("Role could not be added\n");
 		return -1;
 	}
 
@@ -167,14 +158,14 @@ int Database::insertUser(int uid, User value) {
 	ret = file_fwrite(&tuple, 0, jsonValue.length(),
 			(euint8*) jsonValue.c_str());
 	if (ret == 0) {
-		printf("User could not be added");
+		printf("User could not be added\n");
 		return -1;
 	}
 
 	tuple.DirEntry.Attribute = uid;
 	ret = file_fclose(&tuple);
 	if (ret != 0) {
-		printf("User could not be added");
+		printf("User could not be added\n");
 		return -1;
 	}
 
@@ -211,14 +202,14 @@ int Database::insertRoleSched(int id, RoleSchedule value) {
 	ret = file_fwrite(&tuple, 0, jsonValue.length(),
 			(euint8*) jsonValue.c_str());
 	if (ret == 0) {
-		printf("Role schedule could not be added");
+		printf("Role schedule could not be added\n");
 		return -1;
 	}
 
 	tuple.DirEntry.Attribute = id;
 	ret = file_fclose(&tuple);
 	if (ret != 0) {
-		printf("Role schedule could not be added");
+		printf("Role schedule could not be added\n");
 		return -1;
 	}
 
@@ -240,6 +231,7 @@ int Database::insertUserRole(int id, UserRole value) {
 	}
 
 	Json::Value nodeToInsert;
+	nodeToInsert["id"] = value.id;
 	nodeToInsert["uid"] = value.u_id;
 	nodeToInsert["rid"] = value.r_id;
 	ostringstream start, end;
@@ -253,14 +245,14 @@ int Database::insertUserRole(int id, UserRole value) {
 	ret = file_fwrite(&tuple, 0, jsonValue.length(),
 			(euint8*) jsonValue.c_str());
 	if (ret != 0) {
-		printf("User role could not be added");
+		printf("User role could not be added\n");
 		return -1;
 	}
 
 	tuple.DirEntry.Attribute = id;
 	ret = file_fclose(&tuple);
 	if (ret != 0) {
-		printf("User role could not be added");
+		printf("User role could not be added\n");
 		return -1;
 	}
 
@@ -281,6 +273,7 @@ int Database::insertUserPrint(int id, UserPrint value) {
 	}
 
 	Json::Value nodeToInsert;
+	nodeToInsert["id"] = value.id;
 	nodeToInsert["fid"] = value.f_id;
 	nodeToInsert["uid"] = value.u_id;
 
@@ -289,14 +282,14 @@ int Database::insertUserPrint(int id, UserPrint value) {
 	ret = file_fwrite(&tuple, 0, jsonValue.length(),
 			(euint8*) jsonValue.c_str());
 	if (ret == 0) {
-		printf("User print could not be added");
+		printf("User print could not be added\n");
 		return -1;
 	}
 
 	tuple.DirEntry.Attribute = id;
 	ret = file_fclose(&tuple);
 	if (ret != 0) {
-		printf("User print could not be added");
+		printf("User print could not be added\n");
 		return -1;
 	}
 
@@ -329,14 +322,14 @@ int Database::insertHistory(int id, History value) {
 	ret = file_fwrite(&tuple, 0, jsonValue.length(),
 			(euint8*) jsonValue.c_str());
 	if (ret == 0) {
-		printf("History could not be added");
+		printf("History could not be added\n");
 		return -1;
 	}
 
 	tuple.DirEntry.Attribute = id;
 	ret = file_fclose(&tuple);
 	if (ret != 0) {
-		printf("History could not be added");
+		printf("History could not be added\n");
 		return -1;
 	}
 
@@ -353,7 +346,7 @@ string Database::findEntry(const char *path, int id) {
 	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
 	if (ret == -1) {
 		printf("Entry could not be found\n");
-		return "";
+		return noRecord();
 	}
 
 	euint8 *fileBuffer = (euint8 *) malloc(tuple.FileSize * sizeof(euint8));
@@ -382,7 +375,7 @@ string Database::findRole(int rid) {
 	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
 	if (ret == -1) {
 		printf("Role could not be found\n");
-		return "";
+		return noRecord();
 	}
 
 	euint8 *fileBuffer = (euint8 *) malloc(tuple.FileSize * sizeof(euint8));
@@ -411,7 +404,7 @@ string Database::findUser(int uid) {
 	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
 	if (ret == -1) {
 		printf("User could not be found\n");
-		return "";
+		return noRecord();
 	}
 
 	euint8 *fileBuffer = (euint8 *) malloc(tuple.FileSize * sizeof(euint8));
@@ -440,7 +433,7 @@ string Database::findRoleSchedule(int id) {
 	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
 	if (ret == -1) {
 		printf("Role schedule could not be found\n");
-		return "";
+		return noRecord();
 	}
 
 	euint8 *fileBuffer = (euint8 *) malloc(tuple.FileSize * sizeof(euint8));
@@ -469,7 +462,7 @@ string Database::findUserRole(int id) {
 	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
 	if (ret == -1) {
 		printf("User role could not be found\n");
-		return "";
+		return noRecord();
 	}
 
 	euint8 *fileBuffer = (euint8 *) malloc(tuple.FileSize * sizeof(euint8));
@@ -498,7 +491,7 @@ string Database::findUserPrint(int id) {
 	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
 	if (ret == -1) {
 		printf("User prints could not be found\n");
-		return "";
+		return noRecord();
 	}
 
 	euint8 *fileBuffer = (euint8 *) malloc(tuple.FileSize * sizeof(euint8));
@@ -527,7 +520,7 @@ string Database::findHistory(int id) {
 	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
 	if (ret == -1) {
 		printf("History could not be found\n");
-		return "";
+		return noRecord();
 	}
 
 	euint8 *fileBuffer = (euint8 *) malloc(tuple.FileSize * sizeof(euint8));
@@ -602,14 +595,14 @@ int Database::deleteRole(int rid) {
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLES, rid);
 	ret = rmfile(&db.myFs, (euint8*) filename);
 	if (ret != 0) {
-		printf("Role could not be deleted, please try again later");
+		printf("Role could not be deleted, please try again later\n");
 		return -1;
 	}
 
 	// Delete role schedule with same rid
 	ret = ls_openDir(&list, &db.myFs, (eint8 *) ROLE_SCHEDULE);
 	if (ret == -1)
-		printf("Could not open directory.\n");
+		printf("Could not open directory\n");
 	while (ls_getNext(&list) == 0) {
 		file = atoi((const char*) list.currentEntry.FileName);
 		if (file == 0)
@@ -618,8 +611,8 @@ int Database::deleteRole(int rid) {
 		reader.parse(roleSched, attr, true);
 		if (attr["r_id"] == rid) {
 			ret = deleteRoleSchedule(file);
-			if (ret == -1){
-				printf("Role schedule: %d could not be deleted", file);
+			if (ret == -1) {
+				printf("Role schedule: %d could not be deleted\n", file);
 				return -1;
 			}
 		}
@@ -628,7 +621,7 @@ int Database::deleteRole(int rid) {
 	// Delete user roles with same rid
 	ret = ls_openDir(&list, &db.myFs, (eint8 *) USER_ROLES);
 	if (ret == -1)
-		printf("Could not open directory.\n");
+		printf("Could not open directory\n");
 	while (ls_getNext(&list) == 0) {
 		file = atoi((const char*) list.currentEntry.FileName);
 		if (file == 0)
@@ -637,8 +630,8 @@ int Database::deleteRole(int rid) {
 		reader.parse(userRole, attr, true);
 		if (attr["r_id"] == rid) {
 			deleteUserRole(file);
-			if (ret == -1){
-				printf("User role: %d could not be deleted", file);
+			if (ret == -1) {
+				printf("User role: %d could not be deleted\n", file);
 				return -1;
 			}
 		}
@@ -660,7 +653,8 @@ int Database::enableUser(int uid, bool enable) {
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USERS, uid);
 	ret = rmfile(&db.myFs, (euint8*) filename);
 	if (ret != 0) {
-		printf("User enable status could not be changed, please try again later");
+		printf(
+				"User enable status could not be changed, please try again later\n");
 		return -1;
 	}
 	reader.parse(user, userAttr, true);
@@ -670,13 +664,14 @@ int Database::enableUser(int uid, bool enable) {
 	ret = file_fwrite(&tuple, 0, jsonValue.length(),
 			(euint8*) jsonValue.c_str());
 	if (ret == 0) {
-		printf("User could not be disabled");
+		printf(
+				"User enable status could not be changed, please try again later\n");
 		return -1;
 	}
 	tuple.DirEntry.Attribute = uid;
 	ret = file_fclose(&tuple);
 	if (ret != 0) {
-		printf("User enable status could not be changed");
+		printf("User enable status could not be changed\n");
 		return -1;
 	}
 
@@ -691,7 +686,7 @@ int Database::deleteRoleSchedule(int id) {
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLE_SCHEDULE, id);
 	ret = rmfile(&db.myFs, (euint8*) filename);
 	if (ret != 0) {
-		printf("Role schedule could not be deleted, please try again later");
+		printf("Role schedule could not be deleted, please try again later\n");
 		return -1;
 	}
 	return 1;
@@ -705,7 +700,7 @@ int Database::deleteUserRole(int id) {
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_ROLES, id);
 	ret = rmfile(&db.myFs, (euint8*) filename);
 	if (ret != 0) {
-		printf("User role could not be deleted, please try again later");
+		printf("User role could not be deleted, please try again later\n");
 		return -1;
 	}
 	return 1;
@@ -719,10 +714,160 @@ int Database::deleteUserPrint(int id) {
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_PRINTS, id);
 	ret = rmfile(&db.myFs, (euint8*) filename);
 	if (ret != 0) {
-		printf("User print could not be deleted, please try again later");
+		printf("User print could not be deleted, please try again later\n");
 		return -1;
 	}
 	return 1;
+}
+
+void Database::testPopulate() {
+	User u1;
+	u1.id = 1;
+	u1.name = "Mavis Chan";
+	u1.enabled = true;
+	u1.startDate = time(0);
+	u1.endDate = time(0);
+	insertUser(u1.id, u1);
+
+	User u2;
+	u2.id = 2;
+	u2.name = "Brent Erickson";
+	u2.enabled = true;
+	u2.startDate = time(0);
+	u2.endDate = time(0);
+	insertUser(u2.id, u2);
+
+	User u3;
+	u3.id = 3;
+	u3.name = "Sydney Bitner";
+	u3.enabled = true;
+	u3.startDate = time(0);
+	u3.endDate = time(0);
+	insertUser(u3.id, u3);
+
+	Role r1;
+	r1.id = 1;
+	r1.name = "Owner";
+	r1.admin = true;
+	r1.enabled = true;
+	r1.startDate = time(0);
+	r1.endDate = time(0);
+	insertRole(r1.id, r1);
+
+	Role r2;
+	r2.id = 2;
+	r2.name = "Guest";
+	r2.admin = false;
+	r2.enabled = true;
+	r2.startDate = time(0);
+	r2.endDate = time(0);
+	insertRole(r2.id, r2);
+
+	RoleSchedule rs1;
+	rs1.id = 1;
+	rs1.r_id = 1;
+	rs1.startDate = time(0);
+	rs1.endDate = time(0);
+	rs1.days = 50;
+	rs1.startTime = 9;
+	rs1.endTime = 23;
+	insertRoleSched(rs1.id, rs1);
+
+	RoleSchedule rs2;
+	rs2.id = 2;
+	rs2.r_id = 2;
+	rs2.startDate = time(0);
+	rs2.endDate = time(0);
+	rs2.days = 5;
+	rs2.startTime = 9;
+	rs2.endTime = 11;
+	insertRoleSched(rs2.id, rs2);
+
+	RoleSchedule rs3;
+	rs3.id = 3;
+	rs3.r_id = 2;
+	rs3.startDate = time(0);
+	rs3.endDate = time(0);
+	rs3.days = 1;
+	rs3.startTime = 13;
+	rs3.endTime = 14;
+	insertRoleSched(rs3.id, rs3);
+
+	UserRole ur1;
+	ur1.id = 1;
+	ur1.u_id = 1;
+	ur1.r_id = 1;
+	ur1.startDate = time(0);
+	ur1.endDate = time(0);
+	insertUserRole(ur1.id, ur1);
+
+	UserRole ur2;
+	ur2.id = 2;
+	ur2.u_id = 2;
+	ur2.r_id = 1;
+	ur2.startDate = time(0);
+	ur2.endDate = time(0);
+	insertUserRole(ur2.id, ur2);
+
+	UserRole ur3;
+	ur3.id = 3;
+	ur3.u_id = 3;
+	ur3.r_id = 2;
+	ur3.startDate = time(0);
+	ur3.endDate = time(0);
+	insertUserRole(ur3.id, ur3);
+
+	UserPrint up1;
+	up1.id = 1;
+	up1.u_id = 1;
+	up1.f_id = 1;
+	insertUserPrint(up1.id, up1);
+
+	UserPrint up2;
+	up2.id = 2;
+	up2.u_id = 2;
+	up2.f_id = 1;
+	insertUserPrint(up2.id, up2);
+
+	UserPrint up3;
+	up3.id = 3;
+	up3.u_id = 2;
+	up3.f_id = 1;
+	insertUserPrint(up3.id, up3);
+
+	UserPrint up4;
+	up4.id = 4;
+	up4.u_id = 3;
+	up4.f_id = 1;
+	insertUserPrint(up4.id, up4);
+
+	History h1;
+	h1.id = 1;
+	h1.u_id = 1;
+	h1.success = true;
+	h1.time = time(0);
+	insertHistory(h1.id, h1);
+
+	History h2;
+	h2.id = 2;
+	h2.u_id = 1;
+	h2.success = false;
+	h2.time = time(0);
+	insertHistory(h2.id, h2);
+
+	History h3;
+	h3.id = 3;
+	h3.u_id = 2;
+	h3.success = false;
+	h3.time = time(0);
+	insertHistory(h3.id, h3);
+
+	History h4;
+	h4.id = 4;
+	h4.u_id = 3;
+	h4.success = false;
+	h4.time = time(0);
+	insertHistory(h4.id, h4);
 }
 
 // Unmount the file system
