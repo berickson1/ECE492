@@ -170,7 +170,7 @@ void task2(void* pdata) {
 			printf("image could not be added\n");
 		}
 		fs_umount(&db.myFs);
-		OSSemPost(databaseSemaphore)
+		OSSemPost(databaseSemaphore);
 		//Database db(databaseSemaphore);
 		//db.testPopulate();
 	}
@@ -184,7 +184,7 @@ void task2(void* pdata) {
 const char * createHttpResponse(const char * URI) {
 
 	string uriString(URI), retString;
-	RestAPI api(&getCurrentFingerprintId);
+	RestAPI api(&getCurrentFingerprintId, databaseSemaphore);
 	if (uriString.compare(0, 6, "/users") == 0){
 		retString = api.getUsers();
 	} else if (uriString.compare(0, 6, "/roles") == 0){

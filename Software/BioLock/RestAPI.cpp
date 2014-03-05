@@ -7,8 +7,9 @@
 
 #include "RestAPI.h"
 using namespace std;
-RestAPI::RestAPI(int (*getFingerprintIdFunction)()):
-	getFingerprintId(getFingerprintIdFunction)
+RestAPI::RestAPI(int (*getFingerprintIdFunction)(), OS_EVENT * databaseSem):
+	getFingerprintId(getFingerprintIdFunction),
+	m_databaseSem(databaseSem)
 {
 	// TODO Auto-generated constructor stub
 
@@ -20,6 +21,8 @@ RestAPI::~RestAPI() {
 
 
 string RestAPI::getUsers(){
+	Database db(m_databaseSem);
+	string jsonUsers = db.listAll(USERS);
 	Json::Value rootNode;
 	rootNode["1"]["name"] = "Brent";
 	rootNode["2"]["name"] = "Mavis";

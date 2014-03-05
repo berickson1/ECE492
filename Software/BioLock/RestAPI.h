@@ -8,10 +8,11 @@
 #define RESTAPI_H_
 
 #include "json/writer.h"
+#include "Database.h"
 using namespace std;
 class RestAPI {
 public:
-	RestAPI(int (*getFingerprintIdFunction)());
+	RestAPI(int (*getFingerprintIdFunction)(), OS_EVENT * databaseSem);
 	virtual ~RestAPI();
 	string getUsers();
 	string getUser(int uid);
@@ -28,6 +29,7 @@ public:
 	string scanPrint();
 private:
 	int (*getFingerprintId)();
+	OS_EVENT * m_databaseSem;
 };
 
 #endif /* RESTAPI_H_ */
