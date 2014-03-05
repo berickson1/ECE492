@@ -33,7 +33,8 @@
 #include "RestAPI.h"
 #include "Database.h"
 #include "json/reader.h"
-
+#define NOSENSOR
+#define NOWEBSERVER
 extern "C" {
 #include "WebServer/web_server.h"
 }
@@ -124,17 +125,60 @@ void task1(void* pdata) {
 		}
 	}
 }
-
+extern "C" {
+#include "Database/EFSL/efs.h"
+#include "Database/EFSL/ls.h"
+}
 void task2(void* pdata) {
-	//while (1) {
+	char * dataBuff = (char*)malloc(8);
+	while (1) {
 	{
-		printf("Database will now start\n");
-		Database db(databaseSemaphore);
-		db.testPopulate();
+		INT8U err;
+		OSSemPend(databaseSemaphore, 0, &err);
+		EmbeddedFileSystem db;
+		memset(dataBuff, 8092, 0);
+		memcpy((void*)dataBuff, (void*)ONCHIP_MEMORY2_1_BASE,  8092);
+		printf("Saving Image\n");
+
+		File tuple;
+		int ret;
+		char * filename = "image.jpg";
+
+		// Initialises the database on the SD card
+		ret = efs_init(&db, SDCARD_NAME);
+		if (ret != 0 && (ret = efs_init(&db, SDCARD_NAME)) != 0) {
+			printf("Could not initialize file system\n");
+			return;
+		}
+
+		ret = file_fopen(&tuple, &db.myFs, filename, 'w');
+		// File already exists
+		while (ret == -2) {
+			printf("image already exists deleting \n");
+			rmfile(&db.myFs, (euint8*)filename);
+			ret = file_fopen(&tuple, &db.myFs, filename, 'w');
+		}
+
+		ret = file_fwrite(&tuple, 0, 8092,
+				(euint8*) dataBuff);
+		if (ret == 0) {
+			printf("image could not be added\n");
+		}
+		tuple.DirEntry.Attribute = 4;
+		ret = file_fclose(&tuple);
+		if (ret != 0) {
+			printf("image could not be added\n");
+		}
+		fs_umount(&db.myFs);
+		OSSemPost(databaseSemaphore)
+		//Database db(databaseSemaphore);
+		//db.testPopulate();
 	}
+	OSTimeDlyHMSM(0, 0, 1, 0);
+
 	printf("Finished populating test database\n");
 
-	//}
+	}
 }
 
 const char * createHttpResponse(const char * URI) {
