@@ -180,8 +180,9 @@ void task2(void* pdata) {
 	}
 }
 
-const char * createHttpResponse(const char * URI, int *len) {
+const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 
+	*isImage = false;
 	string uriString(URI), retString;
 	RestAPI api(&getCurrentFingerprintId, databaseSemaphore);
 	if (uriString.compare(0, 6, "/users") == 0){

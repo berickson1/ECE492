@@ -836,12 +836,11 @@ int http_send_file_chunk(http_conn* conn)
 }
 
 /*
- * http_send_file_header()
+ * http_send_header()
  *
- * Construct and send an HTTP header describing the now-opened file that is
- * about to be sent to the client.
+ * Construct and send an HTTP header describing JSON or bmp
  */
-int http_send_json(http_conn* conn, int jsonLen, int code)
+int http_send_header(http_conn* conn, int jsonLen, int code, bool isImage)
 {
   int     result = 0, ret_code = 0;
   char* tx_wr_pos = conn->tx_buffer;
@@ -873,7 +872,11 @@ int http_send_json(http_conn* conn, int jsonLen, int code)
 
   /* Handle the various content types */
   tx_wr_pos += sprintf(tx_wr_pos, HTTP_CONTENT_TYPE);
-  tx_wr_pos += sprintf(tx_wr_pos, HTTP_CONTENT_TYPE_JSON);
+  if (isImage){
+	  tx_wr_pos += sprintf(tx_wr_pos, HTTP_CONTENT_TYPE_PNG);
+  } else {
+	  tx_wr_pos += sprintf(tx_wr_pos, HTTP_CONTENT_TYPE_JSON);
+  }
 
   /* "Content-Length: <length bytes>\r\n" */
   tx_wr_pos += sprintf(tx_wr_pos, HTTP_CONTENT_LENGTH);
@@ -1083,9 +1086,10 @@ int http_handle_get(http_conn* conn){
 	//Check conn->url for known uris
 	if (strcmp(conn->uri, "/pic") == 0){
 		int len = 0;
-	      const char * retval = httpResponseFunction(conn->uri, &len);
+		bool isImage = false;
+	      const char * retval = httpResponseFunction(conn->uri, &len, &isImage);
 	      if (len > 0){
-	    	  http_send_json(conn, len, HTTP_OK);
+	    	  http_send_header(conn, len, HTTP_OK, isImage);
 	    	  //Send JSON reply
 	    	  send(conn->fd, (void*)retval, len, 0);
 	    	  free(retval);

@@ -16,6 +16,7 @@
 
 #include "alt_types.h"
 #include "includes.h"
+#include <stdbool.h>
 /*
  * Prototypes:
  *    die_with_error() - Kills current task and delivers error message to 
@@ -30,8 +31,8 @@
  */
 void die_with_error(char err_msg[]);
 void (*callbackFunction)();
-const char * (*httpResponseFunction)(const char * URI, int *len);
-int startWebServer (void (*callback)(), const char * (*httpResponse)(const char * URI, int *len));
+const char * (*httpResponseFunction)(const char * URI, int *len, bool *isImage);
+int startWebServer (void (*callback)(), const char * (*httpResponse)(const char * URI, int *len, bool *isImage));
 
 /*
  * Mailbox to control board features 
