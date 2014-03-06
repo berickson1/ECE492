@@ -162,11 +162,14 @@ architecture structure of BioLock is
 	-- signals to match provided IP core to specific SDRAM chip of our system
 	signal BA	: std_logic_vector (1 downto 0);
 	signal DQM	: std_logic_vector (1 downto 0);
+	signal enet_pll : std_logic;
 begin
 
 	GPIO_1(19) <= '1'; --trigger
 	GPIO_1(17) <= '1'; --reset
-	GPIO_1(16) <= CLOCK_50;
+	GPIO_1(16) <= enet_pll;
+	
+	ENET_CLK <= enet_pll;
 	
 	DRAM_BA_1 <= BA(1);
 	DRAM_BA_0 <= BA(0);
@@ -193,7 +196,7 @@ begin
             character_lcd_0_external_interface_RW   => LCD_RW, 						     --                                   .RW
 
             altpll_0_c0_clk                         => DRAM_CLK, 		                             --                        altpll_0_c0.clk
-				altpll_0_c2_clk                         => ENET_CLK, 		                             --                        altpll_0_c2.clk
+				altpll_0_c2_clk                         => enet_pll, 		                             --                        altpll_0_c2.clk
 
             serial_external_connection_rxd          => GPIO_0(8),				             --         serial_external_connection.rxd
             serial_external_connection_txd          => GPIO_0(9), 				             --                                   .txd

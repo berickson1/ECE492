@@ -16,7 +16,7 @@
    {
       datum _sortIndex
       {
-         value = "21";
+         value = "20";
          type = "int";
       }
    }
@@ -24,7 +24,7 @@
    {
       datum _sortIndex
       {
-         value = "14";
+         value = "13";
          type = "int";
       }
    }
@@ -40,23 +40,23 @@
    {
       datum _sortIndex
       {
-         value = "16";
+         value = "15";
          type = "int";
-      }
-   }
-   element camera.avalon_av_config_slave
-   {
-      datum baseAddress
-      {
-         value = "34640032";
-         type = "String";
       }
    }
    element audio_out.avalon_av_config_slave
    {
       datum baseAddress
       {
-         value = "34640048";
+         value = "25989296";
+         type = "String";
+      }
+   }
+   element camera.avalon_av_config_slave
+   {
+      datum baseAddress
+      {
+         value = "25989280";
          type = "String";
       }
    }
@@ -64,7 +64,7 @@
    {
       datum baseAddress
       {
-         value = "34640016";
+         value = "25989264";
          type = "String";
       }
    }
@@ -72,7 +72,7 @@
    {
       datum baseAddress
       {
-         value = "34640144";
+         value = "25989392";
          type = "String";
       }
    }
@@ -80,7 +80,7 @@
    {
       datum baseAddress
       {
-         value = "34640152";
+         value = "25989400";
          type = "String";
       }
    }
@@ -88,7 +88,7 @@
    {
       datum baseAddress
       {
-         value = "34078720";
+         value = "25165824";
          type = "String";
       }
    }
@@ -96,7 +96,7 @@
    {
       datum _sortIndex
       {
-         value = "20";
+         value = "19";
          type = "int";
       }
    }
@@ -104,7 +104,7 @@
    {
       datum _sortIndex
       {
-         value = "10";
+         value = "9";
          type = "int";
       }
    }
@@ -133,7 +133,7 @@
       }
       datum baseAddress
       {
-         value = "34640136";
+         value = "25989384";
          type = "String";
       }
    }
@@ -149,7 +149,7 @@
    {
       datum _sortIndex
       {
-         value = "17";
+         value = "16";
          type = "int";
       }
    }
@@ -157,7 +157,7 @@
    {
       datum _sortIndex
       {
-         value = "11";
+         value = "10";
          type = "int";
       }
    }
@@ -165,7 +165,7 @@
    {
       datum _sortIndex
       {
-         value = "12";
+         value = "11";
          type = "int";
       }
    }
@@ -173,7 +173,7 @@
    {
       datum baseAddress
       {
-         value = "34637824";
+         value = "25987072";
          type = "String";
       }
    }
@@ -181,7 +181,7 @@
    {
       datum _sortIndex
       {
-         value = "8";
+         value = "7";
          type = "int";
       }
    }
@@ -201,19 +201,35 @@
          type = "int";
       }
    }
-   element onchip_memory2_1
-   {
-      datum _sortIndex
-      {
-         value = "28";
-         type = "int";
-      }
-   }
    element altpll_0.pll_slave
    {
       datum baseAddress
       {
-         value = "34640064";
+         value = "25989312";
+         type = "String";
+      }
+   }
+   element serial.s1
+   {
+      datum baseAddress
+      {
+         value = "25989120";
+         type = "String";
+      }
+   }
+   element DM9000A_IF_0.s1
+   {
+      datum baseAddress
+      {
+         value = "25989376";
+         type = "String";
+      }
+   }
+   element timer_0.s1
+   {
+      datum baseAddress
+      {
+         value = "25989216";
          type = "String";
       }
    }
@@ -221,7 +237,7 @@
    {
       datum baseAddress
       {
-         value = "16777216";
+         value = "8388608";
          type = "String";
       }
    }
@@ -234,39 +250,7 @@
       }
       datum baseAddress
       {
-         value = "34640096";
-         type = "String";
-      }
-   }
-   element serial.s1
-   {
-      datum baseAddress
-      {
-         value = "34639872";
-         type = "String";
-      }
-   }
-   element DM9000A_IF_0.s1
-   {
-      datum baseAddress
-      {
-         value = "34640128";
-         type = "String";
-      }
-   }
-   element green_leds.s1
-   {
-      datum baseAddress
-      {
-         value = "34640080";
-         type = "String";
-      }
-   }
-   element onchip_memory2_1.s1
-   {
-      datum baseAddress
-      {
-         value = "8388608";
+         value = "25989344";
          type = "String";
       }
    }
@@ -274,15 +258,15 @@
    {
       datum baseAddress
       {
-         value = "34640112";
+         value = "25989360";
          type = "String";
       }
    }
-   element timer_0.s1
+   element green_leds.s1
    {
       datum baseAddress
       {
-         value = "34639968";
+         value = "25989328";
          type = "String";
       }
    }
@@ -290,7 +274,7 @@
    {
       datum baseAddress
       {
-         value = "34619392";
+         value = "25968640";
          type = "String";
       }
    }
@@ -302,19 +286,11 @@
          type = "String";
       }
    }
-   element onchip_memory2_1.s2
-   {
-      datum baseAddress
-      {
-         value = "8388608";
-         type = "String";
-      }
-   }
    element sdCard
    {
       datum _sortIndex
       {
-         value = "15";
+         value = "14";
          type = "int";
       }
    }
@@ -322,12 +298,12 @@
    {
       datum _sortIndex
       {
-         value = "7";
+         value = "6";
          type = "int";
       }
       datum megawizard_uipreferences
       {
-         value = "{output_language=VERILOG, output_directory=H:\\De2-115\\ECE492\\Quartus}";
+         value = "{output_language=VERILOG, output_directory=C:\\Users\\be\\Documents\\ECE492\\Quartus}";
          type = "String";
       }
    }
@@ -335,7 +311,7 @@
    {
       datum _sortIndex
       {
-         value = "9";
+         value = "8";
          type = "int";
       }
    }
@@ -343,7 +319,7 @@
    {
       datum baseAddress
       {
-         value = "34639936";
+         value = "25989184";
          type = "String";
       }
    }
@@ -351,7 +327,7 @@
    {
       datum _sortIndex
       {
-         value = "6";
+         value = "25";
          type = "int";
       }
    }
@@ -359,7 +335,7 @@
    {
       datum _sortIndex
       {
-         value = "13";
+         value = "12";
          type = "int";
       }
    }
@@ -378,12 +354,17 @@
          value = "4";
          type = "int";
       }
+      datum sopceditor_expanded
+      {
+         value = "0";
+         type = "boolean";
+      }
    }
    element tristate_conduit_bridge_0
    {
       datum _sortIndex
       {
-         value = "18";
+         value = "17";
          type = "int";
       }
    }
@@ -391,7 +372,7 @@
    {
       datum _sortIndex
       {
-         value = "19";
+         value = "18";
          type = "int";
       }
    }
@@ -399,7 +380,7 @@
    {
       datum baseAddress
       {
-         value = "29360128";
+         value = "20971520";
          type = "String";
       }
    }
@@ -407,7 +388,7 @@
    {
       datum _sortIndex
       {
-         value = "22";
+         value = "21";
          type = "int";
       }
    }
@@ -415,7 +396,7 @@
    {
       datum _sortIndex
       {
-         value = "23";
+         value = "22";
          type = "int";
       }
    }
@@ -423,15 +404,7 @@
    {
       datum _sortIndex
       {
-         value = "27";
-         type = "int";
-      }
-   }
-   element video_rgb_resampler_0
-   {
-      datum _sortIndex
-      {
-         value = "26";
+         value = "24";
          type = "int";
       }
    }
@@ -439,15 +412,7 @@
    {
       datum _sortIndex
       {
-         value = "24";
-         type = "int";
-      }
-   }
-   element video_scaler_1
-   {
-      datum _sortIndex
-      {
-         value = "25";
+         value = "23";
          type = "int";
       }
    }
@@ -466,7 +431,7 @@
  <parameter name="projectName" value="BioLock.qpf" />
  <parameter name="sopcBorderPoints" value="false" />
  <parameter name="systemHash" value="1" />
- <parameter name="timeStamp" value="1393992053876" />
+ <parameter name="timeStamp" value="1394074885817" />
  <parameter name="useTestBenchNamingPattern" value="false" />
  <instanceScript></instanceScript>
  <interface name="reset" internal="clk_0.clk_in_reset" type="reset" dir="end" />
@@ -629,8 +594,8 @@
   <parameter name="regfile_ramBlockType" value="Automatic" />
   <parameter name="mmu_ramBlockType" value="Automatic" />
   <parameter name="bht_ramBlockType" value="Automatic" />
-  <parameter name="instAddrWidth" value="26" />
-  <parameter name="dataAddrWidth" value="26" />
+  <parameter name="instAddrWidth" value="25" />
+  <parameter name="dataAddrWidth" value="25" />
   <parameter name="tightlyCoupledDataMaster0AddrWidth" value="1" />
   <parameter name="tightlyCoupledDataMaster1AddrWidth" value="1" />
   <parameter name="tightlyCoupledDataMaster2AddrWidth" value="1" />
@@ -639,8 +604,8 @@
   <parameter name="tightlyCoupledInstructionMaster1AddrWidth" value="1" />
   <parameter name="tightlyCoupledInstructionMaster2AddrWidth" value="1" />
   <parameter name="tightlyCoupledInstructionMaster3AddrWidth" value="1" />
-  <parameter name="instSlaveMapParam"><![CDATA[<address-map><slave name='sdram_0.s1' start='0x1000000' end='0x1800000' /><slave name='generic_tristate_controller_0.uas' start='0x1C00000' end='0x2000000' /><slave name='sram_0.avalon_sram_slave' start='0x2080000' end='0x2100000' /><slave name='onchip_memory2_0.s1' start='0x2104000' end='0x2108000' /><slave name='nios2_qsys_0.jtag_debug_module' start='0x2108800' end='0x2109000' /><slave name='video_dma_controller_0.avalon_dma_control_slave' start='0x2109090' end='0x21090A0' /></address-map>]]></parameter>
-  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='onchip_memory2_1.s2' start='0x800000' end='0x801F9C' /><slave name='sdram_0.s1' start='0x1000000' end='0x1800000' /><slave name='generic_tristate_controller_0.uas' start='0x1C00000' end='0x2000000' /><slave name='sram_0.avalon_sram_slave' start='0x2080000' end='0x2100000' /><slave name='onchip_memory2_0.s1' start='0x2104000' end='0x2108000' /><slave name='nios2_qsys_0.jtag_debug_module' start='0x2108800' end='0x2109000' /><slave name='serial.s1' start='0x2109000' end='0x2109040' /><slave name='sdCard.spi_control_port' start='0x2109040' end='0x2109060' /><slave name='timer_0.s1' start='0x2109060' end='0x2109080' /><slave name='video_dma_controller_0.avalon_dma_control_slave' start='0x2109090' end='0x21090A0' /><slave name='camera.avalon_av_config_slave' start='0x21090A0' end='0x21090B0' /><slave name='audio_out.avalon_av_config_slave' start='0x21090B0' end='0x21090C0' /><slave name='altpll_0.pll_slave' start='0x21090C0' end='0x21090D0' /><slave name='green_leds.s1' start='0x21090D0' end='0x21090E0' /><slave name='switches.s1' start='0x21090E0' end='0x21090F0' /><slave name='gpio.s1' start='0x21090F0' end='0x2109100' /><slave name='DM9000A_IF_0.s1' start='0x2109100' end='0x2109108' /><slave name='sysid_qsys_0.control_slave' start='0x2109108' end='0x2109110' /><slave name='jtag_uart_0.avalon_jtag_slave' start='0x2109110' end='0x2109118' /><slave name='character_lcd_0.avalon_lcd_slave' start='0x2109118' end='0x210911A' /></address-map>]]></parameter>
+  <parameter name="instSlaveMapParam"><![CDATA[<address-map><slave name='sdram_0.s1' start='0x800000' end='0x1000000' /><slave name='generic_tristate_controller_0.uas' start='0x1400000' end='0x1800000' /><slave name='onchip_memory2_0.s1' start='0x18C4000' end='0x18C8000' /><slave name='nios2_qsys_0.jtag_debug_module' start='0x18C8800' end='0x18C9000' /><slave name='video_dma_controller_0.avalon_dma_control_slave' start='0x18C9090' end='0x18C90A0' /></address-map>]]></parameter>
+  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='sdram_0.s1' start='0x800000' end='0x1000000' /><slave name='generic_tristate_controller_0.uas' start='0x1400000' end='0x1800000' /><slave name='sram_0.avalon_sram_slave' start='0x1800000' end='0x1880000' /><slave name='onchip_memory2_0.s1' start='0x18C4000' end='0x18C8000' /><slave name='nios2_qsys_0.jtag_debug_module' start='0x18C8800' end='0x18C9000' /><slave name='serial.s1' start='0x18C9000' end='0x18C9040' /><slave name='sdCard.spi_control_port' start='0x18C9040' end='0x18C9060' /><slave name='timer_0.s1' start='0x18C9060' end='0x18C9080' /><slave name='video_dma_controller_0.avalon_dma_control_slave' start='0x18C9090' end='0x18C90A0' /><slave name='camera.avalon_av_config_slave' start='0x18C90A0' end='0x18C90B0' /><slave name='audio_out.avalon_av_config_slave' start='0x18C90B0' end='0x18C90C0' /><slave name='altpll_0.pll_slave' start='0x18C90C0' end='0x18C90D0' /><slave name='green_leds.s1' start='0x18C90D0' end='0x18C90E0' /><slave name='switches.s1' start='0x18C90E0' end='0x18C90F0' /><slave name='gpio.s1' start='0x18C90F0' end='0x18C9100' /><slave name='DM9000A_IF_0.s1' start='0x18C9100' end='0x18C9108' /><slave name='sysid_qsys_0.control_slave' start='0x18C9108' end='0x18C9110' /><slave name='jtag_uart_0.avalon_jtag_slave' start='0x18C9110' end='0x18C9118' /><slave name='character_lcd_0.avalon_lcd_slave' start='0x18C9118' end='0x18C911A' /></address-map>]]></parameter>
   <parameter name="clockFrequency" value="50000000" />
   <parameter name="deviceFamilyName" value="Cyclone II" />
   <parameter name="internalIrqMaskSystemInfo" value="31" />
@@ -1182,37 +1147,12 @@
   <parameter name="addr_mode" value="Consecutive" />
   <parameter name="start_address" value="0" />
   <parameter name="back_start_address" value="0" />
-  <parameter name="width" value="80" />
-  <parameter name="height" value="60" />
+  <parameter name="width" value="320" />
+  <parameter name="height" value="240" />
   <parameter name="color_bits" value="8" />
-  <parameter name="color_planes" value="1" />
+  <parameter name="color_planes" value="3" />
   <parameter name="AUTO_CLOCK_RESET_CLOCK_RATE" value="50000000" />
   <parameter name="AUTO_DEVICE_FAMILY" value="Cyclone II" />
- </module>
- <module
-   kind="altera_avalon_onchip_memory2"
-   version="12.1"
-   enabled="1"
-   name="onchip_memory2_1">
-  <parameter name="allowInSystemMemoryContentEditor" value="false" />
-  <parameter name="autoInitializationFileName">$${FILENAME}_onchip_memory2_1</parameter>
-  <parameter name="blockType" value="AUTO" />
-  <parameter name="dataWidth" value="32" />
-  <parameter name="deviceFamily" value="Cyclone II" />
-  <parameter name="dualPort" value="true" />
-  <parameter name="initMemContent" value="true" />
-  <parameter name="initializationFileName" value="onchip_memory2_1" />
-  <parameter name="instanceID" value="NONE" />
-  <parameter name="memorySize" value="8092" />
-  <parameter name="readDuringWriteMode" value="OLD_DATA" />
-  <parameter name="simAllowMRAMContentsFile" value="false" />
-  <parameter name="simMemInitOnlyFilename" value="0" />
-  <parameter name="singleClockOperation" value="false" />
-  <parameter name="slave1Latency" value="1" />
-  <parameter name="slave2Latency" value="1" />
-  <parameter name="useNonDefaultInitFile" value="false" />
-  <parameter name="useShallowMemBlocks" value="false" />
-  <parameter name="writable" value="true" />
  </module>
  <module
    kind="altera_up_avalon_video_scaler"
@@ -1252,38 +1192,13 @@
   <parameter name="AUTO_CLOCK_RESET_CLOCK_RATE" value="50000000" />
   <parameter name="AUTO_DEVICE_FAMILY" value="Cyclone II" />
  </module>
- <module
-   kind="altera_up_avalon_video_rgb_resampler"
-   version="12.0"
-   enabled="1"
-   name="video_rgb_resampler_0">
-  <parameter name="input_type" value="24-bit RGB" />
-  <parameter name="output_type" value="8-bit Grayscale" />
-  <parameter name="alpha" value="1023" />
-  <parameter name="AUTO_CLOCK_RESET_CLOCK_RATE" value="50000000" />
-  <parameter name="AUTO_DEVICE_FAMILY" value="Cyclone II" />
- </module>
- <module
-   kind="altera_up_avalon_video_scaler"
-   version="12.0"
-   enabled="1"
-   name="video_scaler_1">
-  <parameter name="width_scaling" value="0.25" />
-  <parameter name="height_scaling" value="0.25" />
-  <parameter name="width_in" value="320" />
-  <parameter name="height_in" value="240" />
-  <parameter name="color_bits" value="8" />
-  <parameter name="color_planes" value="3" />
-  <parameter name="AUTO_CLOCK_RESET_CLOCK_RATE" value="50000000" />
-  <parameter name="AUTO_DEVICE_FAMILY" value="Cyclone II" />
- </module>
  <connection
    kind="avalon"
    version="12.1"
    start="nios2_qsys_0.instruction_master"
    end="nios2_qsys_0.jtag_debug_module">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x02108800" />
+  <parameter name="baseAddress" value="0x018c8800" />
  </connection>
  <connection
    kind="avalon"
@@ -1291,7 +1206,7 @@
    start="nios2_qsys_0.data_master"
    end="nios2_qsys_0.jtag_debug_module">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x02108800" />
+  <parameter name="baseAddress" value="0x018c8800" />
  </connection>
  <connection
    kind="reset"
@@ -1395,7 +1310,7 @@
    start="nios2_qsys_0.data_master"
    end="gpio.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x021090f0" />
+  <parameter name="baseAddress" value="0x018c90f0" />
  </connection>
  <connection
    kind="avalon"
@@ -1403,15 +1318,7 @@
    start="nios2_qsys_0.data_master"
    end="sdram_0.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x01000000" />
- </connection>
- <connection
-   kind="avalon"
-   version="12.1"
-   start="nios2_qsys_0.instruction_master"
-   end="sdram_0.s1">
-  <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x01000000" />
+  <parameter name="baseAddress" value="0x00800000" />
  </connection>
  <connection
    kind="avalon"
@@ -1419,7 +1326,7 @@
    start="nios2_qsys_0.data_master"
    end="switches.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x021090e0" />
+  <parameter name="baseAddress" value="0x018c90e0" />
  </connection>
  <connection
    kind="avalon"
@@ -1427,7 +1334,7 @@
    start="nios2_qsys_0.data_master"
    end="green_leds.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x021090d0" />
+  <parameter name="baseAddress" value="0x018c90d0" />
  </connection>
  <connection
    kind="avalon"
@@ -1435,7 +1342,7 @@
    start="nios2_qsys_0.data_master"
    end="character_lcd_0.avalon_lcd_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x02109118" />
+  <parameter name="baseAddress" value="0x018c9118" />
  </connection>
  <connection
    kind="avalon"
@@ -1443,7 +1350,7 @@
    start="nios2_qsys_0.data_master"
    end="jtag_uart_0.avalon_jtag_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x02109110" />
+  <parameter name="baseAddress" value="0x018c9110" />
  </connection>
  <connection
    kind="avalon"
@@ -1451,7 +1358,7 @@
    start="nios2_qsys_0.data_master"
    end="timer_0.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x02109060" />
+  <parameter name="baseAddress" value="0x018c9060" />
  </connection>
  <connection
    kind="avalon"
@@ -1459,7 +1366,7 @@
    start="nios2_qsys_0.data_master"
    end="sysid_qsys_0.control_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x02109108" />
+  <parameter name="baseAddress" value="0x018c9108" />
  </connection>
  <connection
    kind="avalon"
@@ -1467,7 +1374,7 @@
    start="nios2_qsys_0.instruction_master"
    end="onchip_memory2_0.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x02104000" />
+  <parameter name="baseAddress" value="0x018c4000" />
  </connection>
  <connection
    kind="avalon"
@@ -1475,7 +1382,7 @@
    start="nios2_qsys_0.data_master"
    end="onchip_memory2_0.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x02104000" />
+  <parameter name="baseAddress" value="0x018c4000" />
  </connection>
  <connection
    kind="avalon"
@@ -1483,15 +1390,7 @@
    start="nios2_qsys_0.data_master"
    end="sram_0.avalon_sram_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x02080000" />
- </connection>
- <connection
-   kind="avalon"
-   version="12.1"
-   start="nios2_qsys_0.instruction_master"
-   end="sram_0.avalon_sram_slave">
-  <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x02080000" />
+  <parameter name="baseAddress" value="0x01800000" />
  </connection>
  <connection
    kind="reset"
@@ -1564,7 +1463,7 @@
    start="nios2_qsys_0.data_master"
    end="altpll_0.pll_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x021090c0" />
+  <parameter name="baseAddress" value="0x018c90c0" />
  </connection>
  <connection
    kind="clock"
@@ -1587,7 +1486,7 @@
    start="nios2_qsys_0.data_master"
    end="DM9000A_IF_0.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x02109100" />
+  <parameter name="baseAddress" value="0x018c9100" />
  </connection>
  <connection
    kind="interrupt"
@@ -1642,7 +1541,7 @@
    start="nios2_qsys_0.data_master"
    end="generic_tristate_controller_0.uas">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x01c00000" />
+  <parameter name="baseAddress" value="0x01400000" />
  </connection>
  <connection
    kind="avalon"
@@ -1650,7 +1549,7 @@
    start="nios2_qsys_0.instruction_master"
    end="generic_tristate_controller_0.uas">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x01c00000" />
+  <parameter name="baseAddress" value="0x01400000" />
  </connection>
  <connection
    kind="clock"
@@ -1689,7 +1588,7 @@
    start="nios2_qsys_0.data_master"
    end="serial.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x02109000" />
+  <parameter name="baseAddress" value="0x018c9000" />
  </connection>
  <connection
    kind="interrupt"
@@ -1715,7 +1614,7 @@
    start="nios2_qsys_0.data_master"
    end="sdCard.spi_control_port">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x02109040" />
+  <parameter name="baseAddress" value="0x018c9040" />
  </connection>
  <connection
    kind="interrupt"
@@ -1735,7 +1634,7 @@
    start="nios2_qsys_0.data_master"
    end="audio_out.avalon_av_config_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x021090b0" />
+  <parameter name="baseAddress" value="0x018c90b0" />
  </connection>
  <connection
    kind="reset"
@@ -1768,7 +1667,7 @@
    start="nios2_qsys_0.data_master"
    end="camera.avalon_av_config_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x021090a0" />
+  <parameter name="baseAddress" value="0x018c90a0" />
  </connection>
  <connection
    kind="clock"
@@ -1826,7 +1725,7 @@
    start="nios2_qsys_0.data_master"
    end="video_dma_controller_0.avalon_dma_control_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x02109090" />
+  <parameter name="baseAddress" value="0x018c9090" />
  </connection>
  <connection
    kind="avalon"
@@ -1834,31 +1733,8 @@
    start="nios2_qsys_0.instruction_master"
    end="video_dma_controller_0.avalon_dma_control_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x02109090" />
+  <parameter name="baseAddress" value="0x018c9090" />
  </connection>
- <connection
-   kind="clock"
-   version="12.1"
-   start="altpll_0.c1"
-   end="onchip_memory2_1.clk1" />
- <connection
-   kind="avalon"
-   version="12.1"
-   start="video_dma_controller_0.avalon_dma_master"
-   end="onchip_memory2_1.s1">
-  <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00800000" />
- </connection>
- <connection
-   kind="reset"
-   version="12.1"
-   start="nios2_qsys_0.jtag_debug_module_reset"
-   end="onchip_memory2_1.reset1" />
- <connection
-   kind="reset"
-   version="12.1"
-   start="clk_0.clk_reset"
-   end="onchip_memory2_1.reset1" />
  <connection
    kind="reset"
    version="12.1"
@@ -1895,76 +1771,29 @@
    start="altpll_0.c1"
    end="video_clipper_0.clock_reset" />
  <connection
-   kind="clock"
-   version="12.1"
-   start="altpll_0.c1"
-   end="onchip_memory2_1.clk2" />
- <connection
-   kind="reset"
-   version="12.1"
-   start="clk_0.clk_reset"
-   end="onchip_memory2_1.reset2" />
- <connection
-   kind="reset"
-   version="12.1"
-   start="nios2_qsys_0.jtag_debug_module_reset"
-   end="onchip_memory2_1.reset2" />
- <connection
-   kind="avalon"
-   version="12.1"
-   start="nios2_qsys_0.data_master"
-   end="onchip_memory2_1.s2">
-  <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00800000" />
- </connection>
- <connection
-   kind="avalon_streaming"
-   version="12.1"
-   start="video_scaler_1.avalon_scaler_source"
-   end="video_rgb_resampler_0.avalon_rgb_sink" />
- <connection
-   kind="avalon_streaming"
-   version="12.1"
-   start="video_rgb_resampler_0.avalon_rgb_source"
-   end="video_dma_controller_0.avalon_dma_sink" />
- <connection
-   kind="avalon_streaming"
-   version="12.1"
-   start="video_scaler_0.avalon_scaler_source"
-   end="video_scaler_1.avalon_scaler_sink" />
- <connection
-   kind="reset"
-   version="12.1"
-   start="nios2_qsys_0.jtag_debug_module_reset"
-   end="video_scaler_1.clock_reset_reset" />
- <connection
-   kind="reset"
-   version="12.1"
-   start="nios2_qsys_0.jtag_debug_module_reset"
-   end="video_rgb_resampler_0.clock_reset_reset" />
- <connection
-   kind="clock"
-   version="12.1"
-   start="altpll_0.c1"
-   end="video_rgb_resampler_0.clock_reset" />
- <connection
-   kind="clock"
-   version="12.1"
-   start="altpll_0.c1"
-   end="video_scaler_1.clock_reset" />
- <connection
-   kind="reset"
-   version="12.1"
-   start="clk_0.clk_reset"
-   end="video_rgb_resampler_0.clock_reset_reset" />
- <connection
-   kind="reset"
-   version="12.1"
-   start="clk_0.clk_reset"
-   end="video_scaler_1.clock_reset_reset" />
- <connection
    kind="avalon_streaming"
    version="12.1"
    start="video_clipper_0.avalon_clipper_source"
    end="video_scaler_0.avalon_scaler_sink" />
+ <connection
+   kind="avalon"
+   version="12.1"
+   start="nios2_qsys_0.instruction_master"
+   end="sdram_0.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x00800000" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="12.1"
+   start="video_dma_controller_0.avalon_dma_master"
+   end="sram_0.avalon_sram_slave">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x01800000" />
+ </connection>
+ <connection
+   kind="avalon_streaming"
+   version="12.1"
+   start="video_scaler_0.avalon_scaler_source"
+   end="video_dma_controller_0.avalon_dma_sink" />
 </system>
