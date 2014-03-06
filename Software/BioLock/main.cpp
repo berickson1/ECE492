@@ -34,7 +34,6 @@
 #include "RestAPI.h"
 #include "Database.h"
 #include "json/reader.h"
-#define NOSENSOR
 extern "C" {
 #include "WebServer/web_server.h"
 }
