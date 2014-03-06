@@ -841,7 +841,7 @@ int http_send_file_chunk(http_conn* conn)
  * Construct and send an HTTP header describing the now-opened file that is
  * about to be sent to the client.
  */
-int http_send_json(http_conn* conn, const char* json, int code)
+int http_send_json(http_conn* conn, int jsonLen, int code)
 {
   int     result = 0, ret_code = 0;
   char* tx_wr_pos = conn->tx_buffer;
@@ -877,7 +877,7 @@ int http_send_json(http_conn* conn, const char* json, int code)
 
   /* "Content-Length: <length bytes>\r\n" */
   tx_wr_pos += sprintf(tx_wr_pos, HTTP_CONTENT_LENGTH);
-  tx_wr_pos += sprintf(tx_wr_pos, "%d\r\n", strlen(json));
+  tx_wr_pos += sprintf(tx_wr_pos, "%d\r\n", jsonLen);
 
   /*
    * 'close' will be set during header parsing if the client either specified
@@ -1081,12 +1081,14 @@ int http_find_file(http_conn* conn)
  */
 int http_handle_get(http_conn* conn){
 	//Check conn->url for known uris
-	if (strcmp(conn->uri, "/users") == 0){
-	      const char * retval = httpResponseFunction(conn->uri);
-	      if (strlen(retval) > 0){
-	    	  http_send_json(conn, retval, HTTP_OK);
+	if (strcmp(conn->uri, "/pic") == 0){
+		int len = 0;
+	      const char * retval = httpResponseFunction(conn->uri, &len);
+	      if (len > 0){
+	    	  http_send_json(conn, len, HTTP_OK);
 	    	  //Send JSON reply
-	    	  send(conn->fd, (void*)retval, strlen(retval), 0);
+	    	  send(conn->fd, (void*)retval, len, 0);
+	    	  free(retval);
 	    	  return 0;
 	      }
 	}

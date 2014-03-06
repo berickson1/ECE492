@@ -205,7 +205,7 @@ OS_STK    BCTaskStk[TASK_STACKSIZE];
  */
 OS_EVENT *board_control_mbox;
 
-int startWebServer (void (*callback)(), const char * (*httpResponse)(const char * URI))
+int startWebServer (void (*callback)(), const char * (*httpResponse)(const char * URI, int *len))
 {
 	callbackFunction = callback;
 	httpResponseFunction = httpResponse;

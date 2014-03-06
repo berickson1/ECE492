@@ -177,11 +177,10 @@ void task2(void* pdata) {
 	OSTimeDlyHMSM(0, 0, 1, 0);
 
 	printf("Finished populating test database\n");
-
 	}
 }
 
-const char * createHttpResponse(const char * URI) {
+const char * createHttpResponse(const char * URI, int *len) {
 
 	string uriString(URI), retString;
 	RestAPI api(&getCurrentFingerprintId, databaseSemaphore);
