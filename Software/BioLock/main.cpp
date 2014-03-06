@@ -28,13 +28,13 @@
  **************************************************************************/
 
 #include <stdio.h>
+#include <fcntl.h>
 #include "includes.h"
 #include "ZFMComm.h"
 #include "RestAPI.h"
 #include "Database.h"
 #include "json/reader.h"
 #define NOSENSOR
-#define NOWEBSERVER
 extern "C" {
 #include "WebServer/web_server.h"
 }
@@ -195,9 +195,37 @@ const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 		retString = api.getHistory();
 	} else if (uriString.compare(0, 7, "/prints") == 0){
 		retString = api.getPrints();
+	} else if (uriString.compare(0, 4, "/pic") == 0){
+		int memsize = 320*240*4 + 54;
+		char * dataBuff = (char*)malloc(memsize);
+		INT8U err;
+		memset(dataBuff, memsize, 0);
+		int offset = 0;
+		int headerData = 54+memsize;
+
+		memcpy((void*)(dataBuff + offset), (void*)&BMPHEADER1, BMPHEADER1LEN);
+		offset += BMPHEADER1LEN;
+		memcpy((void*)(dataBuff + offset), (void*)&headerData, sizeof(int));
+		offset += sizeof(int);
+		memcpy((void*)(dataBuff + offset), (void*)&BMPHEADER2, BMPHEADER2LEN);
+		offset += BMPHEADER2LEN;
+		headerData = 320;
+		memcpy((void*)(dataBuff + offset), (void*)&headerData, sizeof(int));
+		offset += sizeof(int);
+		headerData = 240;
+		memcpy((void*)(dataBuff + offset), (void*)&headerData, sizeof(int));
+		offset += sizeof(int);
+		memcpy((void*)(dataBuff + offset), (void*)&BMPHEADER3, BMPHEADER3LEN);
+		offset += BMPHEADER3LEN;
+		memcpy((void*)(dataBuff + offset), (void*)SRAM_0_BASE,  memsize - 54);
+		offset += memsize - 54;
+		*len = offset;
+		*isImage = true;
+		return dataBuff;
 	} else {
 		retString = Database::noRecord();
 	}
+	*len = retString.length();
 	const char * retval = retString.c_str();
 	return retval;
 }
