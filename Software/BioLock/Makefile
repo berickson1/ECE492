@@ -173,6 +173,7 @@ CXX_SRCS += json/json_reader.cpp
 CXX_SRCS += json/json_value.cpp
 CXX_SRCS += json/json_writer.cpp
 CXX_SRCS += Database.cpp
+CXX_SRCS += Camera/Camera.cpp
 ASM_SRCS :=
 
 
