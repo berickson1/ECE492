@@ -52,7 +52,7 @@ string Database::noRecord() {
 string Database::listAll(char *path) {
 	DirList list;
 	int ret, file;
-	char results[MAXBUF_LENGTH];
+	string results;
 
 	ret = ls_openDir(&list, &db.myFs, path);
 	if (ret == -1)
@@ -61,15 +61,13 @@ string Database::listAll(char *path) {
 		file = atoi((const char*) list.currentEntry.FileName);
 		if (file == 0)
 			return " ";
-		string attr = findEntry(path, file);
-		strcpy(results, attr.c_str());
+		results.append(findEntry(path, file));
 	}
 	while (ls_getNext(&list) == 0) {
 		file = atoi((const char*) list.currentEntry.FileName);
 		if (file == 0)
 			break;
-		string attr = findEntry(path, file);
-		strcat(results, attr.c_str());
+		results.append(findEntry(path, file));
 	}
 	return results;
 }
