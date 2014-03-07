@@ -22,13 +22,8 @@ RestAPI::~RestAPI() {
 
 string RestAPI::getUsers(){
 	Database db(m_databaseSem);
-	string jsonUsers = db.listAll(USERS);
-	Json::Value rootNode;
-	rootNode["1"]["name"] = "Brent";
-	rootNode["2"]["name"] = "Mavis";
-	rootNode["2"]["id"] = getFingerprintId();
-	rootNode["1"]["id"] = getFingerprintId();
-	return rootNode.toStyledString();
+	db.listAll(USERS);
+	return db.listAll(USERS);
 }
 string RestAPI::getUser(int uid){
 
