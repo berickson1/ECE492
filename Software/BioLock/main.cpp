@@ -35,6 +35,8 @@
 #include "Database.h"
 #include "json/reader.h"
 extern "C" {
+#include "altera_avalon_pio_regs.h"
+#include "altera_up_avalon_audio_and_video_config.h"
 #include "WebServer/web_server.h"
 }
 
@@ -129,14 +131,34 @@ extern "C" {
 #include "Database/EFSL/ls.h"
 }
 void task2(void* pdata) {
-	char * dataBuff = (char*)malloc(8);
+	int memsize = 320*240*4 + 54;
+	char * dataBuff = (char*)malloc(memsize);
 	while (1) {
+		OSTimeDlyHMSM(0, 0, 1, 0);}{
 	{
+
 		INT8U err;
 		OSSemPend(databaseSemaphore, 0, &err);
 		EmbeddedFileSystem db;
-		memset(dataBuff, 8092, 0);
-		memcpy((void*)dataBuff, (void*)ONCHIP_MEMORY2_1_BASE,  8092);
+		memset(dataBuff, memsize, 0);
+		int offset = 0;
+		int headerData = 54+memsize;
+
+		memcpy((void*)(dataBuff + offset), (void*)&BMPHEADER1, BMPHEADER1LEN);
+		offset += BMPHEADER1LEN;
+		memcpy((void*)(dataBuff + offset), (void*)&headerData, sizeof(int));
+		offset += sizeof(int);
+		memcpy((void*)(dataBuff + offset), (void*)&BMPHEADER2, BMPHEADER2LEN);
+		offset += BMPHEADER2LEN;
+		headerData = 320;
+		memcpy((void*)(dataBuff + offset), (void*)&headerData, sizeof(int));
+		offset += sizeof(int);
+		headerData = 240;
+		memcpy((void*)(dataBuff + offset), (void*)&headerData, sizeof(int));
+		offset += sizeof(int);
+		memcpy((void*)(dataBuff + offset), (void*)&BMPHEADER3, BMPHEADER3LEN);
+		offset += BMPHEADER3LEN;
+		memcpy((void*)(dataBuff + offset), (void*)SRAM_0_BASE,  memsize);
 		printf("Saving Image\n");
 
 		File tuple;
@@ -157,8 +179,7 @@ void task2(void* pdata) {
 			rmfile(&db.myFs, (euint8*)filename);
 			ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 		}
-
-		ret = file_fwrite(&tuple, 0, 8092,
+		ret = file_fwrite(&tuple, 0, memsize,
 				(euint8*) dataBuff);
 		if (ret == 0) {
 			printf("image could not be added\n");
@@ -195,6 +216,16 @@ const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 	} else if (uriString.compare(0, 7, "/prints") == 0){
 		retString = api.getPrints();
 	} else if (uriString.compare(0, 4, "/pic") == 0){
+		bool cameraCaptureActive = true;
+		//Stop capture on camera
+		IOWR_ALTERA_AVALON_PIO_DATA(CAMERA_TRIGGER_BASE, cameraCaptureActive);
+		OSTimeDlyHMSM(0, 0, 0, 500);
+		IOWR_ALTERA_AVALON_PIO_DATA(CAMERA_TRIGGER_BASE, !cameraCaptureActive);
+		OSTimeDlyHMSM(0, 0, 0, 500);
+		IOWR_ALTERA_AVALON_PIO_DATA(CAMERA_TRIGGER_BASE, cameraCaptureActive);
+		OSTimeDlyHMSM(0, 0, 0, 500);
+		IOWR_ALTERA_AVALON_PIO_DATA(CAMERA_TRIGGER_BASE, !cameraCaptureActive);
+		OSTimeDlyHMSM(0, 0, 0, 500);
 		int memsize = 320*240*4 + 54;
 		char * dataBuff = (char*)malloc(memsize);
 		INT8U err;
@@ -240,7 +271,12 @@ void startTasks() {
 /* The main function creates two task and starts multi-tasking */
 int main(void) {
 	INT8U err;
-
+	alt_up_av_config_dev* camConfig = alt_up_av_config_open_dev(CAMERA_NAME);
+	camConfig -> type = TRDB_D5M_CONFIG;
+	//Enable snapshot mode!
+	unsigned long int stuff = 0;
+	int retval = alt_up_av_config_read_D5M_cfg_register(camConfig, 0x01E, &stuff);
+	retval = alt_up_av_config_write_D5M_cfg_register(camConfig, 0x01E, 0x4106);
 	fingerprintSem = OSSemCreate(0);
 	if (fingerprintSem == NULL) {
 		printf("Error initializing sensor semaphore");

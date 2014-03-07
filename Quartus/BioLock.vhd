@@ -151,6 +151,8 @@ architecture structure of BioLock is
 				d5m_decoder_external_interface_FRAME_VALID                                       : in    std_logic                     := 'X';             -- FRAME_VALID
 				d5m_decoder_external_interface_PIXEL_DATA                                        : in    std_logic_vector(11 downto 0) := (others => 'X'); -- PIXEL_DATA
 				
+				camera_trigger_external_connection_export                                        : out   std_logic;                                         -- export
+				
 				tristate_conduit_bridge_0_out_generic_tristate_controller_0_tcm_read_n_out       : out   std_logic_vector(0 downto 0);                     -- generic_tristate_controller_0_tcm_read_n_out
             tristate_conduit_bridge_0_out_generic_tristate_controller_0_tcm_data_out         : inout std_logic_vector(7 downto 0)  := (others => 'X'); -- generic_tristate_controller_0_tcm_data_out
             tristate_conduit_bridge_0_out_generic_tristate_controller_0_tcm_chipselect_n_out : out   std_logic_vector(0 downto 0);                     -- generic_tristate_controller_0_tcm_chipselect_n_out
@@ -162,14 +164,10 @@ architecture structure of BioLock is
 	-- signals to match provided IP core to specific SDRAM chip of our system
 	signal BA	: std_logic_vector (1 downto 0);
 	signal DQM	: std_logic_vector (1 downto 0);
-	signal enet_pll : std_logic;
 begin
 
-	GPIO_1(19) <= '1'; --trigger
 	GPIO_1(17) <= '1'; --reset
-	GPIO_1(16) <= enet_pll;
-	
-	ENET_CLK <= enet_pll;
+	GPIO_1(16) <= CLOCK_50;
 	
 	DRAM_BA_1 <= BA(1);
 	DRAM_BA_0 <= BA(0);
@@ -196,7 +194,7 @@ begin
             character_lcd_0_external_interface_RW   => LCD_RW, 						     --                                   .RW
 
             altpll_0_c0_clk                         => DRAM_CLK, 		                             --                        altpll_0_c0.clk
-				altpll_0_c2_clk                         => enet_pll, 		                             --                        altpll_0_c2.clk
+				altpll_0_c2_clk                         => ENET_CLK, 		                             --                        altpll_0_c2.clk
 
             serial_external_connection_rxd          => GPIO_0(8),				             --         serial_external_connection.rxd
             serial_external_connection_txd          => GPIO_0(9), 				             --                                   .txd
@@ -245,7 +243,9 @@ begin
             d5m_decoder_external_interface_PIXEL_CLK                                         => GPIO_1(0),                                         --     d5m_decoder_external_interface.PIXEL_CLK
             d5m_decoder_external_interface_LINE_VALID                                        => GPIO_1(21),                                        --                                   .LINE_VALID
             d5m_decoder_external_interface_FRAME_VALID                                       => GPIO_1(22),                                       --                                   .FRAME_VALID
-            d5m_decoder_external_interface_PIXEL_DATA                                        => CCD_DATA
+            d5m_decoder_external_interface_PIXEL_DATA                                        => CCD_DATA,
+				camera_trigger_external_connection_export                                        => GPIO_1(19)                                         -- camera_trigger_external_connection.export
+        
         );
 
 end structure;
