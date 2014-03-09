@@ -1084,19 +1084,19 @@ int http_find_file(http_conn* conn)
  */
 int http_handle_get(http_conn* conn){
 	//Check conn->url for known uris
-	if (strcmp(conn->uri, "/pic") == 0){
-		int len = 0;
-		bool isImage = false;
-	      const char * retval = httpResponseFunction(conn->uri, &len, &isImage);
-	      if (len > 0){
-	    	  http_send_header(conn, len, HTTP_OK, isImage);
-	    	  //Send JSON reply
-	    	  send(conn->fd, (void*)retval, len, 0);
-	    	  free(retval);
-	    	  return 0;
-	      }
+	int len = 0;
+	bool isImage = false;
+	const char * retval = httpResponseFunction(conn->uri, &len, &isImage);
+	if (len > 0){
+		http_send_header(conn, len, HTTP_OK, isImage);
+		//Send JSON reply
+		send(conn->fd, (void*)retval, len, 0);
+		free(retval);
+		return 0;
+	} else {
+		free(retval);
+		return http_find_file(conn);
 	}
-	return http_find_file(conn);
 
 }
 
