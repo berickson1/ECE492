@@ -334,6 +334,7 @@ int Database::insertHistory(int id, History value) {
 	return 1;
 }
 
+// Searches for specific file at the declared folder
 string Database::findEntry(const char *path, int id) {
 	File tuple;
 	int ret;
@@ -476,6 +477,33 @@ string Database::findUserRole(int id) {
 	file_fclose(&tuple);
 
 	return userRole.c_str();
+}
+
+// Searches for users with specific role
+string Database::findRoleUser(int rid) {
+	Json::Reader reader;
+	Json::Value attr;
+	DirList list;
+	int ret, file;
+	string results = "";
+
+	// Searches through user roles
+	ret = ls_openDir(&list, &db.myFs, (eint8 *) USER_ROLES);
+	if (ret == -1){
+		printf("Could not open directory\n");
+		return noRecord();
+	}
+	while (ls_getNext(&list) == 0) {
+		file = atoi((const char*) list.currentEntry.FileName);
+		if (file == 0)
+			break;
+		string userRole = findEntry(USER_ROLES, file);
+		reader.parse(userRole, attr, true);
+		// User role with matching rid found
+		if (attr["rid"].asInt() == rid)
+			results.append(userRole);
+	}
+	return results;
 }
 
 // Searches for a role schedule by id

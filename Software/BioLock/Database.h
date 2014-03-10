@@ -46,6 +46,7 @@ public:
 	string findUser(int uid);
 	string findRoleSchedule(int id);
 	string findUserRole(int id);
+	string findRoleUser(int rid);
 	string findUserPrint(int id);
 	string findHistory(int id);
 
