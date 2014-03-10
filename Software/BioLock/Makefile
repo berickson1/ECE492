@@ -174,6 +174,7 @@ CXX_SRCS += json/json_value.cpp
 CXX_SRCS += json/json_writer.cpp
 CXX_SRCS += Database.cpp
 CXX_SRCS += Camera/Camera.cpp
+CXX_SRCS += Solenoid.cpp
 ASM_SRCS :=
 
 

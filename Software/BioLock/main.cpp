@@ -117,6 +117,7 @@ void task1(void* pdata) {
 								roleRoot)) {
 					//Todo: Finish checking if user has role
 					//Success, unlock door!
+
 					continue;
 				}
 			}
