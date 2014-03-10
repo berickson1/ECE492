@@ -92,7 +92,7 @@ architecture structure of BioLock is
 	         clk_clk                                 : in    std_logic                     := 'X';             -- clk
             reset_reset_n                           : in    std_logic                     := 'X';             -- reset_n
 
-            gpio_external_connection_export         : out   std_logic_vector(5 downto 0);                                        -- export
+            gpio_external_connection_export         : out   std_logic_vector(6 downto 0);                                        -- export
 
             switches_external_connection_export     : in    std_logic_vector(17 downto 0) := (others => 'X'); -- export
 
@@ -159,8 +159,7 @@ architecture structure of BioLock is
             tristate_conduit_bridge_0_out_generic_tristate_controller_0_tcm_write_n_out      : out   std_logic_vector(0 downto 0);                     -- generic_tristate_controller_0_tcm_write_n_out
             tristate_conduit_bridge_0_out_generic_tristate_controller_0_tcm_address_out      : out   std_logic_vector(21 downto 0);                     -- generic_tristate_controller_0_tcm_address_out
 				
-				solenoid_controller_g1_txd                                                       : out   std_logic;                                        -- txd
-            solenoid_controller_g1_rxd                                                       : in    std_logic                     := 'X'              -- rxd 
+				solenoid_controller_external_connection_export                                   : out   std_logic                                         -- export                   := 'X'              -- rxd 
 		 );
     end component nios_system;
 
@@ -183,7 +182,7 @@ begin
         port map (
             reset_reset_n                           => KEY(0),                           		     -- reset.reset_n
 
-            gpio_external_connection_export         => GPIO_0(5 downto 0),         				     -- gpio_external_connection.export
+            gpio_external_connection_export         => GPIO_0(6 downto 0),         				     -- gpio_external_connection.export
 
             switches_external_connection_export     => SW(17 downto 0),     				     -- switches_external_connection.export
 
@@ -249,8 +248,7 @@ begin
             d5m_decoder_external_interface_PIXEL_DATA                                        => CCD_DATA,
 				camera_trigger_external_connection_export                                        => GPIO_1(19),                                         -- camera_trigger_external_connection.export
 		
-				solenoid_controller_g1_txd                                                       => GPIO_0(6),                                                       --             solenoid_controller_g1.txd
-            solenoid_controller_g1_rxd                                                       => GPIO_0(7)
+				solenoid_controller_external_connection_export                                   => GPIO_0(7)   
         );
 
 end structure;
