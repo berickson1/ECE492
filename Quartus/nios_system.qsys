@@ -16,7 +16,7 @@
    {
       datum _sortIndex
       {
-         value = "20";
+         value = "19";
          type = "int";
       }
    }
@@ -24,7 +24,7 @@
    {
       datum _sortIndex
       {
-         value = "13";
+         value = "12";
          type = "int";
       }
    }
@@ -40,19 +40,19 @@
    {
       datum _sortIndex
       {
-         value = "15";
+         value = "14";
          type = "int";
       }
    }
-   element camera.avalon_av_config_slave
+   element audio_out.avalon_av_config_slave
    {
       datum baseAddress
       {
-         value = "25727152";
+         value = "25727184";
          type = "String";
       }
    }
-   element audio_out.avalon_av_config_slave
+   element camera.avalon_av_config_slave
    {
       datum baseAddress
       {
@@ -64,7 +64,7 @@
    {
       datum baseAddress
       {
-         value = "25727136";
+         value = "25727152";
          type = "String";
       }
    }
@@ -96,7 +96,7 @@
    {
       datum _sortIndex
       {
-         value = "19";
+         value = "18";
          type = "int";
       }
    }
@@ -104,7 +104,7 @@
    {
       datum _sortIndex
       {
-         value = "26";
+         value = "25";
          type = "int";
       }
    }
@@ -157,15 +157,7 @@
    {
       datum _sortIndex
       {
-         value = "16";
-         type = "int";
-      }
-   }
-   element gpio
-   {
-      datum _sortIndex
-      {
-         value = "10";
+         value = "15";
          type = "int";
       }
    }
@@ -173,7 +165,7 @@
    {
       datum _sortIndex
       {
-         value = "11";
+         value = "10";
          type = "int";
       }
    }
@@ -213,31 +205,31 @@
    {
       datum baseAddress
       {
-         value = "25727184";
-         type = "String";
-      }
-   }
-   element gpio.s1
-   {
-      datum baseAddress
-      {
-         value = "25727232";
-         type = "String";
-      }
-   }
-   element green_leds.s1
-   {
-      datum baseAddress
-      {
          value = "25727200";
          type = "String";
       }
    }
-   element camera_trigger.s1
+   element solenoid_controller.s1
    {
       datum baseAddress
       {
          value = "25727120";
+         type = "String";
+      }
+   }
+   element serial.s1
+   {
+      datum baseAddress
+      {
+         value = "25726976";
+         type = "String";
+      }
+   }
+   element onchip_memory2_0.s1
+   {
+      datum baseAddress
+      {
+         value = "25706496";
          type = "String";
       }
    }
@@ -257,11 +249,11 @@
          type = "String";
       }
    }
-   element onchip_memory2_0.s1
+   element camera_trigger.s1
    {
       datum baseAddress
       {
-         value = "25706496";
+         value = "25727136";
          type = "String";
       }
    }
@@ -273,14 +265,6 @@
          type = "String";
       }
    }
-   element serial.s1
-   {
-      datum baseAddress
-      {
-         value = "25726976";
-         type = "String";
-      }
-   }
    element switches.s1
    {
       datum _tags
@@ -288,6 +272,14 @@
          value = "";
          type = "String";
       }
+      datum baseAddress
+      {
+         value = "25727232";
+         type = "String";
+      }
+   }
+   element green_leds.s1
+   {
       datum baseAddress
       {
          value = "25727216";
@@ -306,7 +298,7 @@
    {
       datum _sortIndex
       {
-         value = "14";
+         value = "13";
          type = "int";
       }
    }
@@ -335,7 +327,7 @@
    {
       datum _sortIndex
       {
-         value = "27";
+         value = "26";
          type = "int";
       }
    }
@@ -351,7 +343,7 @@
    {
       datum _sortIndex
       {
-         value = "25";
+         value = "24";
          type = "int";
       }
    }
@@ -359,7 +351,7 @@
    {
       datum _sortIndex
       {
-         value = "12";
+         value = "11";
          type = "int";
       }
    }
@@ -388,7 +380,7 @@
    {
       datum _sortIndex
       {
-         value = "17";
+         value = "16";
          type = "int";
       }
    }
@@ -396,7 +388,7 @@
    {
       datum _sortIndex
       {
-         value = "18";
+         value = "17";
          type = "int";
       }
    }
@@ -412,7 +404,7 @@
    {
       datum _sortIndex
       {
-         value = "21";
+         value = "20";
          type = "int";
       }
    }
@@ -420,7 +412,7 @@
    {
       datum _sortIndex
       {
-         value = "22";
+         value = "21";
          type = "int";
       }
    }
@@ -428,7 +420,7 @@
    {
       datum _sortIndex
       {
-         value = "24";
+         value = "23";
          type = "int";
       }
    }
@@ -436,7 +428,7 @@
    {
       datum _sortIndex
       {
-         value = "23";
+         value = "22";
          type = "int";
       }
    }
@@ -455,15 +447,10 @@
  <parameter name="projectName" value="BioLock.qpf" />
  <parameter name="sopcBorderPoints" value="false" />
  <parameter name="systemHash" value="1" />
- <parameter name="timeStamp" value="1394482002247" />
+ <parameter name="timeStamp" value="1394487930065" />
  <parameter name="useTestBenchNamingPattern" value="false" />
  <instanceScript></instanceScript>
  <interface name="reset" internal="clk_0.clk_in_reset" type="reset" dir="end" />
- <interface
-   name="gpio_external_connection"
-   internal="gpio.external_connection"
-   type="conduit"
-   dir="end" />
  <interface
    name="switches_external_connection"
    internal="switches.external_connection"
@@ -638,8 +625,8 @@
   <parameter name="tightlyCoupledInstructionMaster1AddrWidth" value="1" />
   <parameter name="tightlyCoupledInstructionMaster2AddrWidth" value="1" />
   <parameter name="tightlyCoupledInstructionMaster3AddrWidth" value="1" />
-  <parameter name="instSlaveMapParam"><![CDATA[<address-map><slave name='sdram_0.s1' start='0x800000' end='0x1000000' /><slave name='generic_tristate_controller_0.uas' start='0x1400000' end='0x1800000' /><slave name='onchip_memory2_0.s1' start='0x1884000' end='0x1888000' /><slave name='nios2_qsys_0.jtag_debug_module' start='0x1888800' end='0x1889000' /><slave name='video_dma_controller_0.avalon_dma_control_slave' start='0x18890A0' end='0x18890B0' /></address-map>]]></parameter>
-  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='solenoid_controller.s1' start='0x0' end='0x10' /><slave name='sdram_0.s1' start='0x800000' end='0x1000000' /><slave name='generic_tristate_controller_0.uas' start='0x1400000' end='0x1800000' /><slave name='sram_0.avalon_sram_slave' start='0x1800000' end='0x1880000' /><slave name='onchip_memory2_0.s1' start='0x1884000' end='0x1888000' /><slave name='nios2_qsys_0.jtag_debug_module' start='0x1888800' end='0x1889000' /><slave name='serial.s1' start='0x1889000' end='0x1889040' /><slave name='sdCard.spi_control_port' start='0x1889040' end='0x1889060' /><slave name='timer_0.s1' start='0x1889060' end='0x1889080' /><slave name='camera_trigger.s1' start='0x1889090' end='0x18890A0' /><slave name='video_dma_controller_0.avalon_dma_control_slave' start='0x18890A0' end='0x18890B0' /><slave name='camera.avalon_av_config_slave' start='0x18890B0' end='0x18890C0' /><slave name='audio_out.avalon_av_config_slave' start='0x18890C0' end='0x18890D0' /><slave name='altpll_0.pll_slave' start='0x18890D0' end='0x18890E0' /><slave name='green_leds.s1' start='0x18890E0' end='0x18890F0' /><slave name='switches.s1' start='0x18890F0' end='0x1889100' /><slave name='gpio.s1' start='0x1889100' end='0x1889110' /><slave name='DM9000A_IF_0.s1' start='0x1889110' end='0x1889118' /><slave name='sysid_qsys_0.control_slave' start='0x1889118' end='0x1889120' /><slave name='jtag_uart_0.avalon_jtag_slave' start='0x1889120' end='0x1889128' /><slave name='character_lcd_0.avalon_lcd_slave' start='0x1889128' end='0x188912A' /></address-map>]]></parameter>
+  <parameter name="instSlaveMapParam"><![CDATA[<address-map><slave name='sdram_0.s1' start='0x800000' end='0x1000000' /><slave name='generic_tristate_controller_0.uas' start='0x1400000' end='0x1800000' /><slave name='onchip_memory2_0.s1' start='0x1884000' end='0x1888000' /><slave name='nios2_qsys_0.jtag_debug_module' start='0x1888800' end='0x1889000' /><slave name='video_dma_controller_0.avalon_dma_control_slave' start='0x18890B0' end='0x18890C0' /></address-map>]]></parameter>
+  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='sdram_0.s1' start='0x800000' end='0x1000000' /><slave name='generic_tristate_controller_0.uas' start='0x1400000' end='0x1800000' /><slave name='sram_0.avalon_sram_slave' start='0x1800000' end='0x1880000' /><slave name='onchip_memory2_0.s1' start='0x1884000' end='0x1888000' /><slave name='nios2_qsys_0.jtag_debug_module' start='0x1888800' end='0x1889000' /><slave name='serial.s1' start='0x1889000' end='0x1889040' /><slave name='sdCard.spi_control_port' start='0x1889040' end='0x1889060' /><slave name='timer_0.s1' start='0x1889060' end='0x1889080' /><slave name='solenoid_controller.s1' start='0x1889090' end='0x18890A0' /><slave name='camera_trigger.s1' start='0x18890A0' end='0x18890B0' /><slave name='video_dma_controller_0.avalon_dma_control_slave' start='0x18890B0' end='0x18890C0' /><slave name='camera.avalon_av_config_slave' start='0x18890C0' end='0x18890D0' /><slave name='audio_out.avalon_av_config_slave' start='0x18890D0' end='0x18890E0' /><slave name='altpll_0.pll_slave' start='0x18890E0' end='0x18890F0' /><slave name='green_leds.s1' start='0x18890F0' end='0x1889100' /><slave name='switches.s1' start='0x1889100' end='0x1889110' /><slave name='DM9000A_IF_0.s1' start='0x1889110' end='0x1889118' /><slave name='sysid_qsys_0.control_slave' start='0x1889118' end='0x1889120' /><slave name='jtag_uart_0.avalon_jtag_slave' start='0x1889120' end='0x1889128' /><slave name='character_lcd_0.avalon_lcd_slave' start='0x1889128' end='0x188912A' /></address-map>]]></parameter>
   <parameter name="clockFrequency" value="50000000" />
   <parameter name="deviceFamilyName" value="Cyclone II" />
   <parameter name="internalIrqMaskSystemInfo" value="31" />
@@ -783,20 +770,6 @@
   <parameter name="refreshPeriod" value="15.625" />
   <parameter name="registerDataIn" value="true" />
   <parameter name="rowWidth" value="12" />
- </module>
- <module kind="altera_avalon_pio" version="12.1" enabled="1" name="gpio">
-  <parameter name="bitClearingEdgeCapReg" value="false" />
-  <parameter name="bitModifyingOutReg" value="false" />
-  <parameter name="captureEdge" value="false" />
-  <parameter name="clockRate" value="50000000" />
-  <parameter name="direction" value="Output" />
-  <parameter name="edgeType" value="RISING" />
-  <parameter name="generateIRQ" value="false" />
-  <parameter name="irqType" value="LEVEL" />
-  <parameter name="resetValue" value="0" />
-  <parameter name="simDoTestBenchWiring" value="false" />
-  <parameter name="simDrivenValue" value="0" />
-  <parameter name="width" value="8" />
  </module>
  <module kind="altera_up_avalon_sram" version="12.0" enabled="1" name="sram_0">
   <parameter name="board" value="DE2" />
@@ -1368,20 +1341,6 @@
    version="12.1"
    start="nios2_qsys_0.jtag_debug_module_reset"
    end="sdram_0.reset" />
- <connection kind="reset" version="12.1" start="clk_0.clk_reset" end="gpio.reset" />
- <connection
-   kind="reset"
-   version="12.1"
-   start="nios2_qsys_0.jtag_debug_module_reset"
-   end="gpio.reset" />
- <connection
-   kind="avalon"
-   version="12.1"
-   start="nios2_qsys_0.data_master"
-   end="gpio.s1">
-  <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x01889100" />
- </connection>
  <connection
    kind="avalon"
    version="12.1"
@@ -1396,7 +1355,7 @@
    start="nios2_qsys_0.data_master"
    end="switches.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x018890f0" />
+  <parameter name="baseAddress" value="0x01889100" />
  </connection>
  <connection
    kind="avalon"
@@ -1404,7 +1363,7 @@
    start="nios2_qsys_0.data_master"
    end="green_leds.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x018890e0" />
+  <parameter name="baseAddress" value="0x018890f0" />
  </connection>
  <connection
    kind="avalon"
@@ -1526,14 +1485,13 @@
    version="12.1"
    start="altpll_0.c1"
    end="nios2_qsys_0.clk" />
- <connection kind="clock" version="12.1" start="altpll_0.c1" end="gpio.clk" />
  <connection
    kind="avalon"
    version="12.1"
    start="nios2_qsys_0.data_master"
    end="altpll_0.pll_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x018890d0" />
+  <parameter name="baseAddress" value="0x018890e0" />
  </connection>
  <connection
    kind="clock"
@@ -1704,7 +1662,7 @@
    start="nios2_qsys_0.data_master"
    end="audio_out.avalon_av_config_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x018890c0" />
+  <parameter name="baseAddress" value="0x018890d0" />
  </connection>
  <connection
    kind="reset"
@@ -1737,7 +1695,7 @@
    start="nios2_qsys_0.data_master"
    end="camera.avalon_av_config_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x018890b0" />
+  <parameter name="baseAddress" value="0x018890c0" />
  </connection>
  <connection
    kind="clock"
@@ -1795,7 +1753,7 @@
    start="nios2_qsys_0.data_master"
    end="video_dma_controller_0.avalon_dma_control_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x018890a0" />
+  <parameter name="baseAddress" value="0x018890b0" />
  </connection>
  <connection
    kind="avalon"
@@ -1803,7 +1761,7 @@
    start="nios2_qsys_0.instruction_master"
    end="video_dma_controller_0.avalon_dma_control_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x018890a0" />
+  <parameter name="baseAddress" value="0x018890b0" />
  </connection>
  <connection
    kind="reset"
@@ -1887,7 +1845,7 @@
    start="nios2_qsys_0.data_master"
    end="camera_trigger.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x01889090" />
+  <parameter name="baseAddress" value="0x018890a0" />
  </connection>
  <connection
    kind="reset"
@@ -1905,7 +1863,7 @@
    start="nios2_qsys_0.data_master"
    end="solenoid_controller.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="baseAddress" value="0x01889090" />
  </connection>
  <connection
    kind="clock"

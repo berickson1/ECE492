@@ -89,9 +89,7 @@ architecture structure of BioLock is
 	component nios_system is
 	port (
 	         clk_clk                                 : in    std_logic                     := 'X';             -- clk
-            reset_reset_n                           : in    std_logic                     := 'X';             -- reset_n
-
-            gpio_external_connection_export         : out   std_logic_vector(6 downto 0);                                        -- export
+            reset_reset_n                           : in    std_logic                     := 'X';             -- reset_n             -- export
 
             switches_external_connection_export     : in    std_logic_vector(17 downto 0) := (others => 'X'); -- export
 
@@ -180,8 +178,6 @@ begin
     u0 : component nios_system
         port map (
             reset_reset_n                           => KEY(0),                           		     -- reset.reset_n
-
-           -- gpio_external_connection_export         => GPIO_0(6 downto 0),         				     -- gpio_external_connection.export
 
             switches_external_connection_export     => SW(17 downto 0),     				     -- switches_external_connection.export
 
