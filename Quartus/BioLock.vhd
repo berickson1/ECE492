@@ -16,8 +16,7 @@ entity BioLock is
 
 
 		-- Off Chip
-		GPIO_0		: inout std_logic_vector(9 downto 0);
-		GPIO_1		: inout std_logic_vector(27 downto 0);
+		GPIO_1		: inout std_logic_vector(37 downto 0);
 		CCD_DATA		: in std_logic_vector(11 downto 0);
 
 		-- Switches
@@ -182,7 +181,7 @@ begin
         port map (
             reset_reset_n                           => KEY(0),                           		     -- reset.reset_n
 
-            gpio_external_connection_export         => GPIO_0(6 downto 0),         				     -- gpio_external_connection.export
+           -- gpio_external_connection_export         => GPIO_0(6 downto 0),         				     -- gpio_external_connection.export
 
             switches_external_connection_export     => SW(17 downto 0),     				     -- switches_external_connection.export
 
@@ -198,8 +197,8 @@ begin
             altpll_0_c0_clk                         => DRAM_CLK, 		                             --                        altpll_0_c0.clk
 				altpll_0_c2_clk                         => ENET_CLK, 		                             --                        altpll_0_c2.clk
 
-            serial_external_connection_rxd          => GPIO_0(8),				             --         serial_external_connection.rxd
-            serial_external_connection_txd          => GPIO_0(9), 				             --                                   .txd
+            serial_external_connection_rxd          => GPIO_1(27),				             --     GREEN    serial_external_connection.rxd
+            serial_external_connection_txd          => GPIO_1(29), 				             --     WHITE                              .txd
 
             sdram_0_wire_addr                       => DRAM_ADDR, 		 	                     --                       sdram_0_wire.addr
             sdram_0_wire_ba                         => BA,                         			     --                                   .ba
@@ -248,7 +247,7 @@ begin
             d5m_decoder_external_interface_PIXEL_DATA                                        => CCD_DATA,
 				camera_trigger_external_connection_export                                        => GPIO_1(19),                                         -- camera_trigger_external_connection.export
 		
-				solenoid_controller_external_connection_export                                   => GPIO_0(7)   
+				solenoid_controller_external_connection_export                                   => GPIO_1(31)   
         );
 
 end structure;
