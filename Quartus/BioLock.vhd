@@ -16,7 +16,7 @@ entity BioLock is
 
 
 		-- Off Chip
-		GPIO_1		: inout std_logic_vector(37 downto 0);
+		GPIO_1		: inout std_logic_vector(35 downto 0);
 		CCD_DATA		: in std_logic_vector(11 downto 0);
 
 		-- Switches
