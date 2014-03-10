@@ -242,7 +242,7 @@ int Database::insertUserRole(int id, UserRole value) {
 
 	ret = file_fwrite(&tuple, 0, jsonValue.length(),
 			(euint8*) jsonValue.c_str());
-	if (ret != 0) {
+	if (ret == 0) {
 		printf("User role could not be added\n");
 		return -1;
 	}
