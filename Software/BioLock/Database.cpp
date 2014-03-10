@@ -185,7 +185,7 @@ int Database::insertRoleSched(int id, RoleSchedule value) {
 	}
 
 	Json::Value nodeToInsert;
-	nodeToInsert["rid"] = value.r_id;
+	nodeToInsert["rid"] = value.rid;
 	nodeToInsert["startTime"] = value.startTime;
 	nodeToInsert["endTime"] = value.endTime;
 	nodeToInsert["days"] = value.days;
@@ -230,8 +230,8 @@ int Database::insertUserRole(int id, UserRole value) {
 
 	Json::Value nodeToInsert;
 	nodeToInsert["id"] = value.id;
-	nodeToInsert["uid"] = value.u_id;
-	nodeToInsert["rid"] = value.r_id;
+	nodeToInsert["uid"] = value.uid;
+	nodeToInsert["rid"] = value.rid;
 	ostringstream start, end;
 	start << static_cast<long int>(value.startDate);
 	end << static_cast<long int>(value.endDate);
@@ -272,8 +272,8 @@ int Database::insertUserPrint(int id, UserPrint value) {
 
 	Json::Value nodeToInsert;
 	nodeToInsert["id"] = value.id;
-	nodeToInsert["fid"] = value.f_id;
-	nodeToInsert["uid"] = value.u_id;
+	nodeToInsert["fid"] = value.fid;
+	nodeToInsert["uid"] = value.uid;
 
 	string jsonValue = nodeToInsert.toStyledString();
 
@@ -309,7 +309,7 @@ int Database::insertHistory(int id, History value) {
 
 	Json::Value nodeToInsert;
 	nodeToInsert["id"] = value.id;
-	nodeToInsert["uid"] = value.u_id;
+	nodeToInsert["uid"] = value.uid;
 	nodeToInsert["success"] = value.success;
 	ostringstream time;
 	time << static_cast<long int>(value.time);
@@ -607,7 +607,7 @@ int Database::deleteRole(int rid) {
 			break;
 		string roleSched = findEntry(ROLE_SCHEDULE, file);
 		reader.parse(roleSched, attr, true);
-		if (attr["r_id"] == rid) {
+		if (attr["rid"] == rid) {
 			ret = deleteRoleSchedule(file);
 			if (ret == -1) {
 				printf("Role schedule: %d could not be deleted\n", file);
@@ -626,7 +626,7 @@ int Database::deleteRole(int rid) {
 			break;
 		string userRole = findEntry(USER_ROLES, file);
 		reader.parse(userRole, attr, true);
-		if (attr["r_id"] == rid) {
+		if (attr["rid"] == rid) {
 			deleteUserRole(file);
 			if (ret == -1) {
 				printf("User role: %d could not be deleted\n", file);
@@ -763,7 +763,7 @@ void Database::testPopulate() {
 
 	RoleSchedule rs1;
 	rs1.id = 1;
-	rs1.r_id = 1;
+	rs1.rid = 1;
 	rs1.startDate = time(0);
 	rs1.endDate = time(0);
 	rs1.days = 50;
@@ -773,7 +773,7 @@ void Database::testPopulate() {
 
 	RoleSchedule rs2;
 	rs2.id = 2;
-	rs2.r_id = 2;
+	rs2.rid = 2;
 	rs2.startDate = time(0);
 	rs2.endDate = time(0);
 	rs2.days = 5;
@@ -783,7 +783,7 @@ void Database::testPopulate() {
 
 	RoleSchedule rs3;
 	rs3.id = 3;
-	rs3.r_id = 2;
+	rs3.rid = 2;
 	rs3.startDate = time(0);
 	rs3.endDate = time(0);
 	rs3.days = 1;
@@ -793,76 +793,76 @@ void Database::testPopulate() {
 
 	UserRole ur1;
 	ur1.id = 1;
-	ur1.u_id = 1;
-	ur1.r_id = 1;
+	ur1.uid = 1;
+	ur1.rid = 1;
 	ur1.startDate = time(0);
 	ur1.endDate = time(0);
 	insertUserRole(ur1.id, ur1);
 
 	UserRole ur2;
 	ur2.id = 2;
-	ur2.u_id = 2;
-	ur2.r_id = 1;
+	ur2.uid = 2;
+	ur2.rid = 1;
 	ur2.startDate = time(0);
 	ur2.endDate = time(0);
 	insertUserRole(ur2.id, ur2);
 
 	UserRole ur3;
 	ur3.id = 3;
-	ur3.u_id = 3;
-	ur3.r_id = 2;
+	ur3.uid = 3;
+	ur3.rid = 2;
 	ur3.startDate = time(0);
 	ur3.endDate = time(0);
 	insertUserRole(ur3.id, ur3);
 
 	UserPrint up1;
 	up1.id = 1;
-	up1.u_id = 1;
-	up1.f_id = 1;
+	up1.uid = 1;
+	up1.fid = 1;
 	insertUserPrint(up1.id, up1);
 
 	UserPrint up2;
 	up2.id = 2;
-	up2.u_id = 2;
-	up2.f_id = 1;
+	up2.uid = 2;
+	up2.fid = 1;
 	insertUserPrint(up2.id, up2);
 
 	UserPrint up3;
 	up3.id = 3;
-	up3.u_id = 2;
-	up3.f_id = 1;
+	up3.uid = 2;
+	up3.fid = 1;
 	insertUserPrint(up3.id, up3);
 
 	UserPrint up4;
 	up4.id = 4;
-	up4.u_id = 3;
-	up4.f_id = 1;
+	up4.uid = 3;
+	up4.fid = 1;
 	insertUserPrint(up4.id, up4);
 
 	History h1;
 	h1.id = 1;
-	h1.u_id = 1;
+	h1.uid = 1;
 	h1.success = true;
 	h1.time = time(0);
 	insertHistory(h1.id, h1);
 
 	History h2;
 	h2.id = 2;
-	h2.u_id = 1;
+	h2.uid = 1;
 	h2.success = false;
 	h2.time = time(0);
 	insertHistory(h2.id, h2);
 
 	History h3;
 	h3.id = 3;
-	h3.u_id = 2;
+	h3.uid = 2;
 	h3.success = false;
 	h3.time = time(0);
 	insertHistory(h3.id, h3);
 
 	History h4;
 	h4.id = 4;
-	h4.u_id = 3;
+	h4.uid = 3;
 	h4.success = false;
 	h4.time = time(0);
 	insertHistory(h4.id, h4);

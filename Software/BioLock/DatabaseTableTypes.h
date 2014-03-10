@@ -10,7 +10,7 @@
 using namespace std;
 
 typedef struct History{
-	int id, u_id;
+	int id, uid;
 	bool success;
 	time_t time;
 } History;
@@ -23,7 +23,7 @@ typedef struct User{
 } User;
 
 typedef struct UserPrint{
-	int id, u_id, f_id;
+	int id, uid, fid;
 } UserPrint;
 
 typedef struct Role{
@@ -34,12 +34,12 @@ typedef struct Role{
 } Role;
 
 typedef struct UserRole{
-	int id, u_id, r_id;
+	int id, uid, rid;
 	time_t startDate, endDate;
 } UserRole;
 
 typedef struct RoleSchedule{
-	int id, r_id, startTime, endTime, days;
+	int id, rid, startTime, endTime, days;
 	time_t startDate, endDate;
 } RoleSchedule;
 
