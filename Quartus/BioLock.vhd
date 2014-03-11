@@ -78,8 +78,19 @@ entity BioLock is
 		FL_OE_N 		:	out std_logic_vector (0 downto 0);
 		FL_DQ 		:	inout std_logic_vector (7 downto 0);
 		FL_RST_N 	:	out std_logic_vector (0 downto 0);
-		FL_WE_N 		:	out std_logic_vector (0 downto 0)
+		FL_WE_N 		:	out std_logic_vector (0 downto 0);
+		
+		-- Audio
+		AUD_ADCDAT: IN STD_LOGIC;
+		AUD_ADCLRCK: INOUT STD_LOGIC;
+		AUD_BCLK: INOUT STD_LOGIC;
+		AUD_DACDAT: OUT STD_LOGIC;
+		AUD_DACLRCK: INOUT STD_LOGIC;
+		AUD_XCK : OUT STD_LOGIC;
 	
+		-- I2C
+		I2C_SCLK : out std_logic;
+		I2C_SDAT : inout std_logic
 	);
 end BioLock;
 
@@ -156,7 +167,15 @@ architecture structure of BioLock is
             tristate_conduit_bridge_0_out_generic_tristate_controller_0_tcm_write_n_out      : out   std_logic_vector(0 downto 0);                     -- generic_tristate_controller_0_tcm_write_n_out
             tristate_conduit_bridge_0_out_generic_tristate_controller_0_tcm_address_out      : out   std_logic_vector(21 downto 0);                     -- generic_tristate_controller_0_tcm_address_out
 				
-				solenoid_controller_external_connection_export                                   : out   std_logic                                         -- export                   := 'X'              -- rxd 
+				solenoid_controller_external_connection_export                                   : out   std_logic;                                         -- export                   := 'X'              -- rxd 
+		 
+				audio_out_external_interface_SDAT                                                : inout std_logic                     := 'X';             -- SDAT
+            audio_out_external_interface_SCLK                                                : out   std_logic;                                        -- SCLK
+			
+				audio_external_interface_BCLK                                                    : in    std_logic                     := 'X';             -- BCLK
+            audio_external_interface_DACDAT                                                  : out   std_logic;                                        -- DACDAT
+            audio_external_interface_DACLRCK                                                 : in    std_logic                     := 'X'              -- DACLRCK
+
 		 );
     end component nios_system;
 
@@ -167,6 +186,7 @@ begin
 
 	GPIO_1(17) <= '1'; --reset
 	GPIO_1(16) <= CLOCK_50;
+	AUD_XCK <= CLOCK_50;
 	
 	DRAM_BA_1 <= BA(1);
 	DRAM_BA_0 <= BA(0);
@@ -243,8 +263,15 @@ begin
             d5m_decoder_external_interface_PIXEL_DATA                                        => CCD_DATA,
 				camera_trigger_external_connection_export                                        => GPIO_1(19),                                         -- camera_trigger_external_connection.export
 		
-				solenoid_controller_external_connection_export                                   => GPIO_1(31)   
-        );
+				solenoid_controller_external_connection_export                                   => GPIO_1(31),   
+        
+				audio_out_external_interface_SDAT        => I2C_SDAT,                                                --            audio_out_external_interface.SDAT
+            audio_out_external_interface_SCLK        => I2C_SCLK,                                                --                                        .SCLK
+
+				audio_external_interface_BCLK         => AUD_BCLK,                                                    --                audio_external_interface.BCLK
+            audio_external_interface_DACDAT       => AUD_DACDAT,                                                  --                                        .DACDAT
+            audio_external_interface_DACLRCK      => AUD_DACLRCK                                                  --                                        .DACLRCK
+		  );
 
 end structure;
 
