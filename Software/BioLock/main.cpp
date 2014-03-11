@@ -34,6 +34,7 @@
 #include "RestAPI.h"
 #include "Database.h"
 #include "json/reader.h"
+#include "Audio.h"
 extern "C" {
 #include "Camera/Camera.h"
 #include "WebServer/web_server.h"
@@ -43,6 +44,7 @@ extern "C" {
 #define   TASK_STACKSIZE       2048
 OS_STK task1_stk[TASK_STACKSIZE];
 OS_STK task2_stk[TASK_STACKSIZE];
+OS_STK task3_stk[TASK_STACKSIZE];
 
 OS_EVENT *fingerprintMailbox;
 OS_EVENT *fingerprintSem;
@@ -52,6 +54,7 @@ OS_EVENT *databaseSemaphore;
 
 #define TASK1_PRIORITY      6
 #define TASK2_PRIORITY      7
+#define TASK3_PRIORITY		11
 
 int getCurrentFingerprintId() {
 	INT8U err;
@@ -129,10 +132,11 @@ void task1(void* pdata) {
 extern "C" {
 #include "Database/EFSL/efs.h"
 #include "Database/EFSL/ls.h"
+#include "altera_up_avalon_audio.h"
 }
 void task2(void* pdata) {
-	int memsize = 320*240*4 + 54;
-	char * dataBuff = (char*)malloc(memsize);
+	int memsize = 320 * 240 * 4 + 54;
+	char * dataBuff = (char*) malloc(memsize);
 	while (1) {
 		{
 			//Database db(databaseSemaphore);
@@ -144,22 +148,45 @@ void task2(void* pdata) {
 	}
 }
 
+extern "C" {
+#include "altera_up_avalon_audio.h"
+}
+void task3(void* pdata) {
+	alt_up_audio_dev * audio_dev;
+
+	audio_dev = alt_up_audio_open_dev("/dev/audio");
+	if (audio_dev == NULL)
+		printf("Error: could not open audio device \n");
+	else
+		printf("Opened audio device \n");
+
+	unsigned int *SoundBuf;
+	// Currently makes one small beep noise per loop
+	Audio sound(databaseSemaphore, SoundBuf);
+	while (true) {
+		//write data to the L and R buffers; R buffer will receive a copy of L buffer data
+		alt_up_audio_write_fifo(audio_dev, SoundBuf, 128, ALT_UP_AUDIO_RIGHT);
+		alt_up_audio_write_fifo(audio_dev, SoundBuf, 128, ALT_UP_AUDIO_LEFT);
+		printf("done");
+	}
+}
+
 const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 
 	*isImage = false;
 	string uriString(URI), retString;
 	RestAPI api(&getCurrentFingerprintId, databaseSemaphore);
-	if (uriString.compare(0, 6, "/users") == 0){
+	if (uriString.compare(0, 6, "/users") == 0) {
 		retString = api.getUsers();
-	} else if (uriString.compare(0, 6, "/roles") == 0){
+	} else if (uriString.compare(0, 6, "/roles") == 0) {
 		retString = api.getRoles();
-	} else if (uriString.compare(0, 14, "/roleSchedules") == 0){
+	} else if (uriString.compare(0, 14, "/roleSchedules") == 0) {
 		retString = api.getRoleSchedule();
-	} else if (uriString.compare(0, 8, "/history") == 0){
+	} else if (uriString.compare(0, 8, "/history") == 0) {
 		retString = api.getHistory();
-	} else if (uriString.compare(0, 7, "/prints") == 0){
+	} else if (uriString.compare(0, 7, "/prints") == 0) {
 		retString = api.getPrints();
-	} else if (uriString.compare(0, 4, "/pic") == 0){
+	} else if (uriString.compare(0, 4, "/pic") == 0) {
 		*isImage = true;
 		return Camera::getBMP(len);
 	} else {
@@ -171,15 +198,19 @@ const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 }
 extern "C" {
 void startTasks() {
-	#ifndef NOSENSOR
-		OSTaskCreateExt(task1, NULL, &task1_stk[TASK_STACKSIZE - 1], TASK1_PRIORITY,
-				TASK1_PRIORITY, task1_stk, TASK_STACKSIZE, NULL, 0);
-	#endif
+#ifndef NOSENSOR
+	OSTaskCreateExt(task1, NULL, &task1_stk[TASK_STACKSIZE - 1], TASK1_PRIORITY,
+			TASK1_PRIORITY, task1_stk, TASK_STACKSIZE, NULL, 0);
+#endif
 	OSTaskCreateExt(task2, NULL, &task2_stk[TASK_STACKSIZE - 1], TASK2_PRIORITY,
 			TASK2_PRIORITY, task2_stk, TASK_STACKSIZE, NULL, 0);
+
+	OSTaskCreateExt(task3, NULL, &task3_stk[TASK_STACKSIZE - 1], TASK3_PRIORITY,
+			TASK3_PRIORITY, task3_stk, TASK_STACKSIZE, NULL, 0);
 }
 /* The main function creates two task and starts multi-tasking */
 int main(void) {
+
 	INT8U err;
 	fingerprintSem = OSSemCreate(0);
 	if (fingerprintSem == NULL) {
