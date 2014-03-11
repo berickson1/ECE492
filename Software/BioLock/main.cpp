@@ -129,11 +129,6 @@ void task1(void* pdata) {
 		}
 	}
 }
-extern "C" {
-#include "Database/EFSL/efs.h"
-#include "Database/EFSL/ls.h"
-#include "altera_up_avalon_audio.h"
-}
 void task2(void* pdata) {
 	int memsize = 320 * 240 * 4 + 54;
 	char * dataBuff = (char*) malloc(memsize);
@@ -147,27 +142,12 @@ void task2(void* pdata) {
 		printf("Finished populating test database\n");
 	}
 }
-
-extern "C" {
-#include "altera_up_avalon_audio.h"
-}
 void task3(void* pdata) {
-	alt_up_audio_dev * audio_dev;
-
-	audio_dev = alt_up_audio_open_dev("/dev/audio");
-	if (audio_dev == NULL)
-		printf("Error: could not open audio device \n");
-	else
-		printf("Opened audio device \n");
-
-	unsigned int *SoundBuf;
 	// Currently makes one small beep noise per loop
-	Audio sound(databaseSemaphore, SoundBuf);
+	Audio sound(databaseSemaphore);
 	while (true) {
-		//write data to the L and R buffers; R buffer will receive a copy of L buffer data
-		alt_up_audio_write_fifo(audio_dev, SoundBuf, 128, ALT_UP_AUDIO_RIGHT);
-		alt_up_audio_write_fifo(audio_dev, SoundBuf, 128, ALT_UP_AUDIO_LEFT);
-		printf("done");
+		sound.play();
+		OSTimeDlyHMSM(0, 0, 1, 0);
 	}
 }
 

@@ -16,6 +16,7 @@
 #include <sstream>
 
 extern "C" {
+#include "altera_up_avalon_audio.h"
 #include "Database/EFSL/efs.h"
 #include "Database/EFSL/ls.h"
 }
@@ -25,12 +26,14 @@ extern "C" {
 using namespace std;
 class Audio {
 public:
-	Audio(OS_EVENT * databaseSemaphore, unsigned int *soundBuf);
+	Audio(OS_EVENT * databaseSemaphore);
+	void play();
 	virtual ~Audio();
 
 private:
+	alt_up_audio_dev * m_audio_dev;
 	OS_EVENT *m_databaseSemaphore;
-	EmbeddedFileSystem db;
+	unsigned int *m_soundBuf;
 };
 
 #endif

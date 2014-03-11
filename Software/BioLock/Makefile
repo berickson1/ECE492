@@ -175,6 +175,7 @@ CXX_SRCS += json/json_writer.cpp
 CXX_SRCS += Database.cpp
 CXX_SRCS += Camera/Camera.cpp
 CXX_SRCS += Solenoid.cpp
+CXX_SRCS += Audio.cpp
 ASM_SRCS :=
 
 
