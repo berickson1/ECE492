@@ -1086,7 +1086,7 @@ int http_handle_get(http_conn* conn){
 	//Check conn->url for known uris
 	int len = 0;
 	bool isImage = false;
-	const char * retval = httpResponseFunction(conn->uri, &len, &isImage);
+	char * retval = httpResponseFunction(conn->uri, &len, &isImage);
 	if (len > 0){
 		http_send_header(conn, len, HTTP_OK, isImage);
 		//Send JSON reply
