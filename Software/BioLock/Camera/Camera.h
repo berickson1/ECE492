@@ -12,8 +12,10 @@
 #include <cstdlib>
 #include <cstdio>
 #include <string.h>
+extern "C"{
 #include "altera_avalon_pio_regs.h"
 #include "altera_up_avalon_audio_and_video_config.h"
+}
 class Camera {
 public:
 
