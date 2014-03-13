@@ -61,5 +61,12 @@ bool Camera::enableSnapshotMode(){
 	//Enable snapshot mode!
 	return alt_up_av_config_write_D5M_cfg_register(camConfig, SNAPSHOT_MODE_REG, SNAPSHOT_MODE_VAL) == 0;
 }
+bool Camera::mirrorHorizontal(){
+	alt_up_av_config_dev* camConfig = alt_up_av_config_open_dev(CAMERA_NAME);
+	//Override config type
+	camConfig -> type = TRDB_D5M_CONFIG;
+	//Enable snapshot mode!
+	return alt_up_av_config_write_D5M_cfg_register(camConfig, HORIZONTAL_REG, HORIZONTAL_VAL) == 0;
+}
 
 

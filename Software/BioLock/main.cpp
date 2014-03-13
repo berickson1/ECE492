@@ -210,6 +210,7 @@ int main(void) {
 	}
 
 	Camera::enableSnapshotMode();
+	Camera::mirrorHorizontal();
 
 #ifndef NOWEBSERVER
 	startWebServer(&startTasks, &createHttpResponse);
