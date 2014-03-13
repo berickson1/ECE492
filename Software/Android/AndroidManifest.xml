@@ -7,6 +7,7 @@
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="18" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -32,7 +33,7 @@
         </activity>
         <activity
             android:name="ca.ualberta.ece492.g9.biolock.NewLock"
-            android:label="@+id/newLockTitle" >
+            android:label="@+id/newLock" >
         </activity>
         <activity
             android:name="ca.ualberta.ece492.g9.biolock.Manage"
@@ -44,15 +45,19 @@
         </activity>
         <activity
             android:name="ca.ualberta.ece492.g9.biolock.NewUser"
-            android:label="@+id/manageUsers" >
+            android:label="@+id/newUsers" >
+        </activity>
+        <activity
+            android:name="ca.ualberta.ece492.g9.biolock.NewRole"
+            android:label="@+id/newRoles" >
         </activity>
         <activity
             android:name="ca.ualberta.ece492.g9.biolock.Roles"
-            android:label="@+id/manageUsers" >
+            android:label="@+id/manageRoles" >
         </activity>
         <activity
             android:name="ca.ualberta.ece492.g9.biolock.Log"
-            android:label="@+id/manageUsers" >
+            android:label="@+id/manageLog" >
         </activity>
     </application>
 

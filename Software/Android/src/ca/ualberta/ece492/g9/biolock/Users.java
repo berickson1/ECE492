@@ -1,7 +1,9 @@
 package ca.ualberta.ece492.g9.biolock;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -13,5 +15,11 @@ public class Users extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_users);
+	}
+	
+	// User selected to add new user
+	public void addNewUser(View v) {
+		Intent newUser = new Intent(Users.this, NewUser.class);
+		startActivity(newUser);
 	}
 }

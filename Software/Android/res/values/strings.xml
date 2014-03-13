@@ -27,5 +27,10 @@
     <string name="enroll_print"><u>Enroll New Print</u></string>
     <string name="delete"><u>Delete</u></string>
     <string name="update"><u>Update</u></string>
+    <string name="new_role"><u>Add New Role</u></string>
+    <string name="new_user"><u>Add New User</u></string>
+    <string name="display_roleInfo">Role Info</string>
+    <string name="sampleRole">Role Name</string>
+    <string name="roleName">Role</string>
 
 </resources>
