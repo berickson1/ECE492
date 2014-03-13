@@ -364,7 +364,8 @@ int ZFMComm::readPacket(char* bufferHead, int bufferSize){
  * @return number of bytes read from the serial buffer
  */
 int ZFMComm::getBytes(char* bufferHead, int bytesToRead, int bufferSize){
-	int bytesRead;
+	int bytesRead, totalBytesRead, failCount = 0;
+	char * buffer = bufferHead;
 	if(bytesToRead > bufferSize){
 		return -1;
 	}
@@ -372,11 +373,23 @@ int ZFMComm::getBytes(char* bufferHead, int bytesToRead, int bufferSize){
 		printf("Invalid Sensor FD");
 		return -1;
 	}
-	bytesRead = read(fd, bufferHead, bytesToRead);
-	if (bytesRead != bytesToRead){
-		return -1;
+	bytesRead = totalBytesRead = read(fd, buffer, bytesToRead);
+	while (bytesRead != bytesToRead){
+		if (bytesRead == -1){
+			if (failCount >= 4){
+				return -1;
+			}
+			bytesRead = 0;
+			failCount++;
+		}
+		bytesToRead -= bytesRead;
+		buffer += bytesRead;
+		OSTimeDlyHMSM(0,0,0,10);
+		//Handle failure case where we do not read all the data
+		bytesRead = read(fd, buffer, bytesToRead);
+		totalBytesRead += bytesRead;
 	}
-	return bytesRead;
+	return totalBytesRead;
 }
 /**
  * Checks if an ACK packet is a success packet
