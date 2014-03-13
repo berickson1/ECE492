@@ -130,8 +130,6 @@ void task1(void* pdata) {
 	}
 }
 void task2(void* pdata) {
-	int memsize = 320 * 240 * 4 + 54;
-	char * dataBuff = (char*) malloc(memsize);
 	while (1) {
 		{
 			//Database db(databaseSemaphore);
