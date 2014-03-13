@@ -151,7 +151,7 @@ void task3(void* pdata) {
 	}
 }
 
-const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
+char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 
 	*isImage = false;
 	string uriString(URI), retString;
@@ -174,7 +174,7 @@ const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 	}
 	*len = retString.length();
 	const char * retval = retString.c_str();
-	return retval;
+	return (char *) retval;
 }
 extern "C" {
 void startTasks() {

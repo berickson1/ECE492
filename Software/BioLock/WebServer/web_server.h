@@ -31,8 +31,8 @@
  */
 void die_with_error(char err_msg[]);
 void (*callbackFunction)();
-const char * (*httpResponseFunction)(const char * URI, int *len, bool *isImage);
-int startWebServer (void (*callback)(), const char * (*httpResponse)(const char * URI, int *len, bool *isImage));
+char * (*httpResponseFunction)(const char * URI, int *len, bool *isImage);
+int startWebServer (void (*callback)(), char * (*httpResponse)(const char * URI, int *len, bool *isImage));
 
 /*
  * Mailbox to control board features 
