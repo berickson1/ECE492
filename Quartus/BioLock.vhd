@@ -13,6 +13,7 @@ entity BioLock is
 		-- Reset and Clock
 		KEY		: in std_logic_vector (0 downto 0);
 		CLOCK_50	: in std_logic;
+		CLOCK_27 : in std_logic;
 
 
 		-- Off Chip
@@ -100,7 +101,8 @@ architecture structure of BioLock is
 	component nios_system is
 	port (
 	         clk_clk                                 : in    std_logic                     := 'X';             -- clk
-            reset_reset_n                           : in    std_logic                     := 'X';             -- reset_n             -- export
+            clk_0_clk                               : in    std_logic                     := 'X';             -- clk
+				reset_reset_n                           : in    std_logic                     := 'X';             -- reset_n             -- export
 
             switches_external_connection_export     : in    std_logic_vector(17 downto 0) := (others => 'X'); -- export
 
@@ -115,6 +117,7 @@ architecture structure of BioLock is
 
             altpll_0_c0_clk                         : out   std_logic;                                        -- clk
 				altpll_0_c2_clk                         : out   std_logic;                                        -- clk
+				altpll_1_c0_clk                         : out   std_logic;                                         -- clk
 
             serial_external_connection_rxd          : in    std_logic                     := 'X';             -- rxd
             serial_external_connection_txd          : out   std_logic;                                        -- txd
@@ -186,7 +189,6 @@ begin
 
 	GPIO_1(17) <= '1'; --reset
 	GPIO_1(16) <= CLOCK_50;
-	AUD_XCK <= CLOCK_50;
 	
 	DRAM_BA_1 <= BA(1);
 	DRAM_BA_0 <= BA(0);
@@ -212,6 +214,7 @@ begin
 
             altpll_0_c0_clk                         => DRAM_CLK, 		                             --                        altpll_0_c0.clk
 				altpll_0_c2_clk                         => ENET_CLK, 		                             --                        altpll_0_c2.clk
+				altpll_1_c0_clk                         => AUD_XCK,                                                                   --                             altpll_1_c0.clk
 
             serial_external_connection_rxd          => GPIO_1(26),				             --     GREEN    serial_external_connection.rxd
             serial_external_connection_txd          => GPIO_1(28), 				             --     WHITE                              .txd
@@ -227,6 +230,7 @@ begin
             sdram_0_wire_we_n                       => DRAM_WE_N, 			                     --                                   .we_n
 
             clk_clk                                 => CLOCK_50,                                	     --                                clk.clk
+				clk_0_clk                               => CLOCK_27,                                                                        --                                   clk_0.clk
 
             sram_0_external_interface_DQ            => SRAM_DQ,					             --          sram_0_external_interface.DQ
             sram_0_external_interface_ADDR          => SRAM_ADDR,				             --                                   .ADDR
