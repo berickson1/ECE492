@@ -358,127 +358,32 @@ string Database::findEntry(const char *path, int id) {
 		return "";
 	}
 
-	string attr = string((char *) fileBuffer);
+	string attr = "";
+	attr.append((char*)fileBuffer, sizeRead);
 	free(fileBuffer);
 	file_fclose(&tuple);
 
-	return attr.c_str();
+	return attr;
 }
 
 // Searches for a role by rid
 string Database::findRole(int rid) {
-	File tuple;
-	int ret;
-	unsigned int sizeRead;
-	char filename[MAXBUF_LENGTH];
-
-	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLES, rid);
-	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
-	if (ret == -1) {
-		printf("Role could not be found\n");
-		return noRecord();
-	}
-
-	euint8 *fileBuffer = (euint8 *) malloc(tuple.FileSize * sizeof(euint8));
-
-	sizeRead = file_read(&tuple, tuple.FileSize, fileBuffer);
-	if (sizeRead == 0) {
-		printf("Role attributes could not read\n");
-		return "";
-	}
-
-	string roleAttr = string((char *) fileBuffer);
-	free(fileBuffer);
-	file_fclose(&tuple);
-
-	return roleAttr.c_str();
+	return findEntry(ROLES, rid);
 }
 
 // Searches for a user by uid
 string Database::findUser(int uid) {
-	File tuple;
-	int ret;
-	unsigned int sizeRead;
-	char filename[MAXBUF_LENGTH];
-
-	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USERS, uid);
-	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
-	if (ret == -1) {
-		printf("User could not be found\n");
-		return noRecord();
-	}
-
-	euint8 *fileBuffer = (euint8 *) malloc(tuple.FileSize * sizeof(euint8));
-
-	sizeRead = file_read(&tuple, tuple.FileSize, fileBuffer);
-	if (sizeRead == 0) {
-		printf("User attributes could not read\n");
-		return "";
-	}
-
-	string userAttr = string((char *) fileBuffer);
-	free(fileBuffer);
-	file_fclose(&tuple);
-
-	return userAttr.c_str();
+	return findEntry(USERS, uid);
 }
 
 // Searches for a role schedule by id
 string Database::findRoleSchedule(int id) {
-	File tuple;
-	int ret;
-	unsigned int sizeRead;
-	char filename[MAXBUF_LENGTH];
-
-	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLE_SCHEDULE, id);
-	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
-	if (ret == -1) {
-		printf("Role schedule could not be found\n");
-		return noRecord();
-	}
-
-	euint8 *fileBuffer = (euint8 *) malloc(tuple.FileSize * sizeof(euint8));
-
-	sizeRead = file_read(&tuple, tuple.FileSize, fileBuffer);
-	if (sizeRead == 0) {
-		printf("Role schedule attributes could not read\n");
-		return "";
-	}
-
-	string roleSched = string((char *) fileBuffer);
-	free(fileBuffer);
-	file_fclose(&tuple);
-
-	return roleSched.c_str();
+	return findEntry(ROLE_SCHEDULE, id);
 }
 
 // Searches for a role schedule by id
 string Database::findUserRole(int id) {
-	File tuple;
-	int ret;
-	unsigned int sizeRead;
-	char filename[MAXBUF_LENGTH];
-
-	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_ROLES, id);
-	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
-	if (ret == -1) {
-		printf("User role could not be found\n");
-		return noRecord();
-	}
-
-	euint8 *fileBuffer = (euint8 *) malloc(tuple.FileSize * sizeof(euint8));
-
-	sizeRead = file_read(&tuple, tuple.FileSize, fileBuffer);
-	if (sizeRead == 0) {
-		printf("User role attributes could not read\n");
-		return "";
-	}
-
-	string userRole = string((char *) fileBuffer);
-	free(fileBuffer);
-	file_fclose(&tuple);
-
-	return userRole.c_str();
+	return findEntry(USER_ROLES, id);
 }
 
 // Searches for users with specific role
@@ -510,60 +415,12 @@ string Database::findRoleUser(int rid) {
 
 // Searches for a role schedule by id
 string Database::findUserPrint(int id) {
-	File tuple;
-	int ret;
-	unsigned int sizeRead;
-	char filename[MAXBUF_LENGTH];
-
-	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_PRINTS, id);
-	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
-	if (ret == -1) {
-		printf("User prints could not be found\n");
-		return noRecord();
-	}
-
-	euint8 *fileBuffer = (euint8 *) malloc(tuple.FileSize * sizeof(euint8));
-
-	sizeRead = file_read(&tuple, tuple.FileSize, fileBuffer);
-	if (sizeRead == 0) {
-		printf("User prints attributes could not read\n");
-		return "";
-	}
-
-	string userPrint = string((char *) fileBuffer);
-	free(fileBuffer);
-	file_fclose(&tuple);
-
-	return userPrint.c_str();
+	return findEntry(USER_PRINTS, id);
 }
 
 // Searches for a history by id
 string Database::findHistory(int id) {
-	File tuple;
-	int ret;
-	unsigned int sizeRead;
-	char filename[MAXBUF_LENGTH];
-
-	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", HISTORY, id);
-	ret = file_fopen(&tuple, &db.myFs, filename, 'r');
-	if (ret == -1) {
-		printf("History could not be found\n");
-		return noRecord();
-	}
-
-	euint8 *fileBuffer = (euint8 *) malloc(tuple.FileSize * sizeof(euint8));
-
-	sizeRead = file_read(&tuple, tuple.FileSize, fileBuffer);
-	if (sizeRead == 0) {
-		printf("History attributes could not read\n");
-		return "";
-	}
-
-	string history = string((char *) fileBuffer);
-	free(fileBuffer);
-	file_fclose(&tuple);
-
-	return history.c_str();
+	return findEntry(HISTORY, id);
 }
 
 // Updates role by deleting entry and creating new entry
