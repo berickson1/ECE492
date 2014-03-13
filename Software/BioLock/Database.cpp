@@ -52,7 +52,7 @@ string Database::noRecord() {
 string Database::listAll(char *path) {
 	DirList list;
 	int ret, file;
-	string results;
+	string results = "[";
 
 	ret = ls_openDir(&list, &db.myFs, path);
 	if (ret == -1)
@@ -67,8 +67,10 @@ string Database::listAll(char *path) {
 		file = atoi((const char*) list.currentEntry.FileName);
 		if (file == 0)
 			break;
+		results.append(",");
 		results.append(findEntry(path, file));
 	}
+	results.append("]");
 	return results;
 }
 
