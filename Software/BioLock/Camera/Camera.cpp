@@ -13,11 +13,24 @@ const char Camera::BMPHEADER3[] = {0x01, 0x00, 0x20, 0x00, 0x00, 0x00, 0x00, 0x0
 
 char* Camera::getBMP(int * memsize){
 	bool cameraCaptureActive = true;
-	//Stop capture on camera
+	//TODO: Is this correct?
 	IOWR_ALTERA_AVALON_PIO_DATA(CAMERA_TRIGGER_BASE, cameraCaptureActive);
-	//Pause to allow picture to be taken
 	OSTimeDlyHMSM(0, 0, 1, 0);
+	{
+
+		alt_up_av_config_dev* camConfig = alt_up_av_config_open_dev(CAMERA_NAME);
+		//Override config type
+		camConfig -> type = TRDB_D5M_CONFIG;
+		//Enable snapshot mode!
+		alt_up_av_config_write_D5M_cfg_register(camConfig, 0x0B, 1<<1);
+		OSTimeDlyHMSM(0, 0, 1, 0);
+		alt_up_av_config_write_D5M_cfg_register(camConfig, 0x0B, 1<<1 | 1<<0);
+	}
+	//Stop capture on camera
+	//
+	//Pause to allow picture to be taken
 	*memsize = CAM_WIDTH*CAM_HEIGHT*4 + BMPHEADERLEN;
+	OSTimeDlyHMSM(0, 0, 1, 0);
 	char * dataBuff = (char*)malloc((*memsize));
 	//TODO: Check return value
 	memset(dataBuff, (*memsize), 0);
@@ -40,6 +53,14 @@ char* Camera::getBMP(int * memsize){
 	offset += BMPHEADER3LEN;
 	imageToBuffer(dataBuff + offset);
 	IOWR_ALTERA_AVALON_PIO_DATA(CAMERA_TRIGGER_BASE, !cameraCaptureActive);
+	{
+
+		alt_up_av_config_dev* camConfig = alt_up_av_config_open_dev(CAMERA_NAME);
+		//Override config type
+		camConfig -> type = TRDB_D5M_CONFIG;
+		//Enable snapshot mode!
+		alt_up_av_config_write_D5M_cfg_register(camConfig, 0x0B, 1<<0);
+	}
 	return dataBuff;
 }
 
