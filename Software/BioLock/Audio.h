@@ -17,6 +17,7 @@
 
 extern "C" {
 #include "altera_up_avalon_audio.h"
+#include "altera_up_avalon_audio_and_video_config.h"
 #include "Database/EFSL/efs.h"
 #include "Database/EFSL/ls.h"
 }
@@ -32,8 +33,10 @@ public:
 
 private:
 	alt_up_audio_dev * m_audio_dev;
+	alt_up_av_config_dev * m_audio_config;
 	OS_EVENT *m_databaseSemaphore;
 	unsigned int *m_soundBuf;
+	int m_fileSize;
 };
 
 #endif
