@@ -45,7 +45,8 @@ string Database::noRecord() {
 	Json::Value noRecord;
 	noRecord["id"] = -1;
 	noRecord["msg"] = "No Records Found";
-	return noRecord.toStyledString();
+	string noRecordString = noRecord.toStyledString();
+	return noRecordString;
 }
 
 // Lists all tables (folders) or tuplets (files) in directory specified

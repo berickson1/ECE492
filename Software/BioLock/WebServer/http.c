@@ -1073,8 +1073,10 @@ int http_send_file_header(http_conn* conn, const char* name, int code)
  */
 int http_find_file(http_conn* conn)
 {
-	fprintf(stderr, "Can't open the 404 File Not Found error page.\n");
-	fprintf(stderr, "Have you programmed the filing system into flash?\n");
+	fprintf(stderr, "Unable to find file: %s", conn->uri);
+	fclose(conn->file_handle);
+	conn->state = RESET;
+	return -1;
 }
 
 /*
@@ -1086,15 +1088,13 @@ int http_handle_get(http_conn* conn){
 	//Check conn->url for known uris
 	int len = 0;
 	bool isImage = false;
-	char * retval = httpResponseFunction(conn->uri, &len, &isImage);
+	const char * retval = httpResponseFunction(conn->uri, &len, &isImage);
 	if (len > 0){
 		http_send_header(conn, len, HTTP_OK, isImage);
 		//Send JSON reply
 		send(conn->fd, (void*)retval, len, 0);
-		free(retval);
 		return 0;
 	} else {
-		free(retval);
 		return http_find_file(conn);
 	}
 

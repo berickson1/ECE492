@@ -149,7 +149,7 @@ void task3(void* pdata) {
 	}
 }
 
-char * createHttpResponse(const char * URI, int *len, bool *isImage) {
+const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 
 	*isImage = false;
 	string uriString(URI), retString;
@@ -166,13 +166,15 @@ char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 		retString = api.getPrints();
 	} else if (uriString.compare(0, 4, "/pic") == 0) {
 		*isImage = true;
-		return Camera::getBMP(len);
+		char * imgData = Camera::getBMP(len);
+		retString.append(imgData, *len);
 	} else {
-		retString = Database::noRecord();
+		*len = 0;
+		return NULL;
 	}
 	*len = retString.length();
 	const char * retval = retString.c_str();
-	return (char *) retval;
+	return retval;
 }
 extern "C" {
 void startTasks() {
