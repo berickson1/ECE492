@@ -23,7 +23,7 @@ typedef struct User{
 } User;
 
 typedef struct UserPrint{
-	int id, uid, fid;
+	int uid, fid;
 } UserPrint;
 
 typedef struct Role{

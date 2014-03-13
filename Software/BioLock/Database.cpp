@@ -274,7 +274,6 @@ int Database::insertUserPrint(int id, UserPrint value) {
 	}
 
 	Json::Value nodeToInsert;
-	nodeToInsert["id"] = value.id;
 	nodeToInsert["fid"] = value.fid;
 	nodeToInsert["uid"] = value.uid;
 
@@ -704,28 +703,24 @@ void Database::testPopulate() {
 	insertUserRole(ur3.id, ur3);
 
 	UserPrint up1;
-	up1.id = 1;
 	up1.uid = 1;
 	up1.fid = 1;
-	insertUserPrint(up1.id, up1);
+	insertUserPrint(up1.fid, up1);
 
 	UserPrint up2;
-	up2.id = 2;
 	up2.uid = 2;
-	up2.fid = 1;
-	insertUserPrint(up2.id, up2);
+	up2.fid = 2;
+	insertUserPrint(up2.fid, up2);
 
 	UserPrint up3;
-	up3.id = 3;
 	up3.uid = 2;
-	up3.fid = 1;
-	insertUserPrint(up3.id, up3);
+	up3.fid = 2;
+	insertUserPrint(up3.fid, up3);
 
 	UserPrint up4;
-	up4.id = 4;
-	up4.uid = 3;
-	up4.fid = 1;
-	insertUserPrint(up4.id, up4);
+	up4.uid = 7;
+	up4.fid = 7;
+	insertUserPrint(up4.fid, up4);
 
 	History h1;
 	h1.id = 1;
