@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
- 
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -15,51 +15,60 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import android.util.Log; 
+import android.app.Activity;
+import android.os.AsyncTask;
+import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 
-public class JSONParser {
-    static InputStream iStream = null;
-    static JSONArray jarray = null;
-    static String json = "";
- 
-    public JSONParser() {
-    }
- 
-    public JSONArray getJSONFromUrl(String url) {
- 
-           StringBuilder builder = new StringBuilder();
-            HttpClient client = new DefaultHttpClient();
-            HttpGet httpGet = new HttpGet(url);
-            try {
-              HttpResponse response = client.execute(httpGet);
-              StatusLine statusLine = response.getStatusLine();
-              int statusCode = statusLine.getStatusCode();
-              if (statusCode == 200) {
-                HttpEntity entity = response.getEntity();
-                InputStream content = entity.getContent();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(content));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                  builder.append(line);
-                }
-              } else {
-                Log.e("==>", "Failed to download file");
-              }
-            } catch (ClientProtocolException e) {
-              e.printStackTrace();
-            } catch (IOException e) {
-              e.printStackTrace();
-            }
-           
-        // Parse String to JSON object
-        try {
-            jarray = new JSONArray( builder.toString());
-        } catch (JSONException e) {
-            Log.e("JSON Parser", "Error parsing data " + e.toString());
-        }
- 
-        // return JSON Object
-        return jarray;
- 
-    }
+public class JSONParser extends AsyncTask<String, Void, JSONArray> {
+	static InputStream iStream = null;
+	static JSONArray jarray = null;
+	static String json = "";
+	JSONCallbackFunction m_callback;
+
+	public JSONParser(JSONCallbackFunction callback) {
+		m_callback = callback;
+	}
+
+	public JSONArray doInBackground(String... url) {
+
+		StringBuilder builder = new StringBuilder();
+		HttpClient client = new DefaultHttpClient();
+		HttpGet httpGet = new HttpGet(url[0]);
+		try {
+			HttpResponse response = client.execute(httpGet);
+			StatusLine statusLine = response.getStatusLine();
+			int statusCode = statusLine.getStatusCode();
+			if (statusCode == 200) {
+				HttpEntity entity = response.getEntity();
+				InputStream content = entity.getContent();
+				BufferedReader reader = new BufferedReader(
+						new InputStreamReader(content));
+				String line;
+				while ((line = reader.readLine()) != null) {
+					builder.append(line);
+				}
+			} else {
+				Log.e("==>", "Failed to download file");
+			}
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			return new JSONArray(builder.toString());
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	protected void onPostExecute(JSONArray jsonArr) {
+		// Parse String to JSON object
+		Log.d("ASYNCTask", jsonArr.toString());
+		m_callback.execute(jsonArr);
+	}
 }

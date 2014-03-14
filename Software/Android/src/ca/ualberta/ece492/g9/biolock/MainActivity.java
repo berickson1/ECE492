@@ -4,8 +4,6 @@
 
 package ca.ualberta.ece492.g9.biolock;
 
-import org.json.JSONArray;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -13,7 +11,6 @@ import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.EditText;
 
 // Appears after splash screen - displays devices currently linked to db
 public class MainActivity extends FragmentActivity implements
@@ -26,12 +23,6 @@ public class MainActivity extends FragmentActivity implements
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_main);
-		/*EditText test = (EditText) findViewById(R.id.editText1);
-		JSONParser parser = new JSONParser();
-		JSONArray jsonString;
-		jsonString = parser.getJSONFromUrl("http://192.168.1.122/test");
-		if (jsonString != null)
-			test.setText(jsonString.toString());*/
 	}
 
 	@Override
@@ -56,6 +47,5 @@ public class MainActivity extends FragmentActivity implements
 	public void newLock(View v) {
 		Intent newLock = new Intent(MainActivity.this, NewLock.class);
 		startActivity(newLock);
-
 	}
 }

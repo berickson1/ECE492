@@ -34,4 +34,12 @@
         android:textColor="@color/selector"
         android:textSize="25sp" />
 
+    <ListView
+        android:id="@+id/listUsers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/usersTitle"
+        android:layout_below="@+id/usersTitle" >
+    </ListView>
+
 </RelativeLayout>
