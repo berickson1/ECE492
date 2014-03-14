@@ -120,7 +120,6 @@ int Database::insertRole(Role value) {
 		printf("Role could not be added\n");
 		return -1;
 	}
-	tuple.DirEntry.Attribute = value.id;
 	ret = file_fclose(&tuple);
 	if (ret != 0) {
 		printf("Role could not be added\n");
@@ -163,7 +162,6 @@ int Database::insertUser(User value) {
 		return -1;
 	}
 
-	tuple.DirEntry.Attribute = value.id;
 	ret = file_fclose(&tuple);
 	if (ret != 0) {
 		printf("User could not be added\n");
@@ -207,7 +205,6 @@ int Database::insertRoleSched(RoleSchedule value) {
 		return -1;
 	}
 
-	tuple.DirEntry.Attribute = value.id;
 	ret = file_fclose(&tuple);
 	if (ret != 0) {
 		printf("Role schedule could not be added\n");
@@ -250,7 +247,6 @@ int Database::insertUserRole(UserRole value) {
 		return -1;
 	}
 
-	tuple.DirEntry.Attribute = value.id;
 	ret = file_fclose(&tuple);
 	if (ret != 0) {
 		printf("User role could not be added\n");
@@ -286,7 +282,6 @@ int Database::insertUserPrint(UserPrint value) {
 		return -1;
 	}
 
-	tuple.DirEntry.Attribute = value.fid;
 	ret = file_fclose(&tuple);
 	if (ret != 0) {
 		printf("User print could not be added\n");
@@ -326,7 +321,6 @@ int Database::insertHistory(History value) {
 		return -1;
 	}
 
-	tuple.DirEntry.Attribute = value.id;
 	ret = file_fclose(&tuple);
 	if (ret != 0) {
 		printf("History could not be added\n");
@@ -553,7 +547,6 @@ int Database::enableUser(int uid, bool enable) {
 				"User enable status could not be changed, please try again later\n");
 		return -1;
 	}
-	tuple.DirEntry.Attribute = uid;
 	ret = file_fclose(&tuple);
 	if (ret != 0) {
 		printf("User enable status could not be changed\n");
