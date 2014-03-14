@@ -207,6 +207,7 @@ const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 		*isImage = true;
 		char * imgData = Camera::getBMP(len);
 		retString.append(imgData, *len);
+		free(imgData);
 	} else {
 		*len = 0;
 		return NULL;
