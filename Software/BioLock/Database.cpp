@@ -468,15 +468,9 @@ int Database::deleteRole(int rid) {
 	Json::Value attr;
 	DirList list;
 	int ret, file;
-	char filename[MAXBUF_LENGTH];
 
 	// Delete role
-	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLES, rid);
-	ret = rmfile(&db.myFs, (euint8*) filename);
-	if (ret != 0) {
-		printf("Role could not be deleted, please try again later\n");
-		return -1;
-	}
+	deleteEntry(ROLES, rid);
 
 	// Delete role schedule with same rid
 	ret = ls_openDir(&list, &db.myFs, (eint8 *) ROLE_SCHEDULE);
@@ -490,10 +484,6 @@ int Database::deleteRole(int rid) {
 		reader.parse(roleSched, attr, true);
 		if (attr["rid"] == rid) {
 			ret = deleteRoleSchedule(file);
-			if (ret == -1) {
-				printf("Role schedule: %d could not be deleted\n", file);
-				return -1;
-			}
 		}
 	}
 
@@ -509,13 +499,8 @@ int Database::deleteRole(int rid) {
 		reader.parse(userRole, attr, true);
 		if (attr["rid"] == rid) {
 			deleteUserRole(file);
-			if (ret == -1) {
-				printf("User role: %d could not be deleted\n", file);
-				return -1;
-			}
 		}
 	}
-
 	return 1;
 }
 
@@ -558,41 +543,103 @@ int Database::enableUser(int uid, bool enable) {
 
 // Deletes role schedule entry with corresponding id
 int Database::deleteRoleSchedule(int id) {
-	int ret;
-	char filename[MAXBUF_LENGTH];
-
-	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLE_SCHEDULE, id);
-	ret = rmfile(&db.myFs, (euint8*) filename);
-	if (ret != 0) {
-		printf("Role schedule could not be deleted, please try again later\n");
-		return -1;
-	}
-	return 1;
+	return deleteEntry(ROLE_SCHEDULE, id);
 }
 
 // Deletes user role entry with corresponding id
 int Database::deleteUserRole(int id) {
-	int ret;
-	char filename[MAXBUF_LENGTH];
-
-	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_ROLES, id);
-	ret = rmfile(&db.myFs, (euint8*) filename);
-	if (ret != 0) {
-		printf("User role could not be deleted, please try again later\n");
-		return -1;
-	}
-	return 1;
+	return deleteEntry(USER_ROLES, id);
 }
 
 // Deletes user print entry with corresponding id
 int Database::deleteUserPrint(int id) {
+	return deleteEntry(USER_PRINTS, id);
+}
+
+// Clears the database
+void Database::clearAll() {
+	int ret, file;
+	DirList list;
+
+	// Role
+	ret = ls_openDir(&list, &db.myFs, ROLES);
+	if (ret == -1)
+		printf("Could not open directory. Please check definition of path\n");
+	while (ls_getNext(&list) == 0) {
+		file = atoi((const char*) list.currentEntry.FileName);
+		if (file != 0) {
+			deleteRole(file);
+		}
+	}
+
+	// User
+	ret = ls_openDir(&list, &db.myFs, USERS);
+	if (ret == -1)
+		printf("Could not open directory. Please check definition of path\n");
+	while (ls_getNext(&list) == 0) {
+		file = atoi((const char*) list.currentEntry.FileName);
+		if (file != 0) {
+			ret = deleteEntry(USERS, file);
+		}
+	}
+
+	// Role Schedule
+	ret = ls_openDir(&list, &db.myFs, ROLE_SCHEDULE);
+	if (ret == -1)
+		printf("Could not open directory. Please check definition of path\n");
+	while (ls_getNext(&list) == 0) {
+		file = atoi((const char*) list.currentEntry.FileName);
+		if (file != 0) {
+			deleteRoleSchedule(file);
+		}
+
+	}
+
+	// User Role
+	ret = ls_openDir(&list, &db.myFs, USER_ROLES);
+	if (ret == -1)
+		printf("Could not open directory. Please check definition of path\n");
+	while (ls_getNext(&list) == 0) {
+		file = atoi((const char*) list.currentEntry.FileName);
+		if (file != 0) {
+			deleteUserRole(file);
+		}
+
+	}
+
+	// User Print
+	ret = ls_openDir(&list, &db.myFs, USER_PRINTS);
+	if (ret == -1)
+		printf("Could not open directory. Please check definition of path\n");
+	while (ls_getNext(&list) == 0) {
+		file = atoi((const char*) list.currentEntry.FileName);
+		if (file != 0) {
+			deleteUserPrint(file);
+		}
+
+	}
+
+	// History
+	ret = ls_openDir(&list, &db.myFs, HISTORY);
+	if (ret == -1)
+		printf("Could not open directory. Please check definition of path\n");
+	while (ls_getNext(&list) == 0) {
+		file = atoi((const char*) list.currentEntry.FileName);
+		if (file != 0) {
+			ret = deleteEntry(HISTORY, file);
+		}
+	}
+}
+
+// Deletes the specified file
+int Database::deleteEntry(char *path, int id) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
-	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_PRINTS, id);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", path, id);
 	ret = rmfile(&db.myFs, (euint8*) filename);
 	if (ret != 0) {
-		printf("User print could not be deleted, please try again later\n");
+		printf("Entry could not be deleted, please try again later\n");
 		return -1;
 	}
 	return 1;

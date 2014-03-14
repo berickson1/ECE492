@@ -60,7 +60,7 @@ public:
 	int deleteRoleSchedule(int id);
 	int deleteUserRole(int id);
 	int deleteUserPrint(int id);
-
+	void clearAll();
 	int enableUser(int uid, bool enable);
 
 	void testPopulate();
@@ -69,6 +69,7 @@ public:
 private:
 	OS_EVENT *m_databaseSemaphore;
 	EmbeddedFileSystem db;
+	int deleteEntry(char *path, int id);
 };
 
 #endif
