@@ -56,7 +56,12 @@ public class JSONParser extends AsyncTask<String, Void, JSONArray> {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+			return null;
+		} catch (RuntimeException e){
+			// No connection to server
+			this.cancel(true);
 		}
+		
 		try {
 			return new JSONArray(builder.toString());
 		} catch (JSONException e) {
@@ -68,7 +73,7 @@ public class JSONParser extends AsyncTask<String, Void, JSONArray> {
 
 	protected void onPostExecute(JSONArray jsonArr) {
 		// Parse String to JSON object
-		Log.d("ASYNCTask", jsonArr.toString());
+		//Log.d("ASYNCTask", jsonArr.toString());
 		m_callback.execute(jsonArr);
 	}
 }

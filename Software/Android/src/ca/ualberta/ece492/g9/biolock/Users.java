@@ -33,43 +33,43 @@ public class Users extends Activity {
 		JSONParser parser = new JSONParser(new JSONCallbackFunction() {
 			@Override
 			public void execute(JSONArray json) {
-				// String[] userID = new String[json.length()];
-				String[] name = new String[json.length()];
-				// String[] enabled = new String[json.length()];
-				// String[] startDate = new String[json.length()];
-				// String[] endDate = new String[json.length()];
-				ListView userList;
-				ListAdapter displayUser;
+				if (json != null) {
+					// String[] userID = new String[json.length()];
+					String[] name = new String[json.length()];
+					// String[] enabled = new String[json.length()];
+					// String[] startDate = new String[json.length()];
+					// String[] endDate = new String[json.length()];
+					ListView userList;
+					ListAdapter displayUser;
 
-				userList = (ListView) findViewById(R.id.listUsers);
-				if (json == null) {
-					// TODO: deal with no users
-					System.out.println("no user");
-				} else {
+					userList = (ListView) findViewById(R.id.listUsers);
 					ArrayList<HashMap<String, String>> users = new ArrayList<HashMap<String, String>>();
 					for (int i = 0; i < json.length(); i++) {
 						try {
 							JSONObject user = (JSONObject) json.get(i);
-							// userID[i] = user.getString("id");	
+							// userID[i] = user.getString("id");
 							HashMap<String, String> usersHash = new HashMap<String, String>();
-							 usersHash.put("Name", user.getString("name"));
-							 users.add(usersHash);
+							usersHash.put("Name", user.getString("name"));
+							users.add(usersHash);
 							/*
 							 * enabled[i] = user.getString("enabled");
 							 * startDate[i] = user.getString("startDate");
 							 * endDate[i] = user.getString("endDate");
 							 */
-							displayUser = new SimpleAdapter(getBaseContext(), users, R.layout.user_row, new String[] {"Name"}, new int[]{R.id.userName});
+							displayUser = new SimpleAdapter(getBaseContext(),
+									users, R.layout.user_row,
+									new String[] { "Name" },
+									new int[] { R.id.userName });
 							userList.setAdapter(displayUser);
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}
 					}
 				}
-				// test.setText(jsonArr.toString());
 			}
 		});
-		parser.execute("http://berickson.ca/ECE492/users");
+		// parser.execute("http://berickson.ca/ECE492/users");
+		parser.execute("http://192.168.1.120/users");
 	}
 
 	// User selected to add new user
