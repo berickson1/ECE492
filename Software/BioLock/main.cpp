@@ -170,7 +170,7 @@ void task1(void* pdata) {
 			printf("Failed to verify print!\n\n");
 			{
 				Audio sound(databaseSemaphore);
-				for (int i = 0; i < 5; i++){
+				for (int i = 0; i < 3; i++){
 					sound.play();
 				}
 			}
