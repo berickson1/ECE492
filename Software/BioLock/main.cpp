@@ -153,8 +153,14 @@ void task1(void* pdata) {
 						if (jsonReader.parse(dbAccess.findUserRole(uid), roleRoot)) {
 						//Todo: Finish checking if user has role
 						//Success, unlock door!
+							char * ledBase = (char*) GREEN_LEDS_BASE;
+							for (int i = 0; i < GREEN_LEDS_DATA_WIDTH; i++){
+								*ledBase = 1 << i;
+								OSTimeDlyHMSM(0, 0, 0, 100);
+							}
+							*ledBase = 0;
 							printf("Open up!!!\n\n");
-						continue;
+							continue;
 						}
 					}
 
