@@ -713,12 +713,12 @@ void Database::testPopulate() {
 	insertUserPrint(up2.fid, up2);
 
 	UserPrint up3;
-	up3.uid = 2;
-	up3.fid = 2;
+	up3.uid = 3;
+	up3.fid = 3;
 	insertUserPrint(up3.fid, up3);
 
 	UserPrint up4;
-	up4.uid = 7;
+	up4.uid = 2;
 	up4.fid = 7;
 	insertUserPrint(up4.fid, up4);
 
