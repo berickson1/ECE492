@@ -67,6 +67,7 @@ int getCurrentFingerprintId() {
 /* Checks for fingerprint */
 void task1(void* pdata) {
 	INT8U err;
+	bool enroll = false;
 	while (true) {
 		ZFMComm fingerprintSensor;
 		fingerprintSensor.init(SERIAL_NAME);
@@ -81,6 +82,23 @@ void task1(void* pdata) {
 				if (!sendToMailbox) {
 					sendToMailbox = OSSemAccept(fingerprintSem) > 0;
 				}
+			}
+			if (enroll){
+				while (!fingerprintSensor.scanFinger()
+						|| !fingerprintSensor.storeImage(2)) {
+					//Sleep for a second and try again
+					OSTimeDlyHMSM(0, 0, 1, 0);
+				}
+				int storeId = 0;
+				printf("Enter ID to store print at:\n");
+				scanf("%d", &storeId);
+				if(fingerprintSensor.storeFingerprint(storeId)){
+					printf("Stored fingerprint at %d\n", storeId);
+				} else {
+					printf("Unable to store fingerprint at %d\n", storeId);
+				}
+				enroll = !enroll;
+				continue;
 			}
 			printf("Fingerprint acquired, looking for fingerprint ID\n");
 			int fid = fingerprintSensor.findFingerprint(1);
