@@ -179,11 +179,21 @@ void task1(void* pdata) {
 }
 void task2(void* pdata) {
 	while (1) {
-		if (*((char*) SWITCHES_BASE) & 1<<1){
-			//Populating database with test data
-			Database db(databaseSemaphore);
-			db.testPopulate();
+		if (*((char*) SWITCHES_BASE) & 1 << 1) {
+			// Clearing database
+			{
+				Database db(databaseSemaphore);
+				db.clearAll();
+			}
+			printf("Database has been cleared\n");
+			if (*((char*) SWITCHES_BASE) & 1 << 2) {
+				// Populate database
+				Database db(databaseSemaphore);
+				db.testPopulate();
+				printf("Database has been populated\n");
+			}
 		}
+
 		OSTimeDlyHMSM(0, 0, 1, 0);
 	}
 }
