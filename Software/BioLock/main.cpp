@@ -100,11 +100,11 @@ void task1(void* pdata) {
 					newUser.id = storeId;
 					newUser.name = "Mavis Chan";
 					newUser.startDate = newUser.enabled = 5;
-					dbAccess.insertUser(newUser.id, newUser);
+					dbAccess.insertUser(newUser);
 					UserPrint userPrint;
 					userPrint.fid = storeId;
 					userPrint.uid = storeId;
-					dbAccess.insertUserPrint(userPrint.fid, userPrint);
+					dbAccess.insertUserPrint(userPrint);
 				} else {
 					printf("Unable to store fingerprint at %d\n", storeId);
 				}
