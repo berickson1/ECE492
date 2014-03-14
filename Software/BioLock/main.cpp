@@ -81,17 +81,30 @@ void task1(void* pdata) {
 					sendToMailbox = OSSemAccept(fingerprintSem) > 0;
 				}
 			}
-			if (enroll){
+			char* address = (char*) SWITCHES_BASE;
+			if ((*address) & 1<<0){
+				int storeId = 0;
+				printf("Enter ID to store print at:\n");
+				scanf("%d", &storeId);
+				printf("Scan finger again\n");
 				while (!fingerprintSensor.scanFinger()
 						|| !fingerprintSensor.storeImage(2)) {
 					//Sleep for a second and try again
 					OSTimeDlyHMSM(0, 0, 1, 0);
 				}
-				int storeId = 0;
-				printf("Enter ID to store print at:\n");
-				scanf("%d", &storeId);
 				if(fingerprintSensor.storeFingerprint(storeId)){
 					printf("Stored fingerprint at %d\n", storeId);
+					Database dbAccess(databaseSemaphore);
+					User newUser;
+					newUser.enabled = true;
+					newUser.id = storeId;
+					newUser.name = "Mavis Chan";
+					newUser.startDate = newUser.enabled = 5;
+					dbAccess.insertUser(newUser.id, newUser);
+					UserPrint userPrint;
+					userPrint.fid = storeId;
+					userPrint.uid = storeId;
+					dbAccess.insertUserPrint(userPrint.fid, userPrint);
 				} else {
 					printf("Unable to store fingerprint at %d\n", storeId);
 				}
