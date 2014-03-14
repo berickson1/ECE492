@@ -160,6 +160,7 @@ void task1(void* pdata) {
 
 				}
 			}
+			//Fallthrough error case. Notify owner!
 			printf("Failed to verify print!\n\n");
 			{
 				Audio sound(databaseSemaphore);
@@ -167,15 +168,15 @@ void task1(void* pdata) {
 					sound.play();
 				}
 			}
-			//Fallthrough error case. Notify owner!
 		}
 	}
 }
 void task2(void* pdata) {
 	while (1) {
-		{
-			//Database db(databaseSemaphore);
-			//db.testPopulate();
+		if (*((char*) SWITCHES_BASE) & 1<<1){
+			//Populating database with test data
+			Database db(databaseSemaphore);
+			db.testPopulate();
 		}
 		OSTimeDlyHMSM(0, 0, 1, 0);
 	}
