@@ -44,7 +44,6 @@ extern "C" {
 #define   TASK_STACKSIZE       2048
 OS_STK task1_stk[TASK_STACKSIZE];
 OS_STK task2_stk[TASK_STACKSIZE];
-OS_STK task3_stk[TASK_STACKSIZE];
 
 OS_EVENT *fingerprintMailbox;
 OS_EVENT *fingerprintSem;
@@ -54,7 +53,6 @@ OS_EVENT *databaseSemaphore;
 
 #define TASK1_PRIORITY      6
 #define TASK2_PRIORITY      7
-#define TASK3_PRIORITY		11
 
 int getCurrentFingerprintId() {
 	INT8U err;
@@ -150,6 +148,12 @@ void task1(void* pdata) {
 				}
 			}
 			printf("Failed to verify print!\n\n");
+			{
+				Audio sound(databaseSemaphore);
+				for (int i = 0; i < 5; i++){
+					sound.play();
+				}
+			}
 			//Fallthrough error case. Notify owner!
 		}
 	}
@@ -160,16 +164,6 @@ void task2(void* pdata) {
 			//Database db(databaseSemaphore);
 			//db.testPopulate();
 		}
-		OSTimeDlyHMSM(0, 0, 1, 0);
-
-		printf("Finished populating test database\n");
-	}
-}
-void task3(void* pdata) {
-	// Currently makes one small beep noise per loop
-	Audio sound(databaseSemaphore);
-	while (true) {
-		sound.play();
 		OSTimeDlyHMSM(0, 0, 1, 0);
 	}
 }
@@ -209,9 +203,6 @@ void startTasks() {
 #endif
 	OSTaskCreateExt(task2, NULL, &task2_stk[TASK_STACKSIZE - 1], TASK2_PRIORITY,
 			TASK2_PRIORITY, task2_stk, TASK_STACKSIZE, NULL, 0);
-
-	OSTaskCreateExt(task3, NULL, &task3_stk[TASK_STACKSIZE - 1], TASK3_PRIORITY,
-			TASK3_PRIORITY, task3_stk, TASK_STACKSIZE, NULL, 0);
 }
 /* The main function creates two task and starts multi-tasking */
 int main(void) {
