@@ -107,24 +107,31 @@ void task1(void* pdata) {
 			//Check if fingerprint is allowed access and unlock door
 			//After this point, we fall through to the error case
 			if (fid >= 0) {
+				Json::Value userPrintRoot;
 				Json::Value userRoot;
 				Json::Value roleRoot;
 				Database dbAccess(databaseSemaphore);
-				string userJSON = dbAccess.findUserPrint(fid);
+				string userPrintJSON = dbAccess.findUserPrint(fid);
 				Json::Reader jsonReader;
 				int uid;
 				//Todo: handle schedule lookup
-				if (jsonReader.parse(userJSON, userRoot)
-						&& (uid = userRoot.get("id", -1).asInt()) != -1
-						&& jsonReader.parse(dbAccess.findUserRole(uid),
-								roleRoot)) {
-					//Todo: Finish checking if user has role
-					//Success, unlock door!
+				if (jsonReader.parse(userPrintJSON, userPrintRoot)){
+					int uid = userPrintRoot.get("uid", -1).asInt();
+					printf("User found id:%d", uid);
+					string userJSON = dbAccess.findUser(uid);
+					if (jsonReader.parse(userJSON, userRoot)){
+						printf(" name:%s\n", userRoot.get("name", "Unknown").asCString());
+						if (jsonReader.parse(dbAccess.findUserRole(uid), roleRoot)) {
+						//Todo: Finish checking if user has role
+						//Success, unlock door!
+							printf("Open up!!!\n\n");
+						continue;
+						}
+					}
 
-					continue;
 				}
 			}
-			printf("Failed to verify print!");
+			printf("Failed to verify print!\n\n");
 			//Fallthrough error case. Notify owner!
 		}
 	}
