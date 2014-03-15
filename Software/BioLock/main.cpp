@@ -35,10 +35,13 @@
 #include "Database.h"
 #include "json/reader.h"
 #include "Audio.h"
+
 extern "C" {
 #include "Camera/Camera.h"
 #include "WebServer/web_server.h"
+#include "WebServer/http.h"
 }
+#define NOWEBSERVER
 
 /* Definition of Task Stacks */
 #define   TASK_STACKSIZE       2048
@@ -123,7 +126,7 @@ void task1(void* pdata) {
 			}
 
 			//Check if fingerprint is allowed access and unlock door
-			//After this point, we fall through to the error case
+			//After this point, we fall through to the error if (uriString.compare(0, 7,
 			if (fid >= 0) {
 				Json::Value userPrintRoot;
 				Json::Value userRoot;
@@ -150,7 +153,7 @@ void task1(void* pdata) {
 				}
 			}
 			printf("Failed to verify print!\n\n");
-			//Fallthrough error case. Notify owner!
+			//Fallthrough error if (uriString.compare(0, 7,. Notify owner!
 		}
 	}
 }
@@ -172,6 +175,12 @@ void task3(void* pdata) {
 		sound.play();
 		OSTimeDlyHMSM(0, 0, 1, 0);
 	}
+}
+
+const char * handleHTTPPost(http_conn* conn, int *replyLen) {
+	string retString = "";
+	const char * retval = retString.c_str();
+	return retval;
 }
 
 const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
@@ -238,7 +247,7 @@ int main(void) {
 	Camera::mirrorHorizontal();
 
 #ifndef NOWEBSERVER
-	startWebServer(&startTasks, &createHttpResponse);
+	startWebServer(&startTasks, &createHttpResponse, &handleHTTPPost);
 #else
 	startTasks();
 #endif

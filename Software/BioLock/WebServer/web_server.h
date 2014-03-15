@@ -17,6 +17,7 @@
 #include "alt_types.h"
 #include "includes.h"
 #include <stdbool.h>
+#include "http.h"
 /*
  * Prototypes:
  *    die_with_error() - Kills current task and delivers error message to 
@@ -32,7 +33,8 @@
 void die_with_error(char err_msg[]);
 void (*callbackFunction)();
 const char * (*httpResponseFunction)(const char * URI, int *len, bool *isImage);
-int startWebServer (void (*callback)(), const char * (*httpResponse)(const char * URI, int *len, bool *isImage));
+const char * (*httpHandlePost)(http_conn* conn, int *replyLen);
+int startWebServer (void (*callback)(), const char * (*httpResponse)(const char * URI, int *len, bool *isImage), const char * (*httpHandlePost)(http_conn* conn, int *replyLen));
 
 /*
  * Mailbox to control board features 

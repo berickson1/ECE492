@@ -1120,6 +1120,16 @@ void http_send_redirect( alt_u8 redirect[256] )
  */
 int http_handle_post(http_conn* conn)
 {
+  int responseLen = 0;
+  const char * postResponse = httpHandlePost(conn, &responseLen);
+  if (responseLen != 0){
+		http_send_header(conn, responseLen, HTTP_OK, false);
+		//Send JSON reply
+		send(conn->fd, (void*)postResponse, responseLen, 0);
+		conn->state = CLOSE;
+		return 0;
+  }
+  //Fall through to old code if necessary
   char* tx_wr_pos = conn->tx_buffer;
   int ret_code = 0;
   struct upload_buf_struct *upload_buffer = &upload_buf;
