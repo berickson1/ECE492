@@ -64,7 +64,7 @@ public class Roles extends Activity {
 				}
 			}
 		});
-		// parser.execute("http://berickson.ca/ECE492/users");
+		//parser.execute("http://berickson.ca/ECE492/roles");
 		parser.execute("http://192.168.1.120/roles");
 	}
 
