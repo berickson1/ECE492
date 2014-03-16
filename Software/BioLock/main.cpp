@@ -202,7 +202,24 @@ void task2(void* pdata) {
 }
 
 const char * handleHTTPPost(http_conn* conn, int *replyLen) {
-	string retString = "";
+	string uriString(conn->uri), retString;
+	RestAPI api(&getCurrentFingerprintId, databaseSemaphore);
+	if (uriString.compare(0, 6, "/users") == 0) {
+		//Save user
+	} else if (uriString.compare(0, 6, "/roles") == 0) {
+		//Save role
+	} else if (uriString.compare(0, 14, "/roleSchedules") == 0) {
+		//Save schedule
+	} else if (uriString.compare(0, 8, "/history") == 0) {
+		//Save history
+	} else if (uriString.compare(0, 7, "/prints") == 0) {
+		//Save Print
+	} else {
+		*replyLen = 0;
+		return NULL;
+	}
+
+	*replyLen = retString.length();
 	const char * retval = retString.c_str();
 	return retval;
 }
