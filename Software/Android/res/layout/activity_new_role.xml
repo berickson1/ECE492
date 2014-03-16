@@ -11,131 +11,119 @@
     tools:context=".MainActivity" >
 
     <TextView
-        android:id="@+id/newUserTitle"
+        android:id="@+id/newRoleTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="30sp"
         android:layout_marginTop="50sp"
         android:gravity="center"
-        android:text="@string/display_userInfo"
+        android:text="@string/display_roleInfo"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="35sp" />
 
     <EditText
-        android:id="@+id/userNameFill"
+        android:id="@+id/roleNameFill"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/userName"
-        android:layout_alignBottom="@+id/userName"
+        android:layout_alignBaseline="@+id/roleName"
+        android:layout_alignBottom="@+id/roleName"
         android:layout_marginLeft="30dp"
-        android:layout_toRightOf="@+id/userName"
+        android:layout_toRightOf="@+id/roleName"
         android:ems="10"
-        android:hint="@string/sampleName"
+        android:hint="@string/sampleRole"
         android:inputType="textPersonName" >
 
         <requestFocus />
     </EditText>
 
     <TextView
-        android:id="@+id/userName"
+        android:id="@+id/roleName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/newUserTitle"
-        android:layout_below="@+id/newUserTitle"
+        android:layout_alignLeft="@+id/newRoleTitle"
+        android:layout_below="@+id/newRoleTitle"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="19dp"
-        android:text="@string/userName"
+        android:text="@string/roleName"
         android:textSize="20sp" />
 
     <CheckBox
-        android:id="@+id/enabledUserStatusBox"
+        android:id="@+id/enabledRoleStatusBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/userNameFill"
-        android:layout_alignTop="@+id/enabledUserStatus"
+        android:layout_alignLeft="@+id/roleNameFill"
+        android:layout_alignTop="@+id/enabledRoleStatus"
         android:layout_marginLeft="84dp" />
 
     <TextView
-        android:id="@+id/enabledUserStatus"
+        android:id="@+id/enabledRoleStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/userName"
-        android:layout_below="@+id/userNameFill"
+        android:layout_alignLeft="@+id/roleName"
+        android:layout_below="@+id/roleNameFill"
         android:layout_marginTop="35dp"
         android:text="@string/enabled"
         android:textSize="20sp" />
 
     <TextView
-        android:id="@+id/tempFingerprint"
+        android:id="@+id/user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/fingerprint"
-        android:layout_marginTop="14dp"
-        android:layout_toRightOf="@+id/enabledUserStatus"
-        android:text="Temp fingerprint name" />
-
-    <TextView
-        android:id="@+id/enrollPrint"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tempFingerprint"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:clickable="true"
-        android:onClick="enrollPrint"
-        android:text="@string/enroll_print"
-        android:textSize="15sp" />
-
-    <TextView
-        android:id="@+id/role"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/fingerprint"
-        android:layout_below="@+id/enrollPrint"
-        android:layout_marginTop="25dp"
-        android:text="@string/display_roles"
-        android:textSize="20sp" />
-
-    <TextView
-        android:id="@+id/tempRole"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/role"
-        android:layout_centerHorizontal="true"
-        android:text="temp role" />
-
-    <TextView
-        android:id="@+id/fingerprint"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/enabledUserStatus"
-        android:layout_below="@+id/enabledUserStatusBox"
+        android:layout_alignLeft="@+id/enabledRoleStatus"
+        android:layout_below="@+id/enabledRoleStatusBox"
         android:layout_marginTop="29dp"
-        android:text="@string/fingerprint"
+        android:text="@string/display_users"
         android:textSize="20sp" />
 
     <TextView
-        android:id="@+id/deleteUser"
+        android:id="@+id/deleteRole"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tempRole"
+        android:layout_below="@+id/tempAccess"
         android:layout_marginTop="25dp"
-        android:layout_toRightOf="@+id/tempRole"
+        android:layout_toRightOf="@+id/tempAccess"
         android:clickable="true"
         android:onClick="confirmDelete"
         android:text="@string/delete"
         android:textSize="25sp" />
 
     <TextView
-        android:id="@+id/updateUser"
+        android:id="@+id/tempFingerprint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/deleteUser"
-        android:layout_alignBottom="@+id/deleteUser"
-        android:layout_toLeftOf="@+id/tempRole"
+        android:layout_below="@+id/user"
+        android:layout_centerHorizontal="true"
+        android:text="Temp user name" />
+
+    <TextView
+        android:id="@+id/updateRole"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/deleteRole"
+        android:layout_alignBottom="@+id/deleteRole"
+        android:layout_toLeftOf="@+id/tempAccess"
         android:clickable="true"
-        android:onClick="updateUser"
+        android:onClick="updateRole"
         android:text="@string/update"
         android:textSize="25sp" />
+
+    <TextView
+        android:id="@+id/access"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/user"
+        android:layout_below="@+id/tempFingerprint"
+        android:layout_marginTop="33dp"
+        android:text="@string/access_hours"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/tempAccess"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/access"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="17dp"
+        android:text="temp access" />
 
 </RelativeLayout>

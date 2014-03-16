@@ -32,5 +32,6 @@
     <string name="display_roleInfo">Role Info</string>
     <string name="sampleRole">Role Name</string>
     <string name="roleName">Role</string>
+    <string name="access_hours">Access Hours</string>
 
 </resources>
