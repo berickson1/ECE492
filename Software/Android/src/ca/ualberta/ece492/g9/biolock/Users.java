@@ -57,9 +57,9 @@ public class Users extends Activity {
 							 * endDate[i] = user.getString("endDate");
 							 */
 							displayUser = new SimpleAdapter(getBaseContext(),
-									users, R.layout.user_row,
+									users, R.layout.list_view_row,
 									new String[] { "Name" },
-									new int[] { R.id.userName });
+									new int[] { R.id.listEntryName });
 							userList.setAdapter(displayUser);
 						} catch (JSONException e) {
 							e.printStackTrace();

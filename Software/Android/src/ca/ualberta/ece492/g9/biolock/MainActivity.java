@@ -24,7 +24,7 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		ListView listLocks;
 		ArrayList<String> lockArray = new ArrayList<String>();
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, lockArray);
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.list_view_row, R.id.listEntryName, lockArray);
 		DatabaseHandler db = new DatabaseHandler(this);
 		List<LockInfo> locks;
 		

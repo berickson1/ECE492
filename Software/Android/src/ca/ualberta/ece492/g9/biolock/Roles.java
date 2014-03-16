@@ -53,9 +53,9 @@ public class Roles extends Activity {
 							 * endDate[i] = user.getString("endDate");
 							 */
 							displayRole = new SimpleAdapter(getBaseContext(),
-									roles, R.layout.role_row,
+									roles, R.layout.list_view_row,
 									new String[] { "Name" },
-									new int[] { R.id.roleName });
+									new int[] { R.id.listEntryName });
 							roleList.setAdapter(displayRole);
 						} catch (JSONException e) {
 							e.printStackTrace();
