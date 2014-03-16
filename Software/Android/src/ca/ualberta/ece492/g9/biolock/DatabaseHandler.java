@@ -77,7 +77,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	    return lockList;
 	}
 	
-	// Getting locks Count
+	// Getting locks count
     public int getLockCount() {
         String countQuery = "SELECT  * FROM " + TABLE_LOCKS;
         SQLiteDatabase db = this.getReadableDatabase();
