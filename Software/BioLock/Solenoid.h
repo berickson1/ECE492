@@ -8,10 +8,17 @@
 #ifndef SOLENOID_H_
 #define SOLENOID_H_
 
+#include "includes.h"
+extern "C"{
+#include "altera_avalon_pio_regs.h"
+}
+
+#define UNLOCKED 1
+#define LOCKED 0
+
 class Solenoid {
 public:
-	Solenoid();
-	virtual ~Solenoid();
+	static void unlock();
 };
 
 #endif /* SOLENOID_H_ */

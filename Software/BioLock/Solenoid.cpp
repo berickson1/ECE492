@@ -7,12 +7,13 @@
 
 #include "Solenoid.h"
 
-Solenoid::Solenoid() {
-	// TODO Auto-generated constructor stub
-
+void Solenoid::unlock() {
+	IOWR_ALTERA_AVALON_PIO_DATA(SOLENOID_CONTROLLER_BASE, UNLOCKED);
+	OSTimeDlyHMSM(0,0,10,0);
+	IOWR_ALTERA_AVALON_PIO_DATA(SOLENOID_CONTROLLER_BASE, LOCKED);
 }
 
-Solenoid::~Solenoid() {
-	// TODO Auto-generated destructor stub
-}
+
+
+
 
