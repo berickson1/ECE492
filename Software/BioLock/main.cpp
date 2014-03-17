@@ -267,7 +267,10 @@ string UriDecode(const string & sSrc) {
 }
 
 const char * handleHTTPPost(http_conn* conn, int *replyLen) {
-	string uriString(conn->uri), retString;
+	string uriString(conn->uri), retString, incomingData;
+	incomingData.append(conn->rx_rd_pos, conn->content_length);
+	incomingData = retString = UriDecode(incomingData);
+	printf("%s", incomingData.c_str());
 	RestAPI api(&getCurrentFingerprintId, databaseSemaphore);
 	if (uriString.compare(0, 6, "/users") == 0) {
 		//Save user
