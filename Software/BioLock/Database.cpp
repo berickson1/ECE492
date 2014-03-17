@@ -10,7 +10,6 @@
  *  		Filenames are padded with '\0' until 8 characters long
  *  			eg: "23" becomes "23      "
  *  			Used atoi => invalid filenames become 0, therefore, start id count at 1
- *  		System has not been tested when subfolders exist
  *
  *  Issues/todos: add method to delete directories if needed
  *	
@@ -60,9 +59,9 @@ string Database::listAll(char *path) {
 		printf("Could not open directory. Please check definition of path\n");
 	if (ls_getNext(&list) == 0) {
 		file = atoi((const char*) list.currentEntry.FileName);
-		if (file == 0)
-			return " ";
-		results.append(findEntry(path, file));
+		// If not an empty file
+		if (file != 0)
+			results.append(findEntry(path, file));
 	}
 	while (ls_getNext(&list) == 0) {
 		file = atoi((const char*) list.currentEntry.FileName);
@@ -345,7 +344,6 @@ string Database::findEntry(const char *path, int id) {
 	}
 
 	euint8 *fileBuffer = (euint8 *) malloc(tuple.FileSize * sizeof(euint8));
-
 	sizeRead = file_read(&tuple, tuple.FileSize, fileBuffer);
 	if (sizeRead == 0) {
 		printf("Attributes could not read\n");
@@ -419,46 +417,31 @@ string Database::findHistory(int id) {
 
 // Updates role by deleting entry and creating new entry
 int Database::editRole(Role value) {
-	char filename[MAXBUF_LENGTH];
-
-	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLES, value.id);
-	rmfile(&db.myFs, (euint8*) filename);
+	deleteEntry(ROLES, value.id);
 	return insertRole(value);
 }
 
 // Updates user by deleting entry and creating new entry
 int Database::editUser(User value) {
-	char filename[MAXBUF_LENGTH];
-
-	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USERS, value.id);
-	rmfile(&db.myFs, (euint8*) filename);
+	deleteEntry(USERS, value.id);
 	return insertUser(value);
 }
 
 // Updates role sched by deleting entry and creating new entry
 int Database::editRoleSched(RoleSchedule value) {
-	char filename[MAXBUF_LENGTH];
-
-	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLE_SCHEDULE, value.id);
-	rmfile(&db.myFs, (euint8*) filename);
+	deleteEntry(ROLE_SCHEDULE, value.id);
 	return insertRoleSched(value);
 }
 
 // Updates user role by deleting entry and creating new entry
 int Database::editUserRole(UserRole value) {
-	char filename[MAXBUF_LENGTH];
-
-	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_ROLES, value.id);
-	rmfile(&db.myFs, (euint8*) filename);
+	deleteEntry(USER_ROLES, value.id);
 	return insertUserRole(value);
 }
 
 // Updates user print by deleting entry and creating new entry
 int Database::editUserPrint(UserPrint value) {
-	char filename[MAXBUF_LENGTH];
-
-	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_PRINTS, value.fid);
-	rmfile(&db.myFs, (euint8*) filename);
+	deleteEntry(USER_PRINTS, value.fid);
 	return insertUserPrint(value);
 }
 
@@ -483,7 +466,7 @@ int Database::deleteRole(int rid) {
 		string roleSched = findEntry(ROLE_SCHEDULE, file);
 		reader.parse(roleSched, attr, true);
 		if (attr["rid"] == rid) {
-			ret = deleteRoleSchedule(file);
+			ret = deleteEntry(ROLE_SCHEDULE, rid);
 		}
 	}
 
@@ -498,7 +481,7 @@ int Database::deleteRole(int rid) {
 		string userRole = findEntry(USER_ROLES, file);
 		reader.parse(userRole, attr, true);
 		if (attr["rid"] == rid) {
-			deleteUserRole(file);
+			ret = deleteEntry(USER_ROLES, rid);
 		}
 	}
 	return 1;
@@ -514,8 +497,7 @@ int Database::enableUser(int uid, bool enable) {
 	char filename[MAXBUF_LENGTH];
 
 	string user = findUser(uid);
-	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USERS, uid);
-	ret = rmfile(&db.myFs, (euint8*) filename);
+	ret = deleteEntry(USERS, uid);
 	if (ret != 0) {
 		printf(
 				"User enable status could not be changed, please try again later\n");
@@ -556,78 +538,29 @@ int Database::deleteUserPrint(int id) {
 	return deleteEntry(USER_PRINTS, id);
 }
 
-// Clears the database
-void Database::clearAll() {
+//Clears the database
+void Database::clearAll(){
+	clearTable(ROLES);
+	clearTable(USERS);
+	clearTable(ROLE_SCHEDULE);
+	clearTable(USER_ROLES);
+	clearTable(USER_PRINTS);
+	clearTable(HISTORY);
+}
+
+// Clears the table
+void Database::clearTable(char *path) {
 	int ret, file;
 	DirList list;
 
-	// Role
-	ret = ls_openDir(&list, &db.myFs, ROLES);
+	ret = ls_openDir(&list, &db.myFs, (eint8 *) path);
 	if (ret == -1)
-		printf("Could not open directory. Please check definition of path\n");
+		printf("Could not open directory\n");
 	while (ls_getNext(&list) == 0) {
 		file = atoi((const char*) list.currentEntry.FileName);
-		if (file != 0) {
-			deleteRole(file);
-		}
-	}
-
-	// User
-	ret = ls_openDir(&list, &db.myFs, USERS);
-	if (ret == -1)
-		printf("Could not open directory. Please check definition of path\n");
-	while (ls_getNext(&list) == 0) {
-		file = atoi((const char*) list.currentEntry.FileName);
-		if (file != 0) {
-			ret = deleteEntry(USERS, file);
-		}
-	}
-
-	// Role Schedule
-	ret = ls_openDir(&list, &db.myFs, ROLE_SCHEDULE);
-	if (ret == -1)
-		printf("Could not open directory. Please check definition of path\n");
-	while (ls_getNext(&list) == 0) {
-		file = atoi((const char*) list.currentEntry.FileName);
-		if (file != 0) {
-			deleteRoleSchedule(file);
-		}
-
-	}
-
-	// User Role
-	ret = ls_openDir(&list, &db.myFs, USER_ROLES);
-	if (ret == -1)
-		printf("Could not open directory. Please check definition of path\n");
-	while (ls_getNext(&list) == 0) {
-		file = atoi((const char*) list.currentEntry.FileName);
-		if (file != 0) {
-			deleteUserRole(file);
-		}
-
-	}
-
-	// User Print
-	ret = ls_openDir(&list, &db.myFs, USER_PRINTS);
-	if (ret == -1)
-		printf("Could not open directory. Please check definition of path\n");
-	while (ls_getNext(&list) == 0) {
-		file = atoi((const char*) list.currentEntry.FileName);
-		if (file != 0) {
-			deleteUserPrint(file);
-		}
-
-	}
-
-	// History
-	ret = ls_openDir(&list, &db.myFs, HISTORY);
-	if (ret == -1)
-		printf("Could not open directory. Please check definition of path\n");
-	while (ls_getNext(&list) == 0) {
-		file = atoi((const char*) list.currentEntry.FileName);
-		if (file != 0) {
-			ret = deleteEntry(HISTORY, file);
-		}
+		if (file == 0)
+			break;
+		deleteEntry(path, file);
 	}
 }
 
