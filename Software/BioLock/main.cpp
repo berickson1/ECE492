@@ -57,6 +57,8 @@ OS_EVENT *databaseSemaphore;
 #define TASK1_PRIORITY      6
 #define TASK2_PRIORITY      7
 
+const char * aliveJSON = "{\"alive\":true}";
+
 int getCurrentFingerprintId() {
 	INT8U err;
 	int *fid;
@@ -292,7 +294,9 @@ const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 	*isImage = false;
 	string uriString(URI), retString;
 	RestAPI api(&getCurrentFingerprintId, databaseSemaphore);
-	if (uriString.compare(0, 6, "/users") == 0) {
+	if (uriString.compare(0, 6, "/alive") == 0) {
+		retString = aliveJSON;
+	} else if (uriString.compare(0, 6, "/users") == 0) {
 		retString = api.getUsers();
 	} else if (uriString.compare(0, 6, "/roles") == 0) {
 		retString = api.getRoles();
