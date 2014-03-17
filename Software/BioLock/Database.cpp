@@ -351,7 +351,7 @@ string Database::findEntry(const char *path, int id) {
 	}
 
 	string attr = "";
-	attr.append((char*)fileBuffer, sizeRead);
+	attr.append((char*) fileBuffer, sizeRead);
 	free(fileBuffer);
 	file_fclose(&tuple);
 
@@ -388,7 +388,7 @@ string Database::findRoleUser(int rid) {
 
 	// Searches through user roles
 	ret = ls_openDir(&list, &db.myFs, (eint8 *) USER_ROLES);
-	if (ret == -1){
+	if (ret == -1) {
 		printf("Could not open directory\n");
 		return noRecord();
 	}
@@ -539,17 +539,38 @@ int Database::deleteUserPrint(int id) {
 }
 
 //Clears the database
-void Database::clearAll(){
-	clearTable(ROLES);
-	clearTable(USERS);
-	clearTable(ROLE_SCHEDULE);
-	clearTable(USER_ROLES);
-	clearTable(USER_PRINTS);
-	clearTable(HISTORY);
+int Database::clearAll() {
+	int ret;
+
+	ret = clearTable(ROLES);
+	if (ret != 1) {
+		return ret;
+	}
+	ret = clearTable(USERS);
+	if (ret != 1) {
+		return ret;
+	}
+	ret = clearTable(ROLE_SCHEDULE);
+	if (ret != 1) {
+		return ret;
+	}
+	ret = clearTable(USER_ROLES);
+	if (ret != 1) {
+		return ret;
+	}
+	ret = clearTable(USER_PRINTS);
+	if (ret != 1) {
+		return ret;
+	}
+	ret = clearTable(HISTORY);
+	if (ret != 1) {
+		return ret;
+	}
+	return ret;
 }
 
 // Clears the table
-void Database::clearTable(char *path) {
+int Database::clearTable(char *path) {
 	int ret, file;
 	DirList list;
 
@@ -560,8 +581,9 @@ void Database::clearTable(char *path) {
 		file = atoi((const char*) list.currentEntry.FileName);
 		if (file == 0)
 			break;
-		deleteEntry(path, file);
+		ret = deleteEntry(path, file);
 	}
+	return ret;
 }
 
 // Deletes the specified file
