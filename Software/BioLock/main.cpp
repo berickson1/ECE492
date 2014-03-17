@@ -40,6 +40,7 @@ extern "C" {
 #include "Camera/Camera.h"
 #include "WebServer/web_server.h"
 #include "WebServer/http.h"
+#include "Solenoid.h"
 }
 #define NOWEBSERVER
 
@@ -169,6 +170,8 @@ void task1(void* pdata) {
 							}
 							*ledBase = 0;
 							printf("Open up!!!\n\n");
+							printf("Unlocking\n");
+							Solenoid::unlock();
 							continue;
 						}
 					}
