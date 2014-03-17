@@ -70,11 +70,14 @@ void task1(void* pdata) {
 	INT8U err;
 	bool enroll = false;
 	while (true) {
+		//Init sensor
 		ZFMComm fingerprintSensor;
 		fingerprintSensor.init(SERIAL_NAME);
+		//Continue while we have no error
 		while (!fingerprintSensor.hasError()) {
 			OSTimeDlyHMSM(0, 0, 1, 0);
 			printf("Checking for fingerprint\n");
+			//Check if the web server is pending on a fingerprint
 			bool sendToMailbox = OSSemAccept(fingerprintSem) > 0;
 			while (!fingerprintSensor.scanFinger()
 					|| !fingerprintSensor.storeImage(1)) {
@@ -84,6 +87,7 @@ void task1(void* pdata) {
 					sendToMailbox = OSSemAccept(fingerprintSem) > 0;
 				}
 			}
+			//IO Demo: are we enrolling?
 			char* address = (char*) SWITCHES_BASE;
 			if ((*address) & 1<<0){
 				int storeId = 0;
