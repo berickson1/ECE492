@@ -1,5 +1,3 @@
-// Need to implement two-pane mode for large tablet size, may not be necessary
-// Need to remove one hard coded value
 // Check if device is authorized already - skip the AdminLogin screen
 
 // http://www.androidhive.info/2011/11/android-sqlite-database-tutorial/
@@ -7,6 +5,7 @@
 package ca.ualberta.ece492.g9.biolock;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.app.Activity;
@@ -15,45 +14,51 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.AdapterView;
+import android.widget.SimpleAdapter;
+import android.widget.AdapterView.OnItemClickListener;
 
-// Appears after splash screen - displays devices currently linked to db
+// Appears after splash screen - displays devices app already knows
 public class MainActivity extends Activity {
 
 	protected void onCreate(Bundle savedInstanceState) {
-		ListView listLocks;
-		ArrayList<String> lockArray = new ArrayList<String>();
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.list_view_row, R.id.listEntryName, lockArray);
-		DatabaseHandler db = new DatabaseHandler(this);
+		final ListView listLocks;
+		final ArrayList<HashMap<String, String>> lockArray = new ArrayList<HashMap<String, String>>();
+		HashMap<String, String> lockHash = new HashMap<String, String>();
+		ListAdapter adapter = new SimpleAdapter(getBaseContext(), lockArray, R.layout.list_view_row, new String[] { "Name" }, new int[] { R.id.listEntryName });
 		List<LockInfo> locks;
-		
+		DatabaseHandler db = new DatabaseHandler(this);
+
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_main);
-		
+
 		// Test population of database
-		//db.addLock(new LockInfo("http://berickson.ca/ECE492/", "Brent's Server"));
-		
+		// db.addLock(new LockInfo("http://berickson.ca/ECE492/", "Brent's Server"));
+
 		listLocks = (ListView) findViewById(R.id.deviceList);
+		// Display all locks
 		locks = db.getAllLocks();
 		for (LockInfo l : locks) {
-			lockArray.add(l.name);
+			lockHash.put("IP", l.ip);
+			lockHash.put("Name", l.name);
+			lockArray.add(lockHash);
 		}
 		listLocks.setAdapter(adapter);
-	}
-	
-	
-	// Callback method indicating which device was selected and passes result to
-	// next activity
-	// TODO: Check if device  is authorized - skip AdminLogin screen
-	public void onDeviceSelected(String id) {
-		Intent deviceSelected = new Intent(MainActivity.this, AdminLogin.class);
-		// TODO: item_id should be referenced in AdminLogin fragment
-		deviceSelected.putExtra("item_id", id);
-		startActivity(deviceSelected);
+
+		listLocks.setOnItemClickListener(new OnItemClickListener() {
+			// Lock selected, will jump to admin login screen
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				String ip = lockArray.get(position).get("IP");
+				Intent login = new Intent(MainActivity.this, AdminLogin.class);
+				login.putExtra("IP", ip);
+				startActivity(login);
+			}
+		});
 	}
 
 	// User selected to add new lock
