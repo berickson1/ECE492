@@ -19,7 +19,7 @@ import android.widget.TextView;
  */
 public class AdminLogin extends Activity {
 	public static final String PREFS_NAME = "CONNECTION";
-	String ip;
+	private static String ip;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

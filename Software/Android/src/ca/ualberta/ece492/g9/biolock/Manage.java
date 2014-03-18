@@ -18,7 +18,7 @@ import android.widget.TextView;
 // From AdminLogin - user authenticated & can modify settings
 public class Manage extends Activity {
 	public static final String PREFS_NAME = "CONNECTION";
-	String ip;
+	private static String ip;
 	TextView unlockButton;
 	
 	protected void onCreate(Bundle savedInstanceState) {
