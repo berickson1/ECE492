@@ -76,7 +76,7 @@ public class NewLock extends Activity {
 					searchButton.setEnabled(true);
 				}
 			}
-			public void execute(int response) {}
+			public void execute(Integer response) {}
 		});
 // Change to alive
 		parser.execute(ip.concat("/users"));

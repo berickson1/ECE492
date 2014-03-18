@@ -88,7 +88,7 @@ public class MainActivity extends Activity {
 							Toast.makeText(getApplicationContext(), "Cannot connect currently", Toast.LENGTH_SHORT).show();
 						}
 					}
-					public void execute(int response) {}
+					public void execute(Integer response) {}
 				});
 // Need to change this to alive
 				parser.execute(ip.concat("/users"));

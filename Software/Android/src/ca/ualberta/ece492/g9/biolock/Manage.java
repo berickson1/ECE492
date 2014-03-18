@@ -13,11 +13,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 // From AdminLogin - user authenticated & can modify settings
 public class Manage extends Activity {
 	public static final String PREFS_NAME = "CONNECTION";
 	String ip;
+	TextView unlockButton;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,6 +52,10 @@ public class Manage extends Activity {
 	
 	// Unlocks door lock
 	public void unlockDoor(View v) {
+		// Disable repeated button click
+		unlockButton = (TextView) findViewById(R.id.unlock);
+		unlockButton.setEnabled(false);
+		
 		// JSONObject to request unlock door
 		JSONObject putRequest = new JSONObject();
 		try {
@@ -57,14 +63,18 @@ public class Manage extends Activity {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
+		
 		// Post request to unlock door
 		JSONPost unlock = new JSONPost(new JSONCallbackFunction() {
 			@Override
-			public void execute(int response) {
+			public void execute(Integer response) {
 				// Not a valid response
-				if (response == -1){
+				if (response.intValue() == -1){
 					System.out.println("No response");
+				} else if (response.intValue() == 404) {
+					System.out.println("Invalid");
 				}
+				unlockButton.setEnabled(true);
 			}
 			public void execute(JSONArray json) {}
 		});

@@ -36,12 +36,13 @@ public class JSONPost extends AsyncTask<String, Void, Integer> {
 	public Integer doInBackground(String... url) {
 		HttpClient client = new DefaultHttpClient();
 		HttpPost httpPost = new HttpPost(url[0]);
+		Integer postResponse = -1;
 		try {
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 			nameValuePairs.add(new BasicNameValuePair("json", url[2]));
 			httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			HttpResponse postRequest = client.execute(httpPost);
-			return postRequest.getStatusLine().getStatusCode();
+			postResponse = postRequest.getStatusLine().getStatusCode();
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -49,13 +50,13 @@ public class JSONPost extends AsyncTask<String, Void, Integer> {
 		} catch (RuntimeException e) {
 			// No connection to server
 			e.printStackTrace();
-			// Returns null & will be handled by the caller
+			// Returns failed & will be handled by the caller
 			return -1;
 		}
-		return -1;
+		return postResponse;
 	}
 
-	protected void onPostExecute(int response) {
+	protected void onPostExecute(Integer response) {
 		// Returns post response
 		m_callback.execute(response);
 	}
