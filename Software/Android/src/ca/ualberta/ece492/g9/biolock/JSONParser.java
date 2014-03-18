@@ -15,11 +15,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.view.View;
-import android.widget.EditText;
 
 public class JSONParser extends AsyncTask<String, Void, JSONArray> {
 	static InputStream iStream = null;
@@ -30,7 +27,7 @@ public class JSONParser extends AsyncTask<String, Void, JSONArray> {
 	public JSONParser(JSONCallbackFunction callback) {
 		m_callback = callback;
 	}
-
+	
 	public JSONArray doInBackground(String... url) {
 
 		StringBuilder builder = new StringBuilder();
@@ -73,7 +70,7 @@ public class JSONParser extends AsyncTask<String, Void, JSONArray> {
 
 	protected void onPostExecute(JSONArray jsonArr) {
 		// Parse String to JSON object
-		//Log.d("ASYNCTask", jsonArr.toString());
+		Log.d("ASYNCTask", jsonArr.toString());
 		m_callback.execute(jsonArr);
 	}
 }

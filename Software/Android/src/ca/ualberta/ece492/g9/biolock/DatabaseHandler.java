@@ -88,7 +88,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		return cursor.getCount();
 	}
 
-	// Deleting single contact
+	// Deleting single lock
 	public void deleteLock(LockInfo lock) {
 		SQLiteDatabase db = this.getWritableDatabase();
 		db.delete(TABLE_LOCKS, KEY_ID + " = ?",
