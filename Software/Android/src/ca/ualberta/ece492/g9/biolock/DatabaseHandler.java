@@ -51,45 +51,52 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		db.insert(TABLE_LOCKS, null, values);
 		db.close(); // Closing database connection
 	}
-	
+
 	// Getting all locks
 	public List<LockInfo> getAllLocks() {
-	    List<LockInfo> lockList = new ArrayList<LockInfo>();
-	    
-	    // Select All Query
-	    String selectQuery = "SELECT * FROM " + TABLE_LOCKS;
-	 
-	    SQLiteDatabase db = this.getWritableDatabase();
-	    Cursor cursor = db.rawQuery(selectQuery, null);
-	 
-	    // looping through all rows and adding to list
-	    if (cursor.moveToFirst()) {
-	        do {
-	            LockInfo lock = new LockInfo();
-	            lock.setIP(cursor.getString(0));
-	            lock.setName(cursor.getString(1));
-	            // Adding contact to list
-	            lockList.add(lock);
-	        } while (cursor.moveToNext());
-	    }
-	 
-	    // return contact list
-	    return lockList;
+		List<LockInfo> lockList = new ArrayList<LockInfo>();
+
+		// Select All Query
+		String selectQuery = "SELECT * FROM " + TABLE_LOCKS;
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+
+		// looping through all rows and adding to list
+		if (cursor.moveToFirst()) {
+			do {
+				LockInfo lock = new LockInfo();
+				lock.setIP(cursor.getString(0));
+				lock.setName(cursor.getString(1));
+				// Adding contact to list
+				lockList.add(lock);
+			} while (cursor.moveToNext());
+		}
+
+		// return contact list
+		return lockList;
 	}
-	
+
 	// Getting locks count
-    public int getLockCount() {
-        String countQuery = "SELECT  * FROM " + TABLE_LOCKS;
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(countQuery, null);
-        cursor.close();
- 
-        // return count
-        return cursor.getCount();
-    }
-    
-	    
-// Is this needed?
+	public int getLockCount() {
+		String countQuery = "SELECT  * FROM " + TABLE_LOCKS;
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery(countQuery, null);
+		cursor.close();
+
+		// return count
+		return cursor.getCount();
+	}
+
+	// Deleting single contact
+	public void deleteLock(LockInfo lock) {
+		SQLiteDatabase db = this.getWritableDatabase();
+		db.delete(TABLE_LOCKS, KEY_ID + " = ?",
+				new String[] { String.valueOf(lock.getIP()) });
+		db.close();
+	}
+
+	// Is this needed?
 	// Getting single lock
 	public LockInfo getLock(String ipAddress) {
 		SQLiteDatabase db = this.getReadableDatabase();
@@ -100,7 +107,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			cursor.moveToFirst();
 
 		LockInfo lock = new LockInfo(ipAddress, cursor.getString(0));
-		
+
 		// return lock
 		return lock;
 	}
