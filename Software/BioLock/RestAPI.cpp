@@ -98,6 +98,10 @@ string RestAPI::scanPrint(){
 }
 
 int RestAPI::extractID(string URI){
+	//At this point we have {ip-addr}/{TYPE}
+	//or {ip-addr}/{TYPE}/
+	//or {ip-addr}/{TYPE}/{NUM}
+	//or {ip-addr}/{TYPE}/{NUM}/
 	int pos = URI.find_last_of("/");
 	string idString;
 	if (pos == URI.size() - 1){
@@ -107,9 +111,9 @@ int RestAPI::extractID(string URI){
 			//If there is no 2nd '/', no id
 			return -1;
 		}
-		idString = URI.substr(pos2+1, pos2-pos);
+		idString = URI.substr(pos2 + 1, pos2 - pos - 1);
 	} else {
-		idString = URI.substr(pos, URI.size() - 1 - pos);
+		idString = URI.substr(pos + 1, URI.size() - 1 - pos - 1);
 	}
 	const char * idToConvert = idString.c_str();
 	int id = strtol(idToConvert, NULL, 10);
