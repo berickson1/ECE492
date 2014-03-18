@@ -67,6 +67,7 @@ public class Users extends Activity {
 					}
 				}
 			}
+			public void execute(int response) {}
 		});
 		// parser.execute("http://berickson.ca/ECE492/users");
 		parser.execute("http://192.168.1.120/users");

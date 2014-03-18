@@ -3,4 +3,5 @@ import org.json.JSONArray;
 
 public interface JSONCallbackFunction {
 	void execute(JSONArray json);
+	void execute(int response);
 }

@@ -63,6 +63,7 @@ public class Roles extends Activity {
 					}
 				}
 			}
+			public void execute(int response) {}
 		});
 		//parser.execute("http://berickson.ca/ECE492/roles");
 		parser.execute("http://192.168.1.120/roles");

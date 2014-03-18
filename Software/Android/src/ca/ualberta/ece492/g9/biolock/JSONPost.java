@@ -10,36 +10,53 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import android.content.Intent;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
-public class JSONPost extends AsyncTask<String, Void, Void> {
+public class JSONPost extends AsyncTask<String, Void, Integer> {
 	static InputStream iStream = null;
 	static JSONArray jarray = null;
 	static String json = "";
 
-	public Void doInBackground(String... url) {
+	JSONCallbackFunction m_callback;
 
+	public JSONPost(JSONCallbackFunction callback) {
+		m_callback = callback;
+	}
+
+	public Integer doInBackground(String... url) {
 		HttpClient client = new DefaultHttpClient();
 		HttpPost httpPost = new HttpPost(url[0]);
 		try {
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-			nameValuePairs.add(new BasicNameValuePair("json", url[1]));
-	        httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-			HttpResponse response = client.execute(httpPost);
-			// check whether post was successful or not
+			nameValuePairs.add(new BasicNameValuePair("json", url[2]));
+			httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			HttpResponse postRequest = client.execute(httpPost);
+			return postRequest.getStatusLine().getStatusCode();
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (RuntimeException e){
+		} catch (RuntimeException e) {
 			// No connection to server
-			this.cancel(true);
+			e.printStackTrace();
+			// Returns null & will be handled by the caller
+			return -1;
 		}
-		return null;
+		return -1;
+	}
+
+	protected void onPostExecute(int response) {
+		// Returns post response
+		m_callback.execute(response);
 	}
 }
