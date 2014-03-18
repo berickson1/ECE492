@@ -72,7 +72,7 @@ public class JSONParser extends AsyncTask<String, Void, JSONArray> {
 
 	protected void onPostExecute(JSONArray jsonArr) {
 		// Parse String to JSON object
-		Log.d("ASYNCTask", jsonArr.toString());
+		//Log.d("ASYNCTask", jsonArr.toString());
 		m_callback.execute(jsonArr);
 	}
 }

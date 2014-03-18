@@ -65,6 +65,7 @@ public class MainActivity extends Activity {
 				SharedPreferences.Editor editor = settings.edit();
 				String ip = lockArray.get(position).get("IP");
 			    editor.putString("ipAddress", ip);
+			    editor.commit();
 
 				// Check connection to that lock
 				JSONParser parser = new JSONParser(new JSONCallbackFunction() {

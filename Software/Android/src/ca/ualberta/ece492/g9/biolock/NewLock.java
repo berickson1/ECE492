@@ -39,6 +39,7 @@ public class NewLock extends Activity {
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		SharedPreferences.Editor editor = settings.edit();
 	    editor.putString("ipAddress", ip);
+	    editor.commit();
 	    
 	    // Attempt communicate with declared ip address 
 		JSONParser parser = new JSONParser(new JSONCallbackFunction() {
