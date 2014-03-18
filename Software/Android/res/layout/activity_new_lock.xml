@@ -25,33 +25,33 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="50sp"
+        android:layout_marginTop="80sp"
         android:ems="20"
         android:gravity="center"
         android:hint="@string/sample_ip"
         android:inputType="phone" />
 
     <TextView
+        android:id="@+id/lock_detected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="80sp"
+        android:text="@string/lock_detected"
+        android:textColor="#000000"
+        android:textSize="20sp" 
+        android:visibility="invisible" />
+    
+    <TextView
         android:id="@+id/detect_lock"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="50sp"
+        android:layout_marginTop="80sp"
         android:clickable="true"
         android:onClick="searchLock"
         android:text="@string/detect_lock"
         android:textColor="@color/selector"
         android:textSize="25sp" />
-
-    <TextView
-        android:id="@+id/lock_detected"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="50sp"
-        android:text="@string/lock_detected"
-        android:textColor="#000000"
-        android:textSize="20sp" 
-        android:visibility="invisible" />
 
 </LinearLayout>
