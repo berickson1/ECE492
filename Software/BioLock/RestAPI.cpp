@@ -18,7 +18,11 @@ RestAPI::~RestAPI() {
 }
 
 
-string RestAPI::getUsers(){
+string RestAPI::getUsers(string URI){
+	int id = extractID(URI);
+	if (id != -1){
+		return getUser(id);
+	}
 	Database db(m_databaseSem);
 	return db.listAll(USERS);
 }
@@ -26,7 +30,11 @@ string RestAPI::getUser(int uid){
 	Database db(m_databaseSem);
 	return db.findUser(uid);
 }
-string RestAPI::getRoles(){
+string RestAPI::getRoles(string URI){
+	int id = extractID(URI);
+	if (id != -1){
+		return getRole(id);
+	}
 	Database db(m_databaseSem);
 	return db.listAll(ROLES);
 
@@ -36,7 +44,11 @@ string RestAPI::getRole(int rid){
 	return db.findRole(rid);
 
 }
-string RestAPI::getUserRoles(){
+string RestAPI::getUserRoles(string URI){
+	int id = extractID(URI);
+	if (id != -1){
+		return getUserRoles(id);
+	}
 	Database db(m_databaseSem);
 	return db.listAll(USER_ROLES);
 
@@ -49,7 +61,11 @@ string RestAPI::getUserRoles(int uid){
 string RestAPI::getRoleUsers(int rid){
 //TODO: Is there a database call for this?
 }
-string RestAPI::getRoleSchedule(){
+string RestAPI::getRoleSchedule(string URI){
+	int id = extractID(URI);
+	if (id != -1){
+		return getRoleSchedule(id);
+	}
 	Database db(m_databaseSem);
 	return db.listAll(ROLE_SCHEDULE);
 
@@ -58,12 +74,16 @@ string RestAPI::getRoleSchedule(int rid){
 	Database db(m_databaseSem);
 	return db.findRoleSchedule(rid);
 }
-string RestAPI::getHistory(){
+string RestAPI::getHistory(string URI){
 	Database db(m_databaseSem);
 	return db.listAll(HISTORY);
 
 }
-string RestAPI::getPrints(){
+string RestAPI::getPrints(string URI){
+	int id = extractID(URI);
+	if (id != -1){
+		return getPrint(id);
+	}
 	Database db(m_databaseSem);
 	return db.listAll(USER_PRINTS);
 
@@ -75,4 +95,26 @@ string RestAPI::getPrint(int uid){
 }
 string RestAPI::scanPrint(){
 
+}
+
+int RestAPI::extractID(string URI){
+	int pos = URI.find_last_of("/");
+	string idString;
+	if (pos == URI.size() - 1){
+		//Request is closed with '/'
+		int pos2 = URI.find_last_not_of("/", pos - 1);
+		if (pos2 == -1){
+			//If there is no 2nd '/', no id
+			return -1;
+		}
+		idString = URI.substr(pos2+1, pos2-pos);
+	} else {
+		idString = URI.substr(pos, URI.size() - 1 - pos);
+	}
+	const char * idToConvert = idString.c_str();
+	int id = strtol(idToConvert, NULL, 10);
+	if (id == 0){
+		return -1;
+	}
+	return id;
 }

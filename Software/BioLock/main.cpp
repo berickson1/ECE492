@@ -303,15 +303,15 @@ const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 	if (uriString.compare(0, 6, "/alive") == 0) {
 		retString = aliveJSON;
 	} else if (uriString.compare(0, 6, "/users") == 0) {
-		retString = api.getUsers();
+		retString = api.getUsers(uriString);
 	} else if (uriString.compare(0, 6, "/roles") == 0) {
-		retString = api.getRoles();
+		retString = api.getRoles(uriString);
 	} else if (uriString.compare(0, 14, "/roleSchedules") == 0) {
-		retString = api.getRoleSchedule();
+		retString = api.getRoleSchedule(uriString);
 	} else if (uriString.compare(0, 8, "/history") == 0) {
-		retString = api.getHistory();
+		retString = api.getHistory(uriString);
 	} else if (uriString.compare(0, 7, "/prints") == 0) {
-		retString = api.getPrints();
+		retString = api.getPrints(uriString);
 	} else if (uriString.compare(0, 4, "/pic") == 0) {
 		*isImage = true;
 		char * imgData = Camera::getBMP(len);

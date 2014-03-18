@@ -14,22 +14,23 @@ class RestAPI {
 public:
 	RestAPI(int (*getFingerprintIdFunction)(), OS_EVENT * databaseSem);
 	virtual ~RestAPI();
-	string getUsers();
+	string getUsers(string URI);
 	string getUser(int uid);
-	string getRoles();
+	string getRoles(string URI);
 	string getRole(int rid);
-	string getUserRoles();
+	string getUserRoles(string URI);
 	string getUserRoles(int uid);
 	string getRoleUsers(int rid);
-	string getRoleSchedule();
+	string getRoleSchedule(string URI);
 	string getRoleSchedule(int rid);
-	string getHistory();
-	string getPrints();
+	string getHistory(string URI);
+	string getPrints(string URI);
 	string getPrint(int uid);
 	string scanPrint();
 private:
 	int (*getFingerprintId)();
 	OS_EVENT * m_databaseSem;
+	int extractID(string URI);
 };
 
 #endif /* RESTAPI_H_ */
