@@ -56,7 +56,9 @@ public class JSONParser extends AsyncTask<String, Void, JSONArray> {
 			return null;
 		} catch (RuntimeException e){
 			// No connection to server
-			this.cancel(true);
+			e.printStackTrace();
+			// Returns null & will be handled by the caller
+			builder.append("");
 		}
 		
 		try {
