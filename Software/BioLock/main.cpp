@@ -42,7 +42,7 @@ extern "C" {
 #include "WebServer/http.h"
 #include "Solenoid.h"
 }
-#define NOWEBSERVER
+#define NOSENSOR
 
 /* Definition of Task Stacks */
 #define   TASK_STACKSIZE       2048
@@ -58,7 +58,7 @@ OS_EVENT *databaseSemaphore;
 #define TASK1_PRIORITY      6
 #define TASK2_PRIORITY      7
 
-const char * aliveJSON = "{\"alive\":true}";
+const char * aliveJSON = "[{\"alive\":true}]";
 
 int getCurrentFingerprintId() {
 	INT8U err;
