@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 import org.json.JSONArray;
 
+import ca.ualberta.ece492.g9.biolock.customs.JSONCallbackFunction;
+import ca.ualberta.ece492.g9.biolock.customs.JSONParser;
+import ca.ualberta.ece492.g9.biolock.customs.UserAdapter;
 import ca.ualberta.ece492.g9.biolock.types.User;
 
 import android.app.Activity;
@@ -29,10 +32,12 @@ public class Users extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_users);
+		
 		// Gets the ip address
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		ip = settings.getString("ipAddress", "noConn");
-
+		
+		// Obtains users from web server & displays user names
 		JSONParser parser = new JSONParser(new JSONCallbackFunction() {
 			@Override
 			public void execute(JSONArray json) {
