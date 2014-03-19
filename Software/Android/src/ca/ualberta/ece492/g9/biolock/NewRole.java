@@ -23,11 +23,13 @@ public class NewRole extends Activity {
 		// Retrieves information of the selected user
 		Intent intent = getIntent();
 		selectedRole = (Role) intent.getParcelableExtra("Role");
-		// Displays retrieved information on screen
-		EditText nameField = (EditText) findViewById(R.id.roleNameFill);
-		CheckBox enabledStatus = (CheckBox) findViewById(R.id.enabledRoleStatusBox);
-		nameField.setText(selectedRole.getName());
-		enabledStatus.setChecked(selectedRole.getEnabled());
+		if (selectedRole != null){
+			// Displays retrieved information on screen
+			EditText nameField = (EditText) findViewById(R.id.roleNameFill);
+			CheckBox enabledStatus = (CheckBox) findViewById(R.id.enabledRoleStatusBox);
+			nameField.setText(selectedRole.getName());
+			enabledStatus.setChecked(selectedRole.getEnabled());
+		}
 	}
 
 	// Jumps to AdminLogin to add new print

@@ -109,7 +109,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/enabledStatus"
-        android:layout_below="@+id/enabledStatusBox"
+        android:layout_below="@+id/enabledUserStatusBox"
         android:layout_marginTop="29dp"
         android:text="@string/fingerprint"
         android:textSize="20sp" />

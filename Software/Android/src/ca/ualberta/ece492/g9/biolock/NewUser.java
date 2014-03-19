@@ -23,11 +23,13 @@ public class NewUser extends Activity {
 		// Retrieves information of the selected user
 		Intent intent = getIntent();
 		selectedUser = (User) intent.getParcelableExtra("User");
-		// Displays retrieved information on screen
-		EditText nameField = (EditText) findViewById(R.id.userNameFill);
-		CheckBox enabledStatus = (CheckBox) findViewById(R.id.enabledUserStatusBox);
-		nameField.setText(selectedUser.getName());
-		enabledStatus.setChecked(selectedUser.getEnabled());
+		if (selectedUser != null){
+			// Displays retrieved information on screen
+			EditText nameField = (EditText) findViewById(R.id.userNameFill);
+			CheckBox enabledStatus = (CheckBox) findViewById(R.id.enabledUserStatusBox);
+			nameField.setText(selectedUser.getName());
+			enabledStatus.setChecked(selectedUser.getEnabled());
+		}
 	}
 
 	// Jumps to AdminLogin to add new print
