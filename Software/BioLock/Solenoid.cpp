@@ -8,8 +8,11 @@
 #include "Solenoid.h"
 
 void Solenoid::unlock() {
+	int count = 0;
 	IOWR_ALTERA_AVALON_PIO_DATA(SOLENOID_CONTROLLER_BASE, UNLOCKED);
-	OSTimeDlyHMSM(0,0,TIME_UNLOCKED,0);
+	while (count < TIME_UNLOCKED){
+		count++;
+	}
 	IOWR_ALTERA_AVALON_PIO_DATA(SOLENOID_CONTROLLER_BASE, LOCKED);
 }
 
