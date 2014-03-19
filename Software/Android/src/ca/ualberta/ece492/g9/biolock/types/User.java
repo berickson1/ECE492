@@ -9,7 +9,7 @@ import org.json.JSONObject;
 public class User{
 	int id;
 	public String name;
-	boolean enabled;
+	public boolean enabled;
 	Long startDate, endDate;
 	
 	public User(){
