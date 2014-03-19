@@ -26,6 +26,16 @@ public:
 	string getHistory(string URI);
 	string getPrints(string URI);
 	string getPrint(int uid);
+	string insertUser(string URI, string data);
+	string insertRole(string URI, string data);
+	string insertUserRole(string URI, string data);
+	string insertRoleSchedule(string URI, string data);
+	string insertPrint(string URI, string data);
+	string deleteUser(int id);
+	string deleteRole(int id);
+	string deleteUserRole(int id);
+	string deleteRoleSchedule(int id);
+	string deletePrint(int id);
 	string scanPrint();
 private:
 	int (*getFingerprintId)();

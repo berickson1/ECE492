@@ -97,6 +97,86 @@ string RestAPI::scanPrint(){
 
 }
 
+string RestAPI::insertUser(string URI, string data){
+	Database db(m_databaseSem);
+	User user;
+	user.loadFromJson(data);
+	stringstream str;
+	str << db.insertUser(user);
+	return str.str();
+}
+
+string RestAPI::insertRole(string URI, string data){
+	Database db(m_databaseSem);
+	Role role;
+	role.loadFromJson(data);
+	stringstream str;
+	str << db.insertRole(role);
+	return str.str();
+}
+
+string RestAPI::insertUserRole(string URI, string data){
+	Database db(m_databaseSem);
+	UserRole userRole;
+	userRole.loadFromJson(data);
+	stringstream str;
+	str << db.insertUserRole(userRole);
+	return str.str();
+}
+
+string RestAPI::insertRoleSchedule(string URI, string data){
+	Database db(m_databaseSem);
+	RoleSchedule roleSchedule;
+	roleSchedule.loadFromJson(data);
+	stringstream str;
+	str << db.insertRoleSched(roleSchedule);
+	return str.str();
+}
+
+string RestAPI::insertPrint(string URI, string data){
+	Database db(m_databaseSem);
+	UserPrint print;
+	print.loadFromJson(data);
+	stringstream str;
+	str << db.insertUserPrint(print);
+	return str.str();
+}
+
+string RestAPI::deleteUser(int id){
+	Database db(m_databaseSem);
+	stringstream result;
+	result << db.enableUser(id, false);
+	return result.str();
+}
+
+string RestAPI::deleteRole(int id){
+	Database db(m_databaseSem);
+	stringstream result;
+	result << db.deleteRole(id);
+	return result.str();
+}
+
+string RestAPI::deleteUserRole(int id){
+	Database db(m_databaseSem);
+	stringstream result;
+	result << db.deleteUserRole(id);
+	return result.str();
+}
+
+string RestAPI::deleteRoleSchedule(int id){
+	Database db(m_databaseSem);
+	stringstream result;
+	result << db.deleteRoleSchedule(id);
+	return result.str();
+}
+
+string RestAPI::deletePrint(int id){
+	Database db(m_databaseSem);
+	stringstream result;
+	result << db.deleteUserPrint(id);
+	return result.str();
+}
+
 int RestAPI::extractID(string URI){
 	//At this point we have {ip-addr}/{TYPE}
 	//or {ip-addr}/{TYPE}/
