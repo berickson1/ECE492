@@ -100,18 +100,7 @@ int Database::insertRole(Role value) {
 		return -1;
 	}
 
-	Json::Value nodeToInsert;
-	nodeToInsert["id"] = value.id;
-	nodeToInsert["name"] = value.name;
-	nodeToInsert["admin"] = value.admin;
-	nodeToInsert["enabled"] = value.enabled;
-	ostringstream start, end;
-	start << static_cast<long int>(value.startDate);
-	end << static_cast<long int>(value.endDate);
-	nodeToInsert["startDate"] = start.str();
-	nodeToInsert["endDate"] = end.str();
-
-	string jsonValue = nodeToInsert.toStyledString();
+	string jsonValue = value.toJSONString();
 
 	ret = file_fwrite(&tuple, 0, jsonValue.length(),
 			(euint8*) jsonValue.c_str());
@@ -142,17 +131,7 @@ int Database::insertUser(User value) {
 		return -1;
 	}
 
-	Json::Value nodeToInsert;
-	nodeToInsert["id"] = value.id;
-	nodeToInsert["name"] = value.name;
-	nodeToInsert["enabled"] = value.enabled;
-	ostringstream start, end;
-	start << static_cast<long int>(value.startDate);
-	end << static_cast<long int>(value.endDate);
-	nodeToInsert["startDate"] = start.str();
-	nodeToInsert["endDate"] = end.str();
-
-	string jsonValue = nodeToInsert.toStyledString();
+	string jsonValue = value.toJSONString();
 
 	ret = file_fwrite(&tuple, 0, jsonValue.length(),
 			(euint8*) jsonValue.c_str());
@@ -184,18 +163,7 @@ int Database::insertRoleSched(RoleSchedule value) {
 		return -1;
 	}
 
-	Json::Value nodeToInsert;
-	nodeToInsert["rid"] = value.rid;
-	nodeToInsert["startTime"] = value.startTime;
-	nodeToInsert["endTime"] = value.endTime;
-	nodeToInsert["days"] = value.days;
-	ostringstream start, end;
-	start << static_cast<long int>(value.startDate);
-	end << static_cast<long int>(value.endDate);
-	nodeToInsert["startDate"] = start.str();
-	nodeToInsert["endDate"] = end.str();
-
-	string jsonValue = nodeToInsert.toStyledString();
+	string jsonValue = value.toJSONString();
 
 	ret = file_fwrite(&tuple, 0, jsonValue.length(),
 			(euint8*) jsonValue.c_str());
@@ -227,17 +195,7 @@ int Database::insertUserRole(UserRole value) {
 		return -1;
 	}
 
-	Json::Value nodeToInsert;
-	nodeToInsert["id"] = value.id;
-	nodeToInsert["uid"] = value.uid;
-	nodeToInsert["rid"] = value.rid;
-	ostringstream start, end;
-	start << static_cast<long int>(value.startDate);
-	end << static_cast<long int>(value.endDate);
-	nodeToInsert["startDate"] = start.str();
-	nodeToInsert["endDate"] = end.str();
-
-	string jsonValue = nodeToInsert.toStyledString();
+	string jsonValue = value.toJSONString();
 
 	ret = file_fwrite(&tuple, 0, jsonValue.length(),
 			(euint8*) jsonValue.c_str());
@@ -268,11 +226,7 @@ int Database::insertUserPrint(UserPrint value) {
 		return -1;
 	}
 
-	Json::Value nodeToInsert;
-	nodeToInsert["fid"] = value.fid;
-	nodeToInsert["uid"] = value.uid;
-
-	string jsonValue = nodeToInsert.toStyledString();
+	string jsonValue = value.toJSONString();
 
 	ret = file_fwrite(&tuple, 0, jsonValue.length(),
 			(euint8*) jsonValue.c_str());
@@ -303,15 +257,7 @@ int Database::insertHistory(History value) {
 		return -1;
 	}
 
-	Json::Value nodeToInsert;
-	nodeToInsert["id"] = value.id;
-	nodeToInsert["uid"] = value.uid;
-	nodeToInsert["success"] = value.success;
-	ostringstream time;
-	time << static_cast<long int>(value.time);
-	nodeToInsert["time"] = time.str();
-
-	string jsonValue = nodeToInsert.toStyledString();
+	string jsonValue = value.toJSONString();
 
 	ret = file_fwrite(&tuple, 0, jsonValue.length(),
 			(euint8*) jsonValue.c_str());
@@ -380,8 +326,6 @@ string Database::findUserRole(int id) {
 
 // Searches for users with specific role
 string Database::findRoleUser(int rid) {
-	Json::Reader reader;
-	Json::Value attr;
 	DirList list;
 	int ret, file;
 	string results = "";
@@ -396,11 +340,11 @@ string Database::findRoleUser(int rid) {
 		file = atoi((const char*) list.currentEntry.FileName);
 		if (file == 0)
 			break;
-		string userRole = findEntry(USER_ROLES, file);
-		reader.parse(userRole, attr, true);
+		UserRole userRole ;
+		userRole.loadFromJson(findEntry(USER_ROLES, file));
 		// User role with matching rid found
-		if (attr["rid"].asInt() == rid)
-			results.append(userRole);
+		if (userRole.rid == rid)
+			results.append(userRole.toJSONString());
 	}
 	return results;
 }
@@ -447,8 +391,6 @@ int Database::editUserPrint(UserPrint value) {
 
 // Deletes role entry with corresponding rid
 int Database::deleteRole(int rid) {
-	Json::Reader reader;
-	Json::Value attr;
 	DirList list;
 	int ret, file;
 
@@ -463,9 +405,9 @@ int Database::deleteRole(int rid) {
 		file = atoi((const char*) list.currentEntry.FileName);
 		if (file == 0)
 			break;
-		string roleSched = findEntry(ROLE_SCHEDULE, file);
-		reader.parse(roleSched, attr, true);
-		if (attr["rid"] == rid) {
+		RoleSchedule roleSchedule;
+		roleSchedule.loadFromJson(findEntry(ROLE_SCHEDULE, file));
+		if (roleSchedule.rid == rid) {
 			ret = deleteEntry(ROLE_SCHEDULE, rid);
 		}
 	}
@@ -478,9 +420,9 @@ int Database::deleteRole(int rid) {
 		file = atoi((const char*) list.currentEntry.FileName);
 		if (file == 0)
 			break;
-		string userRole = findEntry(USER_ROLES, file);
-		reader.parse(userRole, attr, true);
-		if (attr["rid"] == rid) {
+		UserRole userRole;
+		userRole.loadFromJson(findEntry(USER_ROLES, file));
+		if (userRole.rid == rid) {
 			ret = deleteEntry(USER_ROLES, rid);
 		}
 	}
@@ -489,23 +431,21 @@ int Database::deleteRole(int rid) {
 
 // Enables/disables user entry with corresponding uid
 int Database::enableUser(int uid, bool enable) {
-	Json::Reader reader;
-	Json::Value userAttr;
 	User updatedUser;
 	File tuple;
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
-	string user = findUser(uid);
+	User user;
+	user.loadFromJson(findUser(uid));
 	ret = deleteEntry(USERS, uid);
 	if (ret != 0) {
 		printf(
 				"User enable status could not be changed, please try again later\n");
 		return -1;
 	}
-	reader.parse(user, userAttr, true);
-	userAttr["enabled"] = enable;
-	string jsonValue = userAttr.toStyledString();
+	user.enabled = enable;
+	string jsonValue = user.toJSONString();
 	file_fopen(&tuple, &db.myFs, filename, 'w');
 	ret = file_fwrite(&tuple, 0, jsonValue.length(),
 			(euint8*) jsonValue.c_str());
@@ -597,7 +537,7 @@ int Database::deleteEntry(char *path, int id) {
 		printf("Entry could not be deleted, please try again later\n");
 		return -1;
 	}
-	return 1;
+	return id;
 }
 
 void Database::testPopulate() {
