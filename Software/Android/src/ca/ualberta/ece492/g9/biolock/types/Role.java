@@ -6,7 +6,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Role{
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Role implements Parcelable{
 	int id;
 	String name;
 	boolean admin;
@@ -65,4 +68,39 @@ public class Role{
 	public Long getEndDate(){
 		return endDate;
 	}
+	
+	public int describeContents() {
+		return 0;
+	}
+
+	// Read in order
+	public Role(Parcel in){
+		this.id = in.readInt();
+		this.name = in.readString();
+		// true if int == 1
+		this.admin = (in.readInt() == 1);
+		this.enabled = (in.readInt() == 1);
+		this.startDate = in.readLong();
+		this.endDate = in.readLong();
+    }
+	
+	// Write in order
+	public void writeToParcel(Parcel pc, int flags) {
+		pc.writeInt(id);
+		pc.writeString(name);
+		// write 1 if true
+		pc.writeInt(enabled ? 1:0);
+		pc.writeInt(enabled ? 1:0);
+		pc.writeLong(startDate);
+		pc.writeLong(endDate);
+	}
+	
+	public static final Parcelable.Creator<Role> CREATOR = new Parcelable.Creator<Role>() {
+		public Role createFromParcel(Parcel pc) {
+			return new Role(pc);
+		}
+		public Role[] newArray(int size) {
+			return new Role[size];
+		}
+	};
 };
