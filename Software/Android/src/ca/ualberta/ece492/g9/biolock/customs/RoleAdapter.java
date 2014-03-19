@@ -36,8 +36,8 @@ public class RoleAdapter extends ArrayAdapter<Role> {
        CheckBox enabled = (CheckBox) convertView.findViewById(R.id.userEnabled);
        
        // Populate the data into the template view using the data object
-       name.setText(role.name);
-       enabled.setChecked(role.enabled);
+       name.setText(role.getName());
+       enabled.setChecked(role.getEnabled());
        
        // Return the completed view to render on screen
        return convertView;

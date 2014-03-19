@@ -8,9 +8,9 @@ import org.json.JSONObject;
 
 public class Role{
 	int id;
-	public String name;
+	String name;
 	boolean admin;
-	public boolean enabled;
+	boolean enabled;
 	Long startDate, endDate;
 	
 	public Role(){

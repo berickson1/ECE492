@@ -3,7 +3,7 @@ package ca.ualberta.ece492.g9.biolock.customs;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.ualberta.ece492.g9.biolock.LockInfo;
+import ca.ualberta.ece492.g9.biolock.types.LockInfo;
 
 import android.content.ContentValues;
 import android.content.Context;

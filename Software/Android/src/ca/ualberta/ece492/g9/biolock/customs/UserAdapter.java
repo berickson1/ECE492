@@ -36,8 +36,8 @@ public class UserAdapter extends ArrayAdapter<User> {
        CheckBox enabled = (CheckBox) convertView.findViewById(R.id.userEnabled);
        
        // Populate the data into the template view using the data object
-       name.setText(user.name);
-       enabled.setChecked(user.enabled);
+       name.setText(user.getName());
+       enabled.setChecked(user.getEnabled());
        
        // Return the completed view to render on screen
        return convertView;
