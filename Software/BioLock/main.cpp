@@ -42,7 +42,6 @@ extern "C" {
 #include "WebServer/http.h"
 #include "Solenoid.h"
 }
-#define NOSENSOR
 
 /* Definition of Task Stacks */
 #define   TASK_STACKSIZE       2048
