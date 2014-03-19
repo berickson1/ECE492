@@ -1,9 +1,10 @@
 // https://github.com/thecodepath/android_guides/wiki/Using-an-ArrayAdapter-with-ListView
 
-package ca.ualberta.ece492.g9.biolock;
+package ca.ualberta.ece492.g9.biolock.customs;
 
 import java.util.ArrayList;
 
+import ca.ualberta.ece492.g9.biolock.R;
 import ca.ualberta.ece492.g9.biolock.types.User;
 
 import android.content.Context;

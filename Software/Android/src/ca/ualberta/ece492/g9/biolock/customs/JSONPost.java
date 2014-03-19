@@ -1,4 +1,4 @@
-package ca.ualberta.ece492.g9.biolock;
+package ca.ualberta.ece492.g9.biolock.customs;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +14,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
+
 
 import android.os.AsyncTask;
 

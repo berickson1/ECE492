@@ -1,4 +1,4 @@
-package ca.ualberta.ece492.g9.biolock;
+package ca.ualberta.ece492.g9.biolock.customs;
 
 import java.io.BufferedReader;
 import java.io.IOException;

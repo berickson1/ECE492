@@ -4,6 +4,9 @@ package ca.ualberta.ece492.g9.biolock;
 
 import org.json.JSONArray;
 
+import ca.ualberta.ece492.g9.biolock.customs.JSONCallbackFunction;
+import ca.ualberta.ece492.g9.biolock.customs.JSONPost;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
