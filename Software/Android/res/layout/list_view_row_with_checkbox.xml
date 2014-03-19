@@ -4,12 +4,22 @@
     android:layout_height="fill_parent" >
 
     <TextView
-        android:id="@+id/listDeviceName"
+        android:id="@+id/listEntryName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:layout_marginBottom="30sp"
         android:layout_marginTop="30sp"
         android:gravity="center"
         android:textSize="18sp" />
+
+    <CheckBox
+        android:id="@+id/userEnabled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/listEntryName"
+        android:layout_alignBottom="@+id/listEntryName"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="24dp" />
 
 </RelativeLayout>

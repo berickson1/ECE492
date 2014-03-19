@@ -33,7 +33,7 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		final ListView listLocks;
 		final ArrayList<HashMap<String, String>> lockArray = new ArrayList<HashMap<String, String>>();
-		ListAdapter adapter = new SimpleAdapter(getBaseContext(), lockArray, R.layout.list_view_row, new String[] { "Name" }, new int[] { R.id.listEntryName });
+		ListAdapter adapter = new SimpleAdapter(getBaseContext(), lockArray, R.layout.list_view_row, new String[] { "Name" }, new int[] { R.id.listDeviceName });
 		List<LockInfo> locks;
 		DatabaseHandler db = new DatabaseHandler(this);
 
