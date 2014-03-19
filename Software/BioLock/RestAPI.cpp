@@ -182,18 +182,18 @@ int RestAPI::extractID(string URI){
 	//or {ip-addr}/{TYPE}/
 	//or {ip-addr}/{TYPE}/{NUM}
 	//or {ip-addr}/{TYPE}/{NUM}/
-	int pos = URI.find_last_of("/");
+	int pos = URI.find_last_of('/');
 	string idString;
 	if (pos == URI.size() - 1){
 		//Request is closed with '/'
-		int pos2 = URI.find_last_not_of("/", pos - 1);
+		int pos2 = URI.find_last_of('/', pos - 1);
 		if (pos2 == -1){
 			//If there is no 2nd '/', no id
 			return -1;
 		}
 		idString = URI.substr(pos2 + 1, pos2 - pos - 1);
 	} else {
-		idString = URI.substr(pos + 1, URI.size() - 1 - pos - 1);
+		idString = URI.substr(pos + 1, URI.size() - 1 - pos);
 	}
 	const char * idToConvert = idString.c_str();
 	int id = strtol(idToConvert, NULL, 10);
