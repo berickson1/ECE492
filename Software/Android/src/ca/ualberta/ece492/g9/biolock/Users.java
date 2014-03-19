@@ -17,7 +17,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.AdapterView.OnItemClickListener;
 
 //From Manage - user wishes to manage the users
 public class Users extends Activity {
@@ -42,13 +44,25 @@ public class Users extends Activity {
 			@Override
 			public void execute(JSONArray json) {
 				if (json != null) {
-					ListView userList = (ListView) findViewById(R.id.listUsers);
+					final ListView userList = (ListView) findViewById(R.id.listUsers);
 					ArrayList<User> usersArray = new ArrayList<User>();
 					UserAdapter adapter = new UserAdapter(mContext, usersArray);
 					User user = new User();
 					usersArray = user.fromJson(json);
 					adapter.addAll(usersArray);
 					userList.setAdapter(adapter);
+					
+					// User is clicked on
+					userList.setOnItemClickListener(new OnItemClickListener() {
+						@Override
+						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+							User userSelected = (User) userList.getItemAtPosition(position);
+							Intent updateUser = new Intent(Users.this, NewUser.class);
+							updateUser.putExtra("User", userSelected);
+							startActivity(updateUser);
+							finish();
+						}
+					});
 				}
 			}
 			public void execute(Integer response) {}

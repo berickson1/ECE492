@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import ca.ualberta.ece492.g9.biolock.customs.DatabaseHandler;
 import ca.ualberta.ece492.g9.biolock.customs.JSONCallbackFunction;
 import ca.ualberta.ece492.g9.biolock.customs.JSONParser;
+import ca.ualberta.ece492.g9.biolock.types.LockInfo;
 
 import android.app.Activity;
 import android.content.Intent;
