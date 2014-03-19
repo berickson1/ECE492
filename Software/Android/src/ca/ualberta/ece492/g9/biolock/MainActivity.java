@@ -54,8 +54,8 @@ public class MainActivity extends Activity {
 		locks = db.getAllLocks();
 		for (LockInfo l : locks) {
 			HashMap<String, String> lockHash = new HashMap<String, String>();
-			lockHash.put("IP", l.ip);
-			lockHash.put("Name", l.name);
+			lockHash.put("IP", l.getIP());
+			lockHash.put("Name", l.getName());
 			lockArray.add(lockHash);
 		}
 		listLocks.setAdapter(adapter);
