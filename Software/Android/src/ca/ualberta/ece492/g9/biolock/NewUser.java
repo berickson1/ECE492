@@ -25,7 +25,7 @@ public class NewUser extends Activity {
 		selectedUser = (User) intent.getParcelableExtra("User");
 		// Displays retrieved information on screen
 		EditText nameField = (EditText) findViewById(R.id.userNameFill);
-		CheckBox enabledStatus = (CheckBox) findViewById(R.id.enabledStatusBox);
+		CheckBox enabledStatus = (CheckBox) findViewById(R.id.enabledUserStatusBox);
 		nameField.setText(selectedUser.getName());
 		enabledStatus.setChecked(selectedUser.getEnabled());
 	}
