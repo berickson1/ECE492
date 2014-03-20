@@ -18,7 +18,7 @@ import android.widget.TextView;
 public class RoleAdapter extends ArrayAdapter<Role> {
 	
 	public RoleAdapter(Context context, ArrayList<Role> roles) {
-		super(context, R.layout.list_view_row_with_checkbox, roles);
+		super(context, R.layout.list_view_row, roles);
 	}
 	
 	@Override
@@ -28,17 +28,14 @@ public class RoleAdapter extends ArrayAdapter<Role> {
        
        // Check if an existing view is being reused, otherwise inflate the view
        if (convertView == null) {
-          convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_view_row_with_checkbox, null);
+          convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_view_row, null);
        }
        
        // Lookup view for data population
-       TextView name = (TextView) convertView.findViewById(R.id.listEntryName);
-       CheckBox enabled = (CheckBox) convertView.findViewById(R.id.userEnabled);
-       enabled.setEnabled(false);
+       TextView name = (TextView) convertView.findViewById(R.id.listDeviceName);
        
        // Populate the data into the template view using the data object
        name.setText(role.getName());
-       enabled.setChecked(role.getEnabled());
        
        // Return the completed view to render on screen
        return convertView;
