@@ -6,13 +6,17 @@ import org.json.JSONArray;
 
 import ca.ualberta.ece492.g9.biolock.customs.JSONCallbackFunction;
 import ca.ualberta.ece492.g9.biolock.customs.JSONParser;
+import ca.ualberta.ece492.g9.biolock.customs.JSONPost;
 import ca.ualberta.ece492.g9.biolock.customs.UserPrintAdapter;
 import ca.ualberta.ece492.g9.biolock.customs.UserRoleAdapter;
 import ca.ualberta.ece492.g9.biolock.types.User;
 import ca.ualberta.ece492.g9.biolock.types.UserPrint;
 import ca.ualberta.ece492.g9.biolock.types.UserRole;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -25,6 +29,7 @@ import android.widget.ListView;
 
 //From AdminLogin - addition of new user
 public class NewUser extends Activity {
+	ComponentName caller = this.getCallingActivity();
 	public static final String PREFS_NAME = "CONNECTION";
 	private static String ip;
 	private static Context mContext;
@@ -87,7 +92,7 @@ public class NewUser extends Activity {
 				}
 				public void execute(Integer response) {}
 			});
-			//parseRoles.execute(ip.concat("/roles/").concat(String.valueOf(selectedUser.getID())));
+			//parseRoles.execute(ip.concat("/userRole"));
 			parseRoles.execute(ip.concat("/roles"));
 		}
 	}
@@ -98,18 +103,56 @@ public class NewUser extends Activity {
 		startActivity(addPrint);
 	}
 
-	// Confirms deletion of user
+	// Confirms deletion of user before deletion
 	public void confirmDelete(View v) {
-		// CONFIRM DELETE!
-		System.out.println("Delete user");
+		AlertDialog deleteConfirm  = new AlertDialog.Builder(mContext).create();
+		deleteConfirm.setTitle("Delete user");
+		deleteConfirm.setMessage("Are you sure you want to delete this user?");
+		deleteConfirm.setCancelable(false);
+		deleteConfirm.setCanceledOnTouchOutside(false);
+		deleteConfirm.setButton(AlertDialog.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+            	// JSONPost to delete user
+            	JSONPost deleteUser = new JSONPost(new JSONCallbackFunction() {
+            		@Override
+					public void execute(Integer response) {
+						if (response == 200){
+							// User deleted
+							Intent backToCaller = new Intent(NewUser.this, caller.getClass());
+							startActivity(backToCaller);
+							finish();
+						} else {
+							// User could not be deleted
+							AlertDialog result  = new AlertDialog.Builder(mContext).create();
+							result.setTitle("Delete");
+							result.setMessage("User could not be deleted");
+							result.setCancelable(false);
+							result.setCanceledOnTouchOutside(false);
+							result.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+				                public void onClick(DialogInterface dialog, int which) {}
+				            });
+							result.show();
+						}
+						
+					}
+					public void execute(JSONArray json) {}
+            	});
+            	//deleteUser.execute(ip.concat("/users".concat(String.valueOf(selectedUser.getID()))), "delete", selectedUser.toString());
+            	deleteUser.execute(ip.concat("/users"));
+            }
+        });
+		deleteConfirm.setButton(AlertDialog.BUTTON_NEGATIVE, "No", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+		deleteConfirm.show();
 	}
 
 	// TODO: Check updated values before updating users
 	// Jumps to Users
 	public void updateUser(View v) {
 		// Runs Users
-		Intent i = new Intent(NewUser.this, Users.class);
-		startActivity(i);
+		//Intent i = new Intent(NewUser.this, Users.class);
+		//startActivity(i);
 
 		// Close this activity
 		finish();
