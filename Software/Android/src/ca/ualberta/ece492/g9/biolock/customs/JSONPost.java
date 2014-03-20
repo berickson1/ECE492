@@ -35,7 +35,8 @@ public class JSONPost extends AsyncTask<String, Void, Integer> {
 		Integer postResponse = -1;
 		try {
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-			nameValuePairs.add(new BasicNameValuePair("json", url[1]));
+			nameValuePairs.add(new BasicNameValuePair("type", url[1]));
+			nameValuePairs.add(new BasicNameValuePair("json", url[2]));
 			httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			HttpResponse postRequest = client.execute(httpPost);
 			postResponse = postRequest.getStatusLine().getStatusCode();
