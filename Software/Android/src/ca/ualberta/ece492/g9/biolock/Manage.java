@@ -1,5 +1,3 @@
-// TODO: Check if unlockDoor method is okay with JSONObject & handle response
-
 package ca.ualberta.ece492.g9.biolock;
 
 import org.json.JSONArray;
@@ -10,6 +8,9 @@ import ca.ualberta.ece492.g9.biolock.customs.JSONCallbackFunction;
 import ca.ualberta.ece492.g9.biolock.customs.JSONPost;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -22,9 +23,11 @@ import android.widget.TextView;
 public class Manage extends Activity {
 	public static final String PREFS_NAME = "CONNECTION";
 	private static String ip;
+	private static Context mContext;
 	TextView unlockButton;
 	
 	protected void onCreate(Bundle savedInstanceState) {
+		mContext = this;
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -71,16 +74,25 @@ public class Manage extends Activity {
 		JSONPost unlock = new JSONPost(new JSONCallbackFunction() {
 			@Override
 			public void execute(Integer response) {
-				// Not a valid response
-				if (response.intValue() == -1){
-					System.out.println("No response");
-				} else if (response.intValue() == 404) {
-					System.out.println("Invalid");
+				AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
+				noConn.setTitle("Unlock");
+				noConn.setCancelable(false);
+				noConn.setCanceledOnTouchOutside(false);
+				noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+	                public void onClick(DialogInterface dialog, int which) {}
+	            });
+				if (response.intValue() == 200) {
+					// Request succeeded
+					noConn.setMessage("Lock was unlocked");
+				} else {
+					// Request failed
+					noConn.setMessage("Lock could not be unlocked");
 				}
+				noConn.show();
 				unlockButton.setEnabled(true);
 			}
 			public void execute(JSONArray json) {}
 		});
-		unlock.execute(ip.concat("/unlock"), ip.concat("/prints"), putRequest.toString());
+		unlock.execute(ip.concat("/unlock"), putRequest.toString());
 	}
 }
