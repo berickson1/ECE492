@@ -92,7 +92,7 @@ public class NewUser extends Activity {
 				}
 				public void execute(Integer response) {}
 			});
-			//parseRoles.execute(ip.concat("/userRole").concat(String.valueOf(selectedUser.getID())));
+			//parseRoles.execute(ip.concat("/userRole/").concat(String.valueOf(selectedUser.getID())));
 			parseRoles.execute(ip.concat("/roles"));
 		}
 	}
@@ -118,8 +118,6 @@ public class NewUser extends Activity {
 					public void execute(Integer response) {
 						if (response == 200){
 							// User deleted
-							Intent backToCaller = new Intent(NewUser.this, caller.getClass());
-							startActivity(backToCaller);
 							finish();
 						} else {
 							// User could not be deleted
@@ -137,7 +135,7 @@ public class NewUser extends Activity {
 					}
 					public void execute(JSONArray json) {}
             	});
-            	//deleteUser.execute(ip.concat("/users".concat(String.valueOf(selectedUser.getID()))), "delete", selectedUser.toString());
+            	//deleteUser.execute(ip.concat("/users/".concat(String.valueOf(selectedUser.getID()))), "delete", selectedUser.toString());
             	deleteUser.execute(ip.concat("/users"));
             }
         });

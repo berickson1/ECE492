@@ -26,6 +26,7 @@ public class Users extends Activity {
 	public static final String PREFS_NAME = "CONNECTION";
 	private static String ip;
 	private static Context mContext;
+	private static UserAdapter adapter;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		mContext = this;
@@ -46,7 +47,7 @@ public class Users extends Activity {
 				if (json != null) {
 					final ListView userList = (ListView) findViewById(R.id.listUsers);
 					ArrayList<User> usersArray = new ArrayList<User>();
-					UserAdapter adapter = new UserAdapter(mContext, usersArray);
+					adapter = new UserAdapter(mContext, usersArray);
 					User user = new User();
 					usersArray = user.fromJson(json);
 					adapter.addAll(usersArray);
@@ -60,7 +61,6 @@ public class Users extends Activity {
 							Intent updateUser = new Intent(Users.this, NewUser.class);
 							updateUser.putExtra("User", userSelected);
 							startActivity(updateUser);
-							finish();
 						}
 					});
 				}
@@ -68,6 +68,15 @@ public class Users extends Activity {
 			public void execute(Integer response) {}
 		});
 		parser.execute(ip.concat("/users"));
+		
+	}
+	
+	public void onResume(){
+		if (adapter != null){
+			// Updates listview 
+			adapter.notifyDataSetChanged();
+		}
+		super.onResume();
 	}
 
 	// User selected to add new user
