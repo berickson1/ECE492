@@ -119,14 +119,14 @@
         android:layout_marginTop="30dp"
         android:text="@string/fingerprint"
         android:textSize="20sp" />
-
+        
     <TextView
         android:id="@+id/deleteUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/userRoles"
         android:layout_marginLeft="54dp"
-        android:layout_marginTop="47dp"
+        android:layout_marginTop="50dp"
         android:layout_toRightOf="@+id/updateUser"
         android:clickable="true"
         android:onClick="confirmDelete"
@@ -144,5 +144,17 @@
         android:onClick="updateUser"
         android:text="@string/update"
         android:textSize="25sp" />
+
+    <TextView
+        android:id="@+id/enrollRole"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/userRoles"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
+        android:clickable="true"
+        android:onClick="addRole"
+        android:text="@string/add_role"
+        android:textSize="15sp" />
 
 </RelativeLayout>
