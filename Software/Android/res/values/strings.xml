@@ -33,5 +33,6 @@
     <string name="sampleRole">Role Name</string>
     <string name="roleName">Role</string>
     <string name="access_hours">Access Hours</string>
+    <string name="ipName">IP Name</string>
 
 </resources>
