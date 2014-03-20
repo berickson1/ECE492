@@ -35,7 +35,7 @@ public class JSONPost extends AsyncTask<String, Void, Integer> {
 		Integer postResponse = -1;
 		try {
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-			nameValuePairs.add(new BasicNameValuePair("json", url[2]));
+			nameValuePairs.add(new BasicNameValuePair("json", url[1]));
 			httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 			HttpResponse postRequest = client.execute(httpPost);
 			postResponse = postRequest.getStatusLine().getStatusCode();
@@ -44,10 +44,7 @@ public class JSONPost extends AsyncTask<String, Void, Integer> {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (RuntimeException e) {
-			// No connection to server
 			e.printStackTrace();
-			// Returns failed & will be handled by the caller
-			return -1;
 		}
 		return postResponse;
 	}
