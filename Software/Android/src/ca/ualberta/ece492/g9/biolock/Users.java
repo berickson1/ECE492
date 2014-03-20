@@ -74,6 +74,5 @@ public class Users extends Activity {
 	public void addNewUser(View v) {
 		Intent newUser = new Intent(Users.this, NewUser.class);
 		startActivity(newUser);
-		finish();
 	}
 }

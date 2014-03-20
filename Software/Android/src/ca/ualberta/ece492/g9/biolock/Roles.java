@@ -74,6 +74,5 @@ public class Roles extends Activity {
 	public void addNewRole(View v) {
 		Intent newRole = new Intent(Roles.this, NewRole.class);
 		startActivity(newRole);
-		finish();
 	}
 }
