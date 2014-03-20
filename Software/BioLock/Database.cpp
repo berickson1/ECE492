@@ -219,7 +219,7 @@ int Database::insertUserPrint(UserPrint value) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
-	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_PRINTS, value.fid);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_PRINTS, value.id);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	if (ret == -2) {
 		printf("User prints already exists\n");
@@ -385,7 +385,7 @@ int Database::editUserRole(UserRole value) {
 
 // Updates user print by deleting entry and creating new entry
 int Database::editUserPrint(UserPrint value) {
-	deleteEntry(USER_PRINTS, value.fid);
+	deleteEntry(USER_PRINTS, value.id);
 	return insertUserPrint(value);
 }
 
@@ -639,22 +639,22 @@ void Database::testPopulate() {
 
 	UserPrint up1;
 	up1.uid = 1;
-	up1.fid = 1;
+	up1.id = 1;
 	insertUserPrint(up1);
 
 	UserPrint up2;
 	up2.uid = 2;
-	up2.fid = 2;
+	up2.id = 2;
 	insertUserPrint(up2);
 
 	UserPrint up3;
 	up3.uid = 3;
-	up3.fid = 3;
+	up3.id = 3;
 	insertUserPrint(up3);
 
 	UserPrint up4;
 	up4.uid = 2;
-	up4.fid = 7;
+	up4.id = 7;
 	insertUserPrint(up4);
 
 	History h1;

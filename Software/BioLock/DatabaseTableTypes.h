@@ -76,7 +76,7 @@ typedef struct UserPrint {
 	string toJSONString() {
 		Json::Value nodeToInsert;
 		nodeToInsert["uid"] = uid;
-		nodeToInsert["fid"] = fid;
+		nodeToInsert["id"] = id;
 
 		string jsonValue = nodeToInsert.toStyledString();
 		return jsonValue;
@@ -86,9 +86,9 @@ typedef struct UserPrint {
 		Json::Value node;
 		reader.parse(jsonString, node, true);
 		uid = node["uid"].asInt();
-		fid = node["fid"].asInt();
+		id = node["id"].asInt();
 	}
-	int uid, fid;
+	int id, uid;
 } UserPrint;
 
 typedef struct Role {

@@ -111,7 +111,7 @@ void task1(void* pdata) {
 					newUser.startDate = newUser.enabled = 5;
 					dbAccess.insertUser(newUser);
 					UserPrint userPrint;
-					userPrint.fid = storeId;
+					userPrint.id = storeId;
 					userPrint.uid = storeId;
 					dbAccess.insertUserPrint(userPrint);
 				} else {
@@ -333,7 +333,7 @@ const char * handleHTTPPost(http_conn* conn, int *replyLen) {
 		if (postType == "delete"){
 			UserPrint print;
 			print.loadFromJson(jsonData);
-			retString = api.deletePrint(print.fid);
+			retString = api.deletePrint(print.id);
 		} else if (postType == "insert"){
 			retString = api.insertPrint(jsonData);
 		}
