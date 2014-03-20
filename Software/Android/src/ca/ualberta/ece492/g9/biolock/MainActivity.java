@@ -1,7 +1,3 @@
-// TODO: Check if device is authorized already - skip the AdminLogin screen
-
-// http://www.androidhive.info/2011/11/android-sqlite-database-tutorial/
-
 package ca.ualberta.ece492.g9.biolock;
 
 import java.util.ArrayList;
@@ -65,6 +61,7 @@ public class MainActivity extends Activity {
 		listLocks.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				listLocks.setEnabled(false);
 				// Store ip in preferences for access in other intents
 				SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 				SharedPreferences.Editor editor = settings.edit();
@@ -84,6 +81,7 @@ public class MainActivity extends Activity {
 									// Lock is valid, will jump to admin login screen
 									Intent login = new Intent(MainActivity.this, AdminLogin.class);
 									startActivity(login);
+									listLocks.setEnabled(true);
 								}
 							} catch (JSONException e) {
 								e.printStackTrace();
@@ -91,6 +89,7 @@ public class MainActivity extends Activity {
 						} else {
 							// Cannot connect to lock
 							Toast.makeText(getApplicationContext(), "Cannot connect currently", Toast.LENGTH_SHORT).show();
+							listLocks.setEnabled(true);
 						}
 					}
 					public void execute(Integer response) {}
