@@ -14,6 +14,7 @@ import ca.ualberta.ece492.g9.biolock.types.UserPrint;
 import ca.ualberta.ece492.g9.biolock.types.UserRole;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -42,7 +43,8 @@ public class NewUser extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		setContentView(R.layout.activity_new_user);
-		
+		final ProgressDialog wait = ProgressDialog.show(NewUser.this,"User Information", "Loading user information", true, false, null);
+
 		// Gets the ip address
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		ip = settings.getString("ipAddress", "noConn");
@@ -95,6 +97,7 @@ public class NewUser extends Activity {
 			//parseRoles.execute(ip.concat("/userRole/").concat(String.valueOf(selectedUser.getID())));
 			parseRoles.execute(ip.concat("/roles"));
 		}
+		wait.dismiss();
 	}
 
 	// Jumps to AdminLogin to add new print
@@ -112,12 +115,14 @@ public class NewUser extends Activity {
 		deleteConfirm.setCanceledOnTouchOutside(false);
 		deleteConfirm.setButton(AlertDialog.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
+            	final ProgressDialog wait = ProgressDialog.show(NewUser.this,"Delete User", "Deleting user", true, false, null);
             	// JSONPost to delete user
             	JSONPost deleteUser = new JSONPost(new JSONCallbackFunction() {
             		@Override
 					public void execute(Integer response) {
 						if (response == 200){
 							// User deleted
+							wait.dismiss();
 							finish();
 						} else {
 							// User could not be deleted
@@ -129,6 +134,7 @@ public class NewUser extends Activity {
 							result.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
 				                public void onClick(DialogInterface dialog, int which) {}
 				            });
+							wait.dismiss();
 							result.show();
 						}
 						

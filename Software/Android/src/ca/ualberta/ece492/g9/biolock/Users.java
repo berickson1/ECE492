@@ -10,6 +10,7 @@ import ca.ualberta.ece492.g9.biolock.customs.UserAdapter;
 import ca.ualberta.ece492.g9.biolock.types.User;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -35,7 +36,8 @@ public class Users extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_users);
-		
+		final ProgressDialog wait = ProgressDialog.show(Users.this,"Users", "Loading users", true, false, null);
+
 		// Gets the ip address
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		ip = settings.getString("ipAddress", "noConn");
@@ -52,7 +54,7 @@ public class Users extends Activity {
 					usersArray = user.fromJson(json);
 					adapter.addAll(usersArray);
 					userList.setAdapter(adapter);
-					
+					wait.dismiss();
 					// User is clicked on
 					userList.setOnItemClickListener(new OnItemClickListener() {
 						@Override
@@ -68,7 +70,6 @@ public class Users extends Activity {
 			public void execute(Integer response) {}
 		});
 		parser.execute(ip.concat("/users"));
-		
 	}
 	
 	public void onResume(){
