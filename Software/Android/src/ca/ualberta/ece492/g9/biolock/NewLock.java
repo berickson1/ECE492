@@ -12,6 +12,7 @@ import ca.ualberta.ece492.g9.biolock.types.LockInfo;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -63,13 +64,17 @@ public class NewLock extends Activity {
 						if (response.getString("alive").equalsIgnoreCase("true")){
 							DatabaseHandler db = new DatabaseHandler(mContext);
 							if (db.addLock(new LockInfo(ip, name)) == -1){
+								lockStatus.setVisibility(View.INVISIBLE);
 								// Lock already in device
-								AlertDialog.Builder noConn  = new AlertDialog.Builder(mContext);
-								noConn.setMessage("Lock already added");
+								AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
+								noConn.setMessage("Lock already exists");
 								noConn.setTitle("New Lock");
-								noConn.setPositiveButton("OK", null);
-								noConn.setCancelable(true);
-								noConn.create().show();
+								noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+					                public void onClick(DialogInterface dialog, int which) {}
+					            });
+								noConn.setCancelable(false);
+								noConn.setCanceledOnTouchOutside(false);
+								noConn.show();
 							} else {
 								// Displays text stating lock is found
 								lockStatus.setText("Lock detected");

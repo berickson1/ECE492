@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -97,12 +98,15 @@ public class MainActivity extends Activity {
 						} else {
 							// Cannot connect to lock
 							wait.dismiss();
-							AlertDialog.Builder noConn  = new AlertDialog.Builder(mContext);
+							AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
 							noConn.setMessage("Could not connection to device");
 							noConn.setTitle("Device Connection");
-							noConn.setPositiveButton("OK", null);
-							noConn.setCancelable(true);
-							noConn.create().show();
+							noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+				                public void onClick(DialogInterface dialog, int which) {}
+				            });
+							noConn.setCancelable(false);
+							noConn.setCanceledOnTouchOutside(false);
+							noConn.show();
 							listLocks.setEnabled(true);
 						}
 					}
