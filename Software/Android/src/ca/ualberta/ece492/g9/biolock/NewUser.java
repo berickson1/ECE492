@@ -7,8 +7,10 @@ import org.json.JSONArray;
 import ca.ualberta.ece492.g9.biolock.customs.JSONCallbackFunction;
 import ca.ualberta.ece492.g9.biolock.customs.JSONParser;
 import ca.ualberta.ece492.g9.biolock.customs.JSONPost;
+import ca.ualberta.ece492.g9.biolock.customs.RoleAdapter;
 import ca.ualberta.ece492.g9.biolock.customs.UserPrintAdapter;
 import ca.ualberta.ece492.g9.biolock.customs.UserRoleAdapter;
+import ca.ualberta.ece492.g9.biolock.types.Role;
 import ca.ualberta.ece492.g9.biolock.types.User;
 import ca.ualberta.ece492.g9.biolock.types.UserPrint;
 import ca.ualberta.ece492.g9.biolock.types.UserRole;
@@ -37,6 +39,7 @@ public class NewUser extends Activity {
 	User selectedUser;
 	UserPrintAdapter userPrintAdapter;
 	UserRoleAdapter userRoleAdapter;
+	RoleAdapter roleAdapter;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		mContext = this;
@@ -115,6 +118,36 @@ public class NewUser extends Activity {
 	public void enrollPrint(View v) {
 		Intent addPrint = new Intent(NewUser.this, AdminLogin.class);
 		startActivity(addPrint);
+	}
+	
+	// Popup to select from roles
+	public void addRole(View v) {
+		final ProgressDialog wait = ProgressDialog.show(NewUser.this,"User Information", "Loading roles", true, false, null);
+
+		JSONParser parseRoles = new JSONParser(new JSONCallbackFunction() {
+			@Override
+			public void execute(JSONArray json) {
+				if (json != null){
+					ArrayList<Role> rolesArray = new ArrayList<Role>();
+					roleAdapter = new RoleAdapter(mContext, rolesArray);
+					Role role = new Role();
+					rolesArray = role.fromJson(json);
+					roleAdapter.addAll(rolesArray);
+					AlertDialog.Builder roles = new AlertDialog.Builder(mContext);
+					roles.setTitle("Roles");
+					roles.setAdapter(roleAdapter, new DialogInterface.OnClickListener() {
+					    @Override
+					    public void onClick(DialogInterface dialog, int which) {
+					        // the user clicked on colors[which]
+					    }
+					});
+					roles.show();
+				}
+				wait.dismiss();
+			}
+			public void execute(Integer response) {}
+		});
+		parseRoles.execute(ip.concat("/roles"));
 	}
 
 	// Confirms deletion of user before deletion
