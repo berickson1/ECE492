@@ -1,3 +1,5 @@
+// TODO: deal with unconnectable devices
+
 package ca.ualberta.ece492.g9.biolock;
 
 import java.util.ArrayList;
@@ -14,6 +16,9 @@ import ca.ualberta.ece492.g9.biolock.customs.JSONParser;
 import ca.ualberta.ece492.g9.biolock.types.LockInfo;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -30,7 +35,8 @@ import android.widget.Toast;
 // Appears after splash screen - displays devices app already knows
 public class MainActivity extends Activity {
 	public static final String PREFS_NAME = "CONNECTION";
-
+	private static Context mContext;
+	
 	protected void onCreate(Bundle savedInstanceState) {
 		final ListView listLocks;
 		final ArrayList<HashMap<String, String>> lockArray = new ArrayList<HashMap<String, String>>();
@@ -38,6 +44,7 @@ public class MainActivity extends Activity {
 		List<LockInfo> locks;
 		DatabaseHandler db = new DatabaseHandler(this);
 
+		mContext = this;
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -61,6 +68,8 @@ public class MainActivity extends Activity {
 		listLocks.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				// Forces user to wait
+				final ProgressDialog wait = ProgressDialog.show(MainActivity.this,"Device Connection", "Please wait for connection", true, false, null);
 				listLocks.setEnabled(false);
 				// Store ip in preferences for access in other intents
 				SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
@@ -79,15 +88,22 @@ public class MainActivity extends Activity {
 								if (response.getString("alive").equalsIgnoreCase("true")){
 									// Lock is valid, will jump to admin login screen
 									Intent login = new Intent(MainActivity.this, AdminLogin.class);
-									startActivity(login);
+									wait.dismiss();
 									listLocks.setEnabled(true);
+									startActivity(login);
 								}
 							} catch (JSONException e) {
 								e.printStackTrace();
 							}
 						} else {
 							// Cannot connect to lock
-							Toast.makeText(getApplicationContext(), "Cannot connect currently", Toast.LENGTH_SHORT).show();
+							wait.dismiss();
+							AlertDialog.Builder noConn  = new AlertDialog.Builder(mContext);
+							noConn.setMessage("Could not connection to device");
+							noConn.setTitle("Device Connection");
+							noConn.setPositiveButton("OK", null);
+							noConn.setCancelable(true);
+							noConn.create().show();
 							listLocks.setEnabled(true);
 						}
 					}
