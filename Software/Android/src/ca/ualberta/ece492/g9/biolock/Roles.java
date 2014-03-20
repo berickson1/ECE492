@@ -8,7 +8,6 @@ import ca.ualberta.ece492.g9.biolock.customs.JSONCallbackFunction;
 import ca.ualberta.ece492.g9.biolock.customs.JSONParser;
 import ca.ualberta.ece492.g9.biolock.customs.RoleAdapter;
 import ca.ualberta.ece492.g9.biolock.types.Role;
-import ca.ualberta.ece492.g9.biolock.types.User;
 
 import android.app.Activity;
 import android.content.Context;

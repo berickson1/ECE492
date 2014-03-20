@@ -14,7 +14,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -58,18 +57,13 @@ public class JSONParser extends AsyncTask<String, Void, JSONArray> {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-			return null;
 		} catch (RuntimeException e){
-			// No connection to server
 			e.printStackTrace();
-			// Returns null & will be handled by the caller
-			builder.append("");
 		}
 		
 		try {
 			return new JSONArray(builder.toString());
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}

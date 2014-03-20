@@ -30,7 +30,6 @@ import android.widget.ListView;
 import android.widget.AdapterView;
 import android.widget.SimpleAdapter;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Toast;
 
 // Appears after splash screen - displays devices app already knows
 public class MainActivity extends Activity {
