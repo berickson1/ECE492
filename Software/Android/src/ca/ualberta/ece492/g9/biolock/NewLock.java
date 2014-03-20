@@ -48,7 +48,7 @@ public class NewLock extends Activity {
 		EditText ipName = (EditText) findViewById(R.id.ipName);
 		EditText ipInput = (EditText) findViewById(R.id.ip_address);
 		final String name = ipName.getText().toString();
-		final String ip = ipInput.getText().toString();
+		final String ip = "http://".concat(ipInput.getText().toString());
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		SharedPreferences.Editor editor = settings.edit();
 	    editor.putString("ipAddress", ip);
@@ -106,6 +106,6 @@ public class NewLock extends Activity {
 			}
 			public void execute(Integer response) {}
 		});
-		parser.execute("http://".concat(ip).concat("/alive"));
+		parser.execute(ip.concat("/alive"));
 	}
 }
