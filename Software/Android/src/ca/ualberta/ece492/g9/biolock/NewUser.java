@@ -1,25 +1,47 @@
 package ca.ualberta.ece492.g9.biolock;
 
+import java.util.ArrayList;
+
+import org.json.JSONArray;
+
+import ca.ualberta.ece492.g9.biolock.customs.JSONCallbackFunction;
+import ca.ualberta.ece492.g9.biolock.customs.JSONParser;
+import ca.ualberta.ece492.g9.biolock.customs.UserPrintAdapter;
+import ca.ualberta.ece492.g9.biolock.customs.UserRoleAdapter;
 import ca.ualberta.ece492.g9.biolock.types.User;
+import ca.ualberta.ece492.g9.biolock.types.UserPrint;
+import ca.ualberta.ece492.g9.biolock.types.UserRole;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ListView;
 
 //From AdminLogin - addition of new user
 public class NewUser extends Activity {
+	public static final String PREFS_NAME = "CONNECTION";
+	private static String ip;
+	private static Context mContext;
 	User selectedUser;
 	
 	protected void onCreate(Bundle savedInstanceState) {
+		mContext = this;
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		setContentView(R.layout.activity_new_user);
+		
+		// Gets the ip address
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		ip = settings.getString("ipAddress", "noConn");
+				
 		// Retrieves information of the selected user
 		Intent intent = getIntent();
 		selectedUser = (User) intent.getParcelableExtra("User");
@@ -29,6 +51,44 @@ public class NewUser extends Activity {
 			CheckBox enabledStatus = (CheckBox) findViewById(R.id.enabledUserStatusBox);
 			nameField.setText(selectedUser.getName());
 			enabledStatus.setChecked(selectedUser.getEnabled());
+			
+			// Obtain user's enrolled fingerprints
+			JSONParser parsePrints = new JSONParser(new JSONCallbackFunction() {
+				@Override
+				public void execute(JSONArray json) {
+					if (json != null){
+						final ListView printsList = (ListView) findViewById(R.id.userPrints);
+						ArrayList<UserPrint> printsArray = new ArrayList<UserPrint>();
+						UserPrintAdapter adapter = new UserPrintAdapter(mContext, printsArray);
+						UserPrint userPrint = new UserPrint();
+						printsArray = userPrint.fromJson(json);
+						adapter.addAll(printsArray);
+						printsList.setAdapter(adapter);
+					}
+				}
+				public void execute(Integer response) {}
+			});
+			//parsePrints.execute(ip.concat("/users/").concat(String.valueOf(selectedUser.getID())));
+			parsePrints.execute(ip.concat("/prints"));
+			
+			// Obtain user's roles
+			JSONParser parseRoles = new JSONParser(new JSONCallbackFunction() {
+				@Override
+				public void execute(JSONArray json) {
+					if (json != null){
+						final ListView rolesList = (ListView) findViewById(R.id.userRoles);
+						ArrayList<UserRole> rolesArray = new ArrayList<UserRole>();
+						UserRoleAdapter adapter = new UserRoleAdapter(mContext, rolesArray);
+						UserRole userRole = new UserRole();
+						rolesArray = userRole.fromJson(json);
+						adapter.addAll(rolesArray);
+						rolesList.setAdapter(adapter);
+					}
+				}
+				public void execute(Integer response) {}
+			});
+			//parseRoles.execute(ip.concat("/roles/").concat(String.valueOf(selectedUser.getID())));
+			parseRoles.execute(ip.concat("/roles"));
 		}
 	}
 
