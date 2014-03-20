@@ -4,10 +4,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import ca.ualberta.ece492.g9.biolock.customs.DatabaseHandler;
 import ca.ualberta.ece492.g9.biolock.customs.JSONCallbackFunction;
 import ca.ualberta.ece492.g9.biolock.customs.JSONParser;
+import ca.ualberta.ece492.g9.biolock.types.LockInfo;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -22,9 +26,11 @@ import android.widget.TextView;
 public class NewLock extends Activity {
 	public static final String PREFS_NAME = "CONNECTION";
 	private static final int DELAY = 1000;
+	private static Context mContext;
 	TextView searchButton;
 
 	protected void onCreate(Bundle savedInstanceState) {
+		mContext = this;
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -37,8 +43,10 @@ public class NewLock extends Activity {
 		searchButton = (TextView) findViewById(R.id.detect_lock);
 		searchButton.setEnabled(false);
 		// Store ip in preferences for access in other intents
+		EditText ipName = (EditText) findViewById(R.id.ipName);
 		EditText ipInput = (EditText) findViewById(R.id.ip_address);
-		String ip = ipInput.getText().toString();
+		final String name = ipName.getText().toString();
+		final String ip = ipInput.getText().toString();
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		SharedPreferences.Editor editor = settings.edit();
 	    editor.putString("ipAddress", ip);
@@ -53,26 +61,38 @@ public class NewLock extends Activity {
 					try {
 						JSONObject response = (JSONObject) json.get(0);
 						if (response.getString("alive").equalsIgnoreCase("true")){
-							// Displays text stating lock is found
-							lockStatus.setText("Lock detected");
-							lockStatus.setVisibility(View.VISIBLE);
-							// Jumps to AdminLogin screen after 1 second delay
-							new Handler().postDelayed(new Runnable() {
-								@Override
-								public void run() {
-									// Runs AdminLogin
-									Intent login = new Intent(NewLock.this, AdminLogin.class);
-									searchButton.setEnabled(true);
-									startActivity(login);
-									// Close this activity
-									finish();
-								}
-							}, DELAY);
+							DatabaseHandler db = new DatabaseHandler(mContext);
+							if (db.addLock(new LockInfo(ip, name)) == -1){
+								// Lock already in device
+								AlertDialog.Builder noConn  = new AlertDialog.Builder(mContext);
+								noConn.setMessage("Lock already added");
+								noConn.setTitle("New Lock");
+								noConn.setPositiveButton("OK", null);
+								noConn.setCancelable(true);
+								noConn.create().show();
+							} else {
+								// Displays text stating lock is found
+								lockStatus.setText("Lock detected");
+								lockStatus.setVisibility(View.VISIBLE);
+								// Jumps to AdminLogin screen after 1 second delay
+								new Handler().postDelayed(new Runnable() {
+									@Override
+									public void run() {
+										// Runs AdminLogin
+										Intent login = new Intent(NewLock.this, AdminLogin.class);
+										searchButton.setEnabled(true);
+										startActivity(login);
+										// Close this activity
+										finish();
+									}
+								}, DELAY);
+							}
 						}
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
 				} else {
+					// Displays text stating lock not found
 					lockStatus.setText("Lock not detected");
 					lockStatus.setVisibility(View.VISIBLE);
 					searchButton.setEnabled(true);

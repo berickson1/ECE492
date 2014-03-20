@@ -42,7 +42,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	}
 
 	// Adding new lock
-	public void addLock(LockInfo lock) {
+	public long addLock(LockInfo lock) {
 		SQLiteDatabase db = this.getWritableDatabase();
 
 		ContentValues values = new ContentValues();
@@ -50,8 +50,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		values.put(KEY_ID, lock.getIP()); // Lock ip address
 
 		// Inserting Row
-		db.insert(TABLE_LOCKS, null, values);
+		long check = db.insert(TABLE_LOCKS, null, values);
 		db.close(); // Closing database connection
+		return check;
 	}
 
 	// Getting all locks
