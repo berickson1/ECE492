@@ -66,11 +66,15 @@ int getCurrentFingerprintId() {
 	fid = (int*) OSMboxPend(fingerprintMailbox, 0, &err);
 	return *fid;
 }
+int getBufferNum(bool isFirstBuffer){
+	return isFirstBuffer ? 1 : 2;
+}
 
 /* Checks for fingerprint */
 void task1(void* pdata) {
 	INT8U err;
 	bool enroll = false;
+	bool firstBuffer = true;
 	while (true) {
 		//Init sensor
 		ZFMComm fingerprintSensor;
@@ -82,7 +86,7 @@ void task1(void* pdata) {
 			//Check if the web server is pending on a fingerprint
 			bool sendToMailbox = OSSemAccept(fingerprintSem) > 0;
 			while (!fingerprintSensor.scanFinger()
-					|| !fingerprintSensor.storeImage(1)) {
+					|| !fingerprintSensor.storeImage(getBufferNum(firstBuffer))) {
 				//Sleep for a second and try again
 				OSTimeDlyHMSM(0, 0, 1, 0);
 				if (!sendToMailbox) {
@@ -92,15 +96,17 @@ void task1(void* pdata) {
 			//IO Demo: are we enrolling?
 			char* address = (char*) SWITCHES_BASE;
 			if ((*address) & 1<<0){
+				firstBuffer = false;
 				int storeId = 0;
 				printf("Enter ID to store print at:\n");
 				scanf("%d", &storeId);
 				printf("Scan finger again\n");
 				while (!fingerprintSensor.scanFinger()
-						|| !fingerprintSensor.storeImage(2)) {
+						|| !fingerprintSensor.storeImage(getBufferNum(firstBuffer))) {
 					//Sleep for a second and try again
 					OSTimeDlyHMSM(0, 0, 1, 0);
 				}
+				firstBuffer = true;
 				if(fingerprintSensor.storeFingerprint(storeId)){
 					printf("Stored fingerprint at %d\n", storeId);
 					Database dbAccess(databaseSemaphore);
@@ -121,7 +127,7 @@ void task1(void* pdata) {
 				continue;
 			}
 			printf("Fingerprint acquired, looking for fingerprint ID\n");
-			int fid = fingerprintSensor.findFingerprint(1);
+			int fid = fingerprintSensor.findFingerprint(getBufferNum(firstBuffer));
 			printf("Fingerprint id:%d\n", fid);
 			if (sendToMailbox) {
 				//We need to wait for the mailbox to empty before we do anything
