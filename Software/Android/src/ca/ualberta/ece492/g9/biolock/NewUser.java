@@ -92,7 +92,7 @@ public class NewUser extends Activity {
 				}
 				public void execute(Integer response) {}
 			});
-			//parseRoles.execute(ip.concat("/userRole"));
+			//parseRoles.execute(ip.concat("/userRole").concat(String.valueOf(selectedUser.getID())));
 			parseRoles.execute(ip.concat("/roles"));
 		}
 	}
