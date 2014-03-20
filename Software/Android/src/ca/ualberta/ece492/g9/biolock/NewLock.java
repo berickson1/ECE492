@@ -106,6 +106,6 @@ public class NewLock extends Activity {
 			}
 			public void execute(Integer response) {}
 		});
-		parser.execute(ip.concat("/alive"));
+		parser.execute("http://".concat(ip).concat("/alive"));
 	}
 }
