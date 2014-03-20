@@ -5,7 +5,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import ca.ualberta.ece492.g9.biolock.customs.JSONCallbackFunction;
-import ca.ualberta.ece492.g9.biolock.customs.JSONPost;
+import ca.ualberta.ece492.g9.biolock.customs.JSONParser;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -71,9 +71,9 @@ public class Manage extends Activity {
 		}
 		
 		// Post request to unlock door
-		JSONPost unlock = new JSONPost(new JSONCallbackFunction() {
+		JSONParser unlock = new JSONParser(new JSONCallbackFunction() {
 			@Override
-			public void execute(Integer response) {
+			public void execute(JSONArray json) {
 				AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
 				noConn.setTitle("Unlock");
 				noConn.setCancelable(false);
@@ -81,9 +81,19 @@ public class Manage extends Activity {
 				noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
 	                public void onClick(DialogInterface dialog, int which) {}
 	            });
-				if (response.intValue() == 200) {
-					// Request succeeded
-					noConn.setMessage("Lock was unlocked");
+				if (json != null) {
+					try {
+						JSONObject response = (JSONObject) json.get(0);
+						if (response.getString("success").equalsIgnoreCase("true")){
+							// Request succeeded
+							noConn.setMessage("Lock was unlocked");
+						} else {
+							noConn.setMessage("Lock could not be unlocked");
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+					
 				} else {
 					// Request failed
 					noConn.setMessage("Lock could not be unlocked");
@@ -91,7 +101,7 @@ public class Manage extends Activity {
 				noConn.show();
 				unlockButton.setEnabled(true);
 			}
-			public void execute(JSONArray json) {}
+			public void execute(Integer response) {}
 		});
 		unlock.execute(ip.concat("/unlock"), putRequest.toString());
 	}
