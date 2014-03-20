@@ -39,6 +39,7 @@ public:
 	string deletePrint(int id);
 	string scanPrint();
 	string unlockLock();
+	bool checkAdminPrint();
 private:
 	int (*getFingerprintId)();
 	OS_EVENT * m_databaseSem;

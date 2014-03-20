@@ -182,6 +182,34 @@ string RestAPI::unlockLock(){
 	return "{\"success\":true}";
 }
 
+bool RestAPI::checkAdminPrint(){
+	int fid = getFingerprintId();
+	Database db(m_databaseSem);
+	UserPrint print;
+	print.loadFromJson(db.findUserPrint(fid));
+	if(print.id == -1){
+		return false;
+	}
+	User user;
+	user.loadFromJson(db.findUser(print.uid));
+	//TODO: check start and end date
+	if(user.id == -1 || !user.enabled){
+		return false;
+	}
+	UserRole userRole;
+	userRole.loadFromJson(db.findUserRole(user.id));
+	if(userRole.id == -1){
+		return false;
+	}
+	Role role;
+	role.loadFromJson(db.findRole(userRole.rid));
+	if(role.id == -1 || !role.enabled){
+		return false;
+	}
+	return role.admin;
+
+}
+
 int RestAPI::extractID(string URI){
 	//At this point we have {ip-addr}/{TYPE}
 	//or {ip-addr}/{TYPE}/
