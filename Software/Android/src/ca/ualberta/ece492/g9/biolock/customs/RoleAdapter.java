@@ -34,6 +34,7 @@ public class RoleAdapter extends ArrayAdapter<Role> {
        // Lookup view for data population
        TextView name = (TextView) convertView.findViewById(R.id.listEntryName);
        CheckBox enabled = (CheckBox) convertView.findViewById(R.id.userEnabled);
+       enabled.setEnabled(false);
        
        // Populate the data into the template view using the data object
        name.setText(role.getName());
