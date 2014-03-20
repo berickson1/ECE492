@@ -365,7 +365,11 @@ const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 	} else if (uriString.compare(0, 7, "/prints") == 0) {
 		retString = api.getPrints(uriString);
 	} else if (uriString.compare(0, 11, "/checkAdmin") == 0) {
-		retString = api.checkAdminPrint();
+		if(api.checkAdminPrint()){
+			retString = "{\"success\":true}";
+		} else {
+			retString = "{\"success\":false}";
+		}
 	}  else if (uriString.compare(0, 8, "/enroll1") == 0) {
 		//retString = api.enroll1();
 	} else if (uriString.compare(0, 8, "/enroll2") == 0) {
