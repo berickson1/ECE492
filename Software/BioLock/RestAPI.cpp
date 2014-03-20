@@ -97,7 +97,7 @@ string RestAPI::scanPrint(){
 
 }
 
-string RestAPI::insertUser(string URI, string data){
+string RestAPI::insertUser(string data){
 	Database db(m_databaseSem);
 	User user;
 	user.loadFromJson(data);
@@ -106,7 +106,7 @@ string RestAPI::insertUser(string URI, string data){
 	return str.str();
 }
 
-string RestAPI::insertRole(string URI, string data){
+string RestAPI::insertRole(string data){
 	Database db(m_databaseSem);
 	Role role;
 	role.loadFromJson(data);
@@ -115,7 +115,7 @@ string RestAPI::insertRole(string URI, string data){
 	return str.str();
 }
 
-string RestAPI::insertUserRole(string URI, string data){
+string RestAPI::insertUserRole(string data){
 	Database db(m_databaseSem);
 	UserRole userRole;
 	userRole.loadFromJson(data);
@@ -124,7 +124,7 @@ string RestAPI::insertUserRole(string URI, string data){
 	return str.str();
 }
 
-string RestAPI::insertRoleSchedule(string URI, string data){
+string RestAPI::insertRoleSchedule(string data){
 	Database db(m_databaseSem);
 	RoleSchedule roleSchedule;
 	roleSchedule.loadFromJson(data);
@@ -133,7 +133,7 @@ string RestAPI::insertRoleSchedule(string URI, string data){
 	return str.str();
 }
 
-string RestAPI::insertPrint(string URI, string data){
+string RestAPI::insertPrint(string data){
 	Database db(m_databaseSem);
 	UserPrint print;
 	print.loadFromJson(data);
@@ -175,6 +175,11 @@ string RestAPI::deletePrint(int id){
 	stringstream result;
 	result << db.deleteUserPrint(id);
 	return result.str();
+}
+
+string RestAPI::unlockLock(){
+	Solenoid::unlock();
+	return "{\"success\":true}";
 }
 
 int RestAPI::extractID(string URI){

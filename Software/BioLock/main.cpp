@@ -268,22 +268,75 @@ string UriDecode(const string & sSrc) {
 	return sResult;
 }
 
+string getPOSTPayload(string data, string tag){
+	int tagStart = 0,
+		tagEnd = -1,
+		dataEnd = -1;;
+	//Iterate across data looking for tags
+	//Format {tag}={data}&{tag2}={data2}...
+	string currentTag;
+	while(currentTag != tag){
+		tagStart = dataEnd + 1;
+		tagEnd = data.find("=", tagStart);
+		if(tagEnd == string::npos){
+			return "";
+		}
+		currentTag = data.substr(tagStart, tagEnd - tagStart);
+		dataEnd = data.find("&", tagEnd);
+		if(dataEnd == string::npos){
+			dataEnd = data.size();
+		}
+	}
+	//Found Tag
+	return UriDecode(data.substr(tagEnd + 1, dataEnd - tagEnd - 1));
+}
+
 const char * handleHTTPPost(http_conn* conn, int *replyLen) {
-	string uriString(conn->uri), retString, incomingData;
+	string uriString(conn->uri), retString, incomingData, jsonData, postType;
 	incomingData.append(conn->rx_rd_pos, conn->content_length);
-	incomingData = retString = UriDecode(incomingData);
-	printf("%s", incomingData.c_str());
+	retString = "{\"success\":false;}";
+	jsonData = getPOSTPayload(incomingData, "json");
+	postType = getPOSTPayload(incomingData, "type");
+	if (postType != "delete" && postType != "insert"){
+		*replyLen = retString.length();
+			const char * retval = retString.c_str();
+			return retval;
+	}
 	RestAPI api(&getCurrentFingerprintId, databaseSemaphore);
 	if (uriString.compare(0, 6, "/users") == 0) {
-		//Save user
+		if (postType == "delete"){
+			User user;
+			user.loadFromJson(jsonData);
+			retString = api.deleteUser(user.id);
+		} else if (postType == "insert"){
+			retString = api.insertUser(jsonData);
+		}
 	} else if (uriString.compare(0, 6, "/roles") == 0) {
-		//Save role
+		if (postType == "delete"){
+			Role role;
+			role.loadFromJson(jsonData);
+			retString = api.deleteRole(role.id);
+		} else if (postType == "insert"){
+			retString = api.insertRole(jsonData);
+		}
 	} else if (uriString.compare(0, 14, "/roleSchedules") == 0) {
-		//Save schedule
+		if (postType == "delete"){
+			RoleSchedule schedule;
+			schedule.loadFromJson(jsonData);
+			retString = api.deleteUser(schedule.id);
+		} else if (postType == "insert"){
+			retString = api.insertRoleSchedule(jsonData);
+		}
 	} else if (uriString.compare(0, 8, "/history") == 0) {
-		//Save history
+		//retString = api.insertHistory(jsonData);
 	} else if (uriString.compare(0, 7, "/prints") == 0) {
-		//Save Print
+		if (postType == "delete"){
+			UserPrint print;
+			print.loadFromJson(jsonData);
+			retString = api.deletePrint(print.fid);
+		} else if (postType == "insert"){
+			retString = api.insertPrint(jsonData);
+		}
 	} else {
 		*replyLen = 0;
 		return NULL;
@@ -311,6 +364,14 @@ const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 		retString = api.getHistory(uriString);
 	} else if (uriString.compare(0, 7, "/prints") == 0) {
 		retString = api.getPrints(uriString);
+	} else if (uriString.compare(0, 11, "/checkAdmin") == 0) {
+		//retString = api.checkAdminPrint();
+	}  else if (uriString.compare(0, 8, "/enroll1") == 0) {
+		//retString = api.enroll1();
+	} else if (uriString.compare(0, 8, "/enroll2") == 0) {
+		//retString = api.enroll2();
+	} else if (uriString.compare(0, 7, "/unlock") == 0) {
+		retString = api.unlockLock();
 	} else if (uriString.compare(0, 4, "/pic") == 0) {
 		*isImage = true;
 		char * imgData = Camera::getBMP(len);
