@@ -35,6 +35,8 @@ public class NewUser extends Activity {
 	private static String ip;
 	private static Context mContext;
 	User selectedUser;
+	UserPrintAdapter userPrintAdapter;
+	UserRoleAdapter userRoleAdapter;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		mContext = this;
@@ -66,11 +68,11 @@ public class NewUser extends Activity {
 					if (json != null){
 						final ListView printsList = (ListView) findViewById(R.id.userPrints);
 						ArrayList<UserPrint> printsArray = new ArrayList<UserPrint>();
-						UserPrintAdapter adapter = new UserPrintAdapter(mContext, printsArray);
+						userPrintAdapter = new UserPrintAdapter(mContext, printsArray);
 						UserPrint userPrint = new UserPrint();
 						printsArray = userPrint.fromJson(json);
-						adapter.addAll(printsArray);
-						printsList.setAdapter(adapter);
+						userPrintAdapter.addAll(printsArray);
+						printsList.setAdapter(userPrintAdapter);
 					}
 				}
 				public void execute(Integer response) {}
@@ -85,11 +87,11 @@ public class NewUser extends Activity {
 					if (json != null){
 						final ListView rolesList = (ListView) findViewById(R.id.userRoles);
 						ArrayList<UserRole> rolesArray = new ArrayList<UserRole>();
-						UserRoleAdapter adapter = new UserRoleAdapter(mContext, rolesArray);
+						userRoleAdapter = new UserRoleAdapter(mContext, rolesArray);
 						UserRole userRole = new UserRole();
 						rolesArray = userRole.fromJson(json);
-						adapter.addAll(rolesArray);
-						rolesList.setAdapter(adapter);
+						userRoleAdapter.addAll(rolesArray);
+						rolesList.setAdapter(userRoleAdapter);
 					}
 				}
 				public void execute(Integer response) {}
@@ -100,6 +102,15 @@ public class NewUser extends Activity {
 		wait.dismiss();
 	}
 
+	public void onResume(){
+		if (userPrintAdapter != null){
+			// Updates listview 
+			userPrintAdapter.notifyDataSetChanged();
+			userRoleAdapter.notifyDataSetChanged();
+		}
+		super.onResume();
+	}
+	
 	// Jumps to AdminLogin to add new print
 	public void enrollPrint(View v) {
 		Intent addPrint = new Intent(NewUser.this, AdminLogin.class);
