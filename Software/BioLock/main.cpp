@@ -294,7 +294,7 @@ string getPOSTPayload(string data, string tag){
 const char * handleHTTPPost(http_conn* conn, int *replyLen) {
 	string uriString(conn->uri), retString, incomingData, jsonData, postType;
 	incomingData.append(conn->rx_rd_pos, conn->content_length);
-	retString = "{\"success\":false;}";
+	retString = "{\"success\":false}";
 	jsonData = getPOSTPayload(incomingData, "json");
 	postType = getPOSTPayload(incomingData, "type");
 	if (postType != "delete" && postType != "insert"){
