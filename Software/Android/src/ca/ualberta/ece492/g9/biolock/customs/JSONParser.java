@@ -14,6 +14,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.os.AsyncTask;
 import android.util.Log;
@@ -42,9 +43,13 @@ public class JSONParser extends AsyncTask<String, Void, JSONArray> {
 				InputStream content = entity.getContent();
 				BufferedReader reader = new BufferedReader(
 						new InputStreamReader(content));
-				String line;
+				String line = null;
 				while ((line = reader.readLine()) != null) {
 					builder.append(line);
+				}
+				if (builder.charAt(0) != '['){
+					builder.insert(0, "[");
+					builder.append("]");
 				}
 			} else {
 				Log.e("==>", "Failed to download file");

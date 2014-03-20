@@ -52,8 +52,7 @@ public class NewLock extends Activity {
 				if (json != null){
 					try {
 						JSONObject response = (JSONObject) json.get(0);
-// TODO: Need to change this to alive
-						if (response.getString("enabled").equalsIgnoreCase("true")){
+						if (response.getString("alive").equalsIgnoreCase("true")){
 							// Displays text stating lock is found
 							lockStatus.setText("Lock detected");
 							lockStatus.setVisibility(View.VISIBLE);
@@ -81,7 +80,6 @@ public class NewLock extends Activity {
 			}
 			public void execute(Integer response) {}
 		});
-// TODO: Change to alive
-		parser.execute(ip.concat("/users"));
+		parser.execute(ip.concat("/alive"));
 	}
 }

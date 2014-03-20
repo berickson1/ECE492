@@ -76,8 +76,7 @@ public class MainActivity extends Activity {
 						if (json != null){
 							try {
 								JSONObject response = (JSONObject) json.get(0);
-// TODO: Need to change this to alive
-								if (response.getString("enabled").equalsIgnoreCase("true")){
+								if (response.getString("alive").equalsIgnoreCase("true")){
 									// Lock is valid, will jump to admin login screen
 									Intent login = new Intent(MainActivity.this, AdminLogin.class);
 									startActivity(login);
@@ -94,8 +93,7 @@ public class MainActivity extends Activity {
 					}
 					public void execute(Integer response) {}
 				});
-// TODO: Need to change this to alive
-				parser.execute(ip.concat("/users"));
+				parser.execute(ip.concat("/alive"));
 			}
 		});
 	}
