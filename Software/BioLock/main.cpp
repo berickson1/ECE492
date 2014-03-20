@@ -360,6 +360,8 @@ const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 		retString = api.getRoles(uriString);
 	} else if (uriString.compare(0, 14, "/roleSchedules") == 0) {
 		retString = api.getRoleSchedule(uriString);
+	} else if (uriString.compare(0, 9, "/userRole") == 0) {
+		retString = api.getUserRoles(uriString);
 	} else if (uriString.compare(0, 8, "/history") == 0) {
 		retString = api.getHistory(uriString);
 	} else if (uriString.compare(0, 7, "/prints") == 0) {
