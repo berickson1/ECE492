@@ -75,7 +75,6 @@ int getBufferNum(bool isFirstBuffer){
 /* Checks for fingerprint */
 void task1(void* pdata) {
 	INT8U err;
-	bool enroll = false;
 	bool firstBuffer = true;
 	while (true) {
 		//Init sensor
@@ -94,39 +93,6 @@ void task1(void* pdata) {
 				if (!sendToMailbox) {
 					sendToMailbox = OSSemAccept(fingerprintSem) > 0;
 				}
-			}
-			//IO Demo: are we enrolling?
-			char* address = (char*) SWITCHES_BASE;
-			if ((*address) & 1<<0){
-				firstBuffer = false;
-				int storeId = 0;
-				printf("Enter ID to store print at:\n");
-				scanf("%d", &storeId);
-				printf("Scan finger again\n");
-				while (!fingerprintSensor.scanFinger()
-						|| !fingerprintSensor.storeImage(getBufferNum(firstBuffer))) {
-					//Sleep for a second and try again
-					OSTimeDlyHMSM(0, 0, 1, 0);
-				}
-				firstBuffer = true;
-				if(fingerprintSensor.storeFingerprint(storeId)){
-					printf("Stored fingerprint at %d\n", storeId);
-					Database dbAccess(databaseSemaphore);
-					User newUser;
-					newUser.enabled = true;
-					newUser.id = storeId;
-					newUser.name = "Mavis Chan";
-					newUser.startDate = newUser.enabled = 5;
-					dbAccess.insertUser(newUser);
-					UserPrint userPrint;
-					userPrint.id = storeId;
-					userPrint.uid = storeId;
-					dbAccess.insertUserPrint(userPrint);
-				} else {
-					printf("Unable to store fingerprint at %d\n", storeId);
-				}
-				enroll = !enroll;
-				continue;
 			}
 			printf("Fingerprint acquired, looking for fingerprint ID\n");
 			int fid = fingerprintSensor.findFingerprint(getBufferNum(firstBuffer));
