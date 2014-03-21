@@ -48,6 +48,7 @@ public:
 	string findUserRole(int id);
 	string findRoleUser(int rid);
 	string findUserPrint(int id);
+	int nextUserPrintId();
 	string findHistory(int id);
 
 	int editRole(Role value);

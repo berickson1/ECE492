@@ -354,6 +354,36 @@ string Database::findUserPrint(int id) {
 	return findEntry(USER_PRINTS, id);
 }
 
+// Finds the lowest unused fingerprint id
+int Database::nextUserPrintId() {
+	DirList list;
+	int ret, file;
+	int testId = 1;
+
+	ret = ls_openDir(&list, &db.myFs, USER_PRINTS);
+	if (ret == -1)
+		printf("Could not open directory. Please check definition of path\n");
+	if (ls_getNext(&list) == 0) {
+		file = atoi((const char*) list.currentEntry.FileName);
+		if(file == testId){
+			testId = file + 1;
+		} else {
+			//ID 1 open, or no entries
+			return testId;
+		}
+	}
+	while (ls_getNext(&list) == 0) {
+		file = atoi((const char*) list.currentEntry.FileName);
+		if(file == testId){
+			testId = file + 1;
+		} else {
+			//ID 1 open, or no entries left
+			return testId;
+		}
+	}
+	return testId;
+}
+
 // Searches for a history by id
 string Database::findHistory(int id) {
 	return findEntry(HISTORY, id);
