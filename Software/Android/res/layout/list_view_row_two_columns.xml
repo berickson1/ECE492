@@ -1,0 +1,27 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:padding="15dp" >
+
+    <View android:id="@+id/fakeView"
+       android:layout_width="0dp"
+       android:layout_height="0dp" 
+       android:layout_centerInParent="true"/>
+    
+    <TextView
+        android:id="@+id/listDate"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/fakeView"
+        android:gravity="center"
+        android:textSize="18sp" />
+    <TextView
+        android:id="@+id/listTime"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@id/fakeView"
+        android:gravity="center"
+        android:textSize="18sp" />
+
+</RelativeLayout>
