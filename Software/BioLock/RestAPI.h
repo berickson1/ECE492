@@ -13,7 +13,7 @@
 using namespace std;
 class RestAPI {
 public:
-	RestAPI(int (*getFingerprintIdFunction)(), OS_EVENT * databaseSem);
+	RestAPI(int (*getFingerprintIdFunction)(bool enrollNow), OS_EVENT * databaseSem);
 	virtual ~RestAPI();
 	string getUsers(string URI);
 	string getUser(int uid);
@@ -41,7 +41,7 @@ public:
 	string unlockLock();
 	bool checkAdminPrint();
 private:
-	int (*getFingerprintId)();
+	int (*getFingerprintId)(bool enrollNow);
 	OS_EVENT * m_databaseSem;
 	int extractID(string URI);
 	const string m_successString;

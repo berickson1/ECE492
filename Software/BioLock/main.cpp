@@ -58,11 +58,13 @@ OS_EVENT *databaseSemaphore;
 #define TASK2_PRIORITY      7
 
 const char * aliveJSON = "[{\"alive\":true}]";
+bool m_enrollNow;
 
-int getCurrentFingerprintId() {
+int getCurrentFingerprintId(bool enrollNow) {
 	INT8U err;
 	int *fid;
 	err = OSSemPost(fingerprintSem);
+	m_enrollNow = enrollNow;
 	fid = (int*) OSMboxPend(fingerprintMailbox, 0, &err);
 	return *fid;
 }
@@ -130,6 +132,14 @@ void task1(void* pdata) {
 			int fid = fingerprintSensor.findFingerprint(getBufferNum(firstBuffer));
 			printf("Fingerprint id:%d\n", fid);
 			if (sendToMailbox) {
+				//Swap Fingerprint Buffer used in case we enroll next
+				firstBuffer = !firstBuffer;
+				if(m_enrollNow){
+					Database dbAccess(databaseSemaphore);
+					fid = dbAccess.nextUserPrintId();
+					fingerprintSensor.storeFingerprint(fid);
+					m_enrollNow = false;
+				}
 				//We need to wait for the mailbox to empty before we do anything
 				while (true) {
 					OS_MBOX_DATA mboxData;

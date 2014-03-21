@@ -7,12 +7,11 @@
 
 #include "RestAPI.h"
 using namespace std;
-RestAPI::RestAPI(int (*getFingerprintIdFunction)(), OS_EVENT * databaseSem):
+RestAPI::RestAPI(int (*getFingerprintIdFunction)(bool enrollNow), OS_EVENT * databaseSem):
 	getFingerprintId(getFingerprintIdFunction),
 	m_databaseSem(databaseSem),
 	m_successString("{\"success\":true}")
 {
-
 }
 
 RestAPI::~RestAPI() {
@@ -184,7 +183,7 @@ string RestAPI::unlockLock(){
 }
 
 bool RestAPI::checkAdminPrint(){
-	int fid = getFingerprintId();
+	int fid = getFingerprintId(false);
 	Database db(m_databaseSem);
 	UserPrint print;
 	print.loadFromJson(db.findUserPrint(fid));
