@@ -9,7 +9,8 @@
 using namespace std;
 RestAPI::RestAPI(int (*getFingerprintIdFunction)(), OS_EVENT * databaseSem):
 	getFingerprintId(getFingerprintIdFunction),
-	m_databaseSem(databaseSem)
+	m_databaseSem(databaseSem),
+	m_successString("{\"success\":true}")
 {
 
 }
@@ -179,7 +180,7 @@ string RestAPI::deletePrint(int id){
 
 string RestAPI::unlockLock(){
 	Solenoid::unlock();
-	return "{\"success\":true}";
+	return m_successString;
 }
 
 bool RestAPI::checkAdminPrint(){

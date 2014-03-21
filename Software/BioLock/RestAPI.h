@@ -44,6 +44,7 @@ private:
 	int (*getFingerprintId)();
 	OS_EVENT * m_databaseSem;
 	int extractID(string URI);
+	const string m_successString;
 };
 
 #endif /* RESTAPI_H_ */
