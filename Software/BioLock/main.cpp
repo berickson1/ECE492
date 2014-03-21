@@ -389,9 +389,9 @@ const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 			retString = "{\"success\":false}";
 		}
 	}  else if (uriString.compare(0, 8, "/enroll1") == 0) {
-		//retString = api.enroll1();
+		retString = api.enroll1();
 	} else if (uriString.compare(0, 8, "/enroll2") == 0) {
-		//retString = api.enroll2();
+		retString = api.enroll2();
 	} else if (uriString.compare(0, 7, "/unlock") == 0) {
 		retString = api.unlockLock();
 	} else if (uriString.compare(0, 4, "/pic") == 0) {

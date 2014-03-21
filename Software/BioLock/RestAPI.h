@@ -39,6 +39,8 @@ public:
 	string deletePrint(int id);
 	string scanPrint();
 	string unlockLock();
+	string enroll1();
+	string enroll2();
 	bool checkAdminPrint();
 private:
 	int (*getFingerprintId)(bool enrollNow);
