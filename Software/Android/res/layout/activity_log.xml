@@ -21,4 +21,13 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="35sp" />
 
+    <ListView
+        android:id="@+id/listLog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/logTitle"
+        android:layout_alignTop="@+id/logTitle"
+        android:layout_marginTop="50dp" >
+    </ListView>
+
 </RelativeLayout>
