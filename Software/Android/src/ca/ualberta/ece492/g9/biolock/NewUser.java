@@ -36,10 +36,10 @@ public class NewUser extends Activity {
 	public static final String PREFS_NAME = "CONNECTION";
 	private static String ip;
 	private static Context mContext;
-	User selectedUser;
-	UserPrintAdapter userPrintAdapter;
-	UserRoleAdapter userRoleAdapter;
-	RoleAdapter roleAdapter;
+	private static User selectedUser;
+	private static UserPrintAdapter userPrintAdapter;
+	private static UserRoleAdapter userRoleAdapter;
+	private static RoleAdapter roleAdapter;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		mContext = this;
@@ -110,6 +110,7 @@ public class NewUser extends Activity {
 			// Updates listview 
 			userPrintAdapter.notifyDataSetChanged();
 			userRoleAdapter.notifyDataSetChanged();
+			roleAdapter.notifyDataSetChanged();
 		}
 		super.onResume();
 	}
@@ -138,11 +139,11 @@ public class NewUser extends Activity {
 					roles.setAdapter(roleAdapter, new DialogInterface.OnClickListener() {
 					    @Override
 					    public void onClick(DialogInterface dialog, int which) {
-					        // the user clicked on colors[which]
 					    }
 					});
 					roles.show();
 				}
+				roleAdapter.notifyDataSetChanged();
 				wait.dismiss();
 			}
 			public void execute(Integer response) {}

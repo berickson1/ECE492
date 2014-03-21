@@ -10,6 +10,7 @@ import ca.ualberta.ece492.g9.biolock.customs.RoleAdapter;
 import ca.ualberta.ece492.g9.biolock.types.Role;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,6 +27,7 @@ public class Roles extends Activity {
 	public static final String PREFS_NAME = "CONNECTION";
 	private static String ip;
 	private static Context mContext;
+	private static RoleAdapter adapter;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		mContext = this;
@@ -34,7 +36,8 @@ public class Roles extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_roles);
-		
+		final ProgressDialog wait = ProgressDialog.show(Roles.this, "Roles", "Loading roles", true, false, null);
+
 		// Gets the ip address
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		ip = settings.getString("ipAddress", "noConn");
@@ -46,12 +49,12 @@ public class Roles extends Activity {
 				if (json != null) {
 					final ListView roleList = (ListView) findViewById(R.id.listRoles);
 					ArrayList<Role> rolesArray = new ArrayList<Role>();
-					RoleAdapter adapter = new RoleAdapter(mContext, rolesArray);
+					adapter = new RoleAdapter(mContext, rolesArray);
 					Role role = new Role();
 					rolesArray = role.fromJson(json);
 					adapter.addAll(rolesArray);
 					roleList.setAdapter(adapter);
-					
+					wait.dismiss();
 					// Role is clicked on
 					roleList.setOnItemClickListener(new OnItemClickListener() {
 						@Override
@@ -60,7 +63,6 @@ public class Roles extends Activity {
 							Intent updateRole = new Intent(Roles.this, NewRole.class);
 							updateRole.putExtra("Role", roleSelected);
 							startActivity(updateRole);
-							finish();
 						}
 					});
 				}
@@ -70,6 +72,14 @@ public class Roles extends Activity {
 		parser.execute(ip.concat("/roles"));
 	}
 
+	public void onResume(){
+		if (adapter != null){
+			// Updates listview 
+			adapter.notifyDataSetChanged();
+		}
+		super.onResume();
+	}
+	
 	// User selected to add new role
 	public void addNewRole(View v) {
 		Intent newRole = new Intent(Roles.this, NewRole.class);
