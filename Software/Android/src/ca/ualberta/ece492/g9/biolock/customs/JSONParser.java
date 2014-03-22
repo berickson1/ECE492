@@ -29,7 +29,6 @@ public class JSONParser extends AsyncTask<String, Void, JSONArray> {
 	}
 	
 	public JSONArray doInBackground(String... url) {
-
 		StringBuilder builder = new StringBuilder();
 		HttpClient client = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet(url[0]);
@@ -56,7 +55,8 @@ public class JSONParser extends AsyncTask<String, Void, JSONArray> {
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			// Returns null and lets NewLock handle no connection
+			return null;
 		} catch (RuntimeException e){
 			e.printStackTrace();
 		}

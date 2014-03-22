@@ -98,21 +98,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				new String[] { String.valueOf(lock.getIP()) });
 		db.close();
 	}
-
-	// Is this needed?
+	
 	// Getting single lock
 	public LockInfo getLock(String ipAddress) {
 		SQLiteDatabase db = this.getReadableDatabase();
 
 		Cursor cursor = db.query(TABLE_LOCKS, new String[] { KEY_NAME }, KEY_ID
 				+ "=?", new String[] { ipAddress }, null, null, null, null);
-		if (cursor != null)
+		if (cursor.getCount() > 0){
 			cursor.moveToFirst();
-
-		LockInfo lock = new LockInfo(ipAddress, cursor.getString(0));
-
-		// return lock
-		return lock;
+			LockInfo lock = new LockInfo(ipAddress, cursor.getString(0));
+			// return lock
+			return lock;
+		} else {
+			return null;
+		}	
 	}
 
 }
