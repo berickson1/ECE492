@@ -34,7 +34,11 @@ public class UserPrintAdapter extends ArrayAdapter<UserPrint> {
        TextView print = (TextView) convertView.findViewById(R.id.listDetailName);
        
        // Populate the data into the template view using the data object
-       print.setText(String.valueOf(userPrint.getID()));
+       if (userPrint.getID() == -1){
+    	   print.setText("No fingerprint found");
+       } else {
+    	   print.setText(String.valueOf(userPrint.getID()));
+       }
        
        // Return the completed view to render on screen
        return convertView;

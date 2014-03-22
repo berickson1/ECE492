@@ -34,7 +34,11 @@ public class UserRoleAdapter extends ArrayAdapter<UserRole> {
        TextView role = (TextView) convertView.findViewById(R.id.listDetailName);
        
        // Populate the data into the template view using the data object
-       role.setText(String.valueOf(userRole.getRID()));
+       if (userRole.getID() == -1){
+    	   role.setText("No role found");
+       } else {
+    	   role.setText(String.valueOf(userRole.getRID()));
+       }
        
        // Return the completed view to render on screen
        return convertView;
