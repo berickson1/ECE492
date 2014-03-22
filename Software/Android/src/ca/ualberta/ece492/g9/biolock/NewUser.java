@@ -17,7 +17,6 @@ import ca.ualberta.ece492.g9.biolock.types.UserRole;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -31,8 +30,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 //From AdminLogin - addition of new user
+//From Users - displaying of user info
 public class NewUser extends Activity {
-	ComponentName caller = this.getCallingActivity();
 	public static final String PREFS_NAME = "CONNECTION";
 	private static String ip;
 	private static Context mContext;
@@ -54,7 +53,7 @@ public class NewUser extends Activity {
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		ip = settings.getString("ipAddress", "noConn");
 				
-		// Retrieves information of the selected user
+		// Retrieves information of the selected user if exists
 		Intent intent = getIntent();
 		selectedUser = (User) intent.getParcelableExtra("User");
 		if (selectedUser != null){
@@ -95,21 +94,25 @@ public class NewUser extends Activity {
 						rolesArray = userRole.fromJson(json);
 						userRoleAdapter.addAll(rolesArray);
 						rolesList.setAdapter(userRoleAdapter);
+						wait.dismiss();
 					}
-					wait.dismiss();
 				}
 				public void execute(Integer response) {}
 			});
-			//parseRoles.execute(ip.concat("/userRole/").concat(String.valueOf(selectedUser.getID())));
-			parseRoles.execute(ip.concat("/roles"));
+			parseRoles.execute(ip.concat("/userRole/").concat(String.valueOf(selectedUser.getID())));
+			//parseRoles.execute(ip.concat("/roles"));
 		}
 	}
-
+	
 	public void onResume(){
+		// Updates listview 
 		if (userPrintAdapter != null){
-			// Updates listview 
 			userPrintAdapter.notifyDataSetChanged();
+		}
+		if (userRoleAdapter != null) {
 			userRoleAdapter.notifyDataSetChanged();
+		}
+		if (roleAdapter != null){
 			roleAdapter.notifyDataSetChanged();
 		}
 		super.onResume();
