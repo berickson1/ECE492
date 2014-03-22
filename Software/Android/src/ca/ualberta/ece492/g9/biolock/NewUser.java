@@ -96,13 +96,13 @@ public class NewUser extends Activity {
 						userRoleAdapter.addAll(rolesArray);
 						rolesList.setAdapter(userRoleAdapter);
 					}
+					wait.dismiss();
 				}
 				public void execute(Integer response) {}
 			});
 			//parseRoles.execute(ip.concat("/userRole/").concat(String.valueOf(selectedUser.getID())));
 			parseRoles.execute(ip.concat("/roles"));
 		}
-		wait.dismiss();
 	}
 
 	public void onResume(){
