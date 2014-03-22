@@ -28,8 +28,9 @@ public class NewLock extends Activity {
 	public static final String PREFS_NAME = "CONNECTION";
 	private static final int DELAY = 1000;
 	private static Context mContext;
-	TextView searchButton;
-
+	private static TextView searchButton;
+	private TextView lockStatus;
+	
 	protected void onCreate(Bundle savedInstanceState) {
 		mContext = this;
 		super.onCreate(savedInstanceState);
@@ -41,14 +42,32 @@ public class NewLock extends Activity {
 
 	// User attempted connection
 	public void searchLock(View v) {
+		lockStatus = (TextView) findViewById(R.id.lock_detected);
 		// Disable repeated button click
 		searchButton = (TextView) findViewById(R.id.detect_lock);
 		searchButton.setEnabled(false);
-		// Store ip in preferences for access in other intents
+		// Check if ip address is already in database
 		EditText ipName = (EditText) findViewById(R.id.ipName);
 		EditText ipInput = (EditText) findViewById(R.id.ip_address);
 		final String name = ipName.getText().toString();
 		final String ip = "http://".concat(ipInput.getText().toString());
+		DatabaseHandler db = new DatabaseHandler(mContext);
+		if (db.getLock(ip) != null){
+			// Lock already in device
+			lockStatus.setVisibility(View.INVISIBLE);
+			AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
+			noConn.setMessage("Lock already exists");
+			noConn.setTitle("New Lock");
+			noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {}
+            });
+			noConn.setCancelable(false);
+			noConn.setCanceledOnTouchOutside(false);
+			noConn.show();
+			searchButton.setEnabled(true);
+			return;
+		}
+		// Store ip in preferences for access in other intents
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		SharedPreferences.Editor editor = settings.edit();
 	    editor.putString("ipAddress", ip);
@@ -58,25 +77,12 @@ public class NewLock extends Activity {
 		JSONParser parser = new JSONParser(new JSONCallbackFunction() {
 			@Override
 			public void execute(JSONArray json) {
-				TextView lockStatus = (TextView) findViewById(R.id.lock_detected);
 				if (json != null){
 					try {
 						JSONObject response = (JSONObject) json.get(0);
 						if (response.getString("alive").equalsIgnoreCase("true")){
 							DatabaseHandler db = new DatabaseHandler(mContext);
-							if (db.addLock(new LockInfo(ip, name)) == -1){
-								lockStatus.setVisibility(View.INVISIBLE);
-								// Lock already in device
-								AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
-								noConn.setMessage("Lock already exists");
-								noConn.setTitle("New Lock");
-								noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-					                public void onClick(DialogInterface dialog, int which) {}
-					            });
-								noConn.setCancelable(false);
-								noConn.setCanceledOnTouchOutside(false);
-								noConn.show();
-							} else {
+							if (db.addLock(new LockInfo(ip, name)) != -1){
 								// Displays text stating lock is found
 								lockStatus.setText("Lock detected");
 								lockStatus.setVisibility(View.VISIBLE);
