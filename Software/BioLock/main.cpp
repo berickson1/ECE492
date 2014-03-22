@@ -47,15 +47,18 @@ extern "C" {
 #define   TASK_STACKSIZE       2048
 OS_STK task1_stk[TASK_STACKSIZE];
 OS_STK task2_stk[TASK_STACKSIZE];
+OS_STK task3_stk[TASK_STACKSIZE];
 
 OS_EVENT *fingerprintMailbox;
 OS_EVENT *fingerprintSem;
 OS_EVENT *databaseSemaphore;
+OS_EVENT *solenoidSem;
 
 /* Definition of Task Priorities */
 
 #define TASK1_PRIORITY      6
 #define TASK2_PRIORITY      7
+#define TASK3_PRIORITY		11
 
 const char * aliveJSON = "[{\"alive\":true}]";
 bool m_enrollNow;
@@ -142,8 +145,8 @@ void task1(void* pdata) {
 					if (jsonReader.parse(userJSON, userRoot)){
 						printf(" name:%s\n", userRoot.get("name", "Unknown").asCString());
 						if (jsonReader.parse(dbAccess.findUserRole(uid), roleRoot)) {
-						//Todo: Finish checking if user has role
-						//Success, unlock door!
+							//Todo: Finish checking if user has role
+							//Success, unlock door!
 							char * ledBase = (char*) GREEN_LEDS_BASE;
 							for (int i = 0; i < GREEN_LEDS_DATA_WIDTH; i++){
 								*ledBase = 1 << i;
@@ -153,6 +156,10 @@ void task1(void* pdata) {
 							printf("Open up!!!\n\n");
 							printf("Unlocking\n");
 							Solenoid::unlock();
+							err = OSSemPost(solenoidSem);
+							if(err != OS_NO_ERR){
+								printf("Error posting to solenoid semaphore\n");
+							}
 							continue;
 						}
 					}
@@ -190,28 +197,46 @@ void task2(void* pdata) {
 		OSTimeDlyHMSM(0, 0, 1, 0);
 	}
 }
+void task3(void* pdata) {
+	INT8U err = OS_NO_ERR;
+	int count = 0;
+	while (1){
+		OSSemPend(solenoidSem, 0, &err);
+		while(*((char*) SOLENOID_CONTROLLER_BASE) != LOCKED){
+			printf("count:%d\n", count);
+			if(count == Solenoid::TIME_UNLOCKED){
+				printf("locking\n");
+				Solenoid::lock();
+				count = 0;
+			}
+			else count++;
+			OSTimeDlyHMSM(0,0,1,0);
+		}
+		OSTimeDlyHMSM(0,0,1,0);
+	}
+}
 
 const char HEX2DEC[256] = {
-/*       0  1  2  3   4  5  6  7   8  9  A  B   C  D  E  F */
-/* 0 */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-/* 1 */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-/* 2 */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-/* 3 */0, 1, 2, 3, 4, 5, 6, 7, 8, 9, -1, -1, -1, -1, -1, -1,
+		/*       0  1  2  3   4  5  6  7   8  9  A  B   C  D  E  F */
+		/* 0 */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+		/* 1 */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+		/* 2 */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+		/* 3 */0, 1, 2, 3, 4, 5, 6, 7, 8, 9, -1, -1, -1, -1, -1, -1,
 
-/* 4 */-1, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-/* 5 */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-/* 6 */-1, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-/* 7 */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+		/* 4 */-1, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+		/* 5 */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+		/* 6 */-1, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+		/* 7 */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 
-/* 8 */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-/* 9 */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-/* A */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-/* B */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+		/* 8 */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+		/* 9 */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+		/* A */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+		/* B */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 
-/* C */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-/* D */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-/* E */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-/* F */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+		/* C */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+		/* D */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+		/* E */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+		/* F */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 
 //http://www.codeguru.com/cpp/cpp/algorithms/strings/article.php/c12759/URI-Encoding-and-Decoding.htm
 string UriDecode(const string & sSrc) {
@@ -252,8 +277,8 @@ string UriDecode(const string & sSrc) {
 
 string getPOSTPayload(string data, string tag){
 	int tagStart = 0,
-		tagEnd = -1,
-		dataEnd = -1;;
+			tagEnd = -1,
+			dataEnd = -1;;
 	//Iterate across data looking for tags
 	//Format {tag}={data}&{tag2}={data2}...
 	string currentTag;
@@ -281,8 +306,8 @@ const char * handleHTTPPost(http_conn* conn, int *replyLen) {
 	postType = getPOSTPayload(incomingData, "type");
 	if (postType != "delete" && postType != "insert"){
 		*replyLen = retString.length();
-			const char * retval = retString.c_str();
-			return retval;
+		const char * retval = retString.c_str();
+		return retval;
 	}
 	RestAPI api(&getCurrentFingerprintId, databaseSemaphore);
 	if (uriString.compare(0, 6, "/users") == 0) {
@@ -381,6 +406,9 @@ void startTasks() {
 #endif
 	OSTaskCreateExt(task2, NULL, &task2_stk[TASK_STACKSIZE - 1], TASK2_PRIORITY,
 			TASK2_PRIORITY, task2_stk, TASK_STACKSIZE, NULL, 0);
+
+	OSTaskCreateExt(task3, NULL, &task3_stk[TASK_STACKSIZE - 1], TASK3_PRIORITY,
+			TASK3_PRIORITY, task3_stk, TASK_STACKSIZE, NULL, 0);
 }
 /* The main function creates two task and starts multi-tasking */
 int main(void) {
@@ -400,6 +428,12 @@ int main(void) {
 	databaseSemaphore = OSSemCreate(1);
 	if (databaseSemaphore == NULL) {
 		printf("Error initializing database semaphore");
+		return -1;
+	}
+
+	solenoidSem = OSSemCreate(0);
+	if (solenoidSem == NULL){
+		printf("Error initializing solenoid semaphore");
 		return -1;
 	}
 

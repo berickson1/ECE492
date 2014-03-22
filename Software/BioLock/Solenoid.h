@@ -18,8 +18,9 @@ extern "C"{
 
 class Solenoid {
 public:
-	static const int TIME_UNLOCKED = 3000000;//Approx. 10s
+	static const int TIME_UNLOCKED = 10;
 	static void unlock();
+	static void lock();
 };
 
 #endif /* SOLENOID_H_ */
