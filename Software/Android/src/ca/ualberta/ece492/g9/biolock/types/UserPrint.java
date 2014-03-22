@@ -18,8 +18,8 @@ public class UserPrint implements Parcelable{
 	
 	public UserPrint(JSONObject jsonObjects){
 		try {
-			uid = jsonObjects.getInt("uid");
 			id = jsonObjects.getInt("id");
+			uid = jsonObjects.getInt("uid");
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -51,14 +51,14 @@ public class UserPrint implements Parcelable{
 	
 	// Read in order
 	public UserPrint(Parcel in){
-		this.uid = in.readInt();
 		this.id = in.readInt();
+		this.uid = in.readInt();
 	}
 		
 	// Write in order
 	public void writeToParcel(Parcel pc, int flags) {
-		pc.writeInt(uid);
 		pc.writeInt(id);
+		pc.writeInt(uid);
 	}
 		
 	public static final Parcelable.Creator<UserPrint> CREATOR = new Parcelable.Creator<UserPrint>() {
