@@ -513,27 +513,27 @@ int Database::clearAll() {
 	int ret;
 
 	ret = clearTable(ROLES);
-	if (ret != 1) {
+	if (ret == -1) {
 		return ret;
 	}
 	ret = clearTable(USERS);
-	if (ret != 1) {
+	if (ret == -1) {
 		return ret;
 	}
 	ret = clearTable(ROLE_SCHEDULE);
-	if (ret != 1) {
+	if (ret == -1) {
 		return ret;
 	}
 	ret = clearTable(USER_ROLES);
-	if (ret != 1) {
+	if (ret == -1) {
 		return ret;
 	}
 	ret = clearTable(USER_PRINTS);
-	if (ret != 1) {
+	if (ret == -1) {
 		return ret;
 	}
 	ret = clearTable(HISTORY);
-	if (ret != 1) {
+	if (ret == -1) {
 		return ret;
 	}
 	return ret;
@@ -541,7 +541,7 @@ int Database::clearAll() {
 
 // Clears the table
 int Database::clearTable(char *path) {
-	int ret, file;
+	int ret = -1, file;
 	DirList list;
 
 	ret = ls_openDir(&list, &db.myFs, (eint8 *) path);
