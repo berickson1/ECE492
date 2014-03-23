@@ -51,6 +51,7 @@ public class NewUser extends Activity {
 	private TextView addPrint;
 	private TextView addRole;
 	private TextView update;
+	private ProgressDialog wait;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		JSONArray userPrints = null;
@@ -178,7 +179,6 @@ public class NewUser extends Activity {
 	
 	// Enables or disables user
 	public void changeUserStatus(String status) {
-		final ProgressDialog wait = ProgressDialog.show(NewUser.this,"Update User Status", "Updating user status", true, false, null);
 		// JSONPost to enable or disable user
         JSONPost changeStatus = new JSONPost(new JSONCallbackFunction() {
         	@Override
@@ -186,15 +186,22 @@ public class NewUser extends Activity {
 				if (json != null) {
 					try {
 						if (json.toString().contains("1")){
-							wait.dismiss();
-							finish();
-							return;
+							// Don't need to wait for other asynctask
+							if (nameField.getText().toString() == selectedUser.getName()){
+								wait.dismiss();
+								finish();
+								return;
+							}
 						}
 						JSONObject response = (JSONObject) json.get(0);
 						if (!response.getString("success").equalsIgnoreCase("false")){
 							// User status changed successfully
-							wait.dismiss();
-							finish();
+							// Don't need to wait for other asynctask
+							if (nameField.getText().toString() == selectedUser.getName()){
+								wait.dismiss();
+								finish();
+								return;
+							}
 						} else {
 							wait.dismiss();
 							AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
@@ -228,10 +235,73 @@ public class NewUser extends Activity {
         //changeStatus.execute(ip.concat("/users"));
 	}
 
+	// Updates user name
+	public void changeUserName(){
+		// JSONPost to change user name
+        JSONPost changeName = new JSONPost(new JSONCallbackFunction() {
+			@Override
+			public void execute(JSONArray json) {		
+				if (json != null){
+					try {
+						if (json.toString().contains("1")){
+							// Don't need to wait for other asynctask
+							if (enabledStatus.isChecked() == selectedUser.getEnabled()){
+								wait.dismiss();
+								finish();
+								return;
+							}
+						}
+						JSONObject response = (JSONObject) json.get(0);
+						if (!response.getString("success").equalsIgnoreCase("false")){
+							// User name changed successfully
+							// Don't need to wait for other asynctask
+							if (enabledStatus.isChecked() == selectedUser.getEnabled()){
+								wait.dismiss();
+								finish();
+								return;
+							}
+						} else {
+							wait.dismiss();
+							AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
+							noConn.setMessage("Could not change user name");
+							noConn.setTitle("User Name");
+							noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog, int which) {}
+						    });
+							noConn.setCancelable(false);
+							noConn.setCanceledOnTouchOutside(false);
+							noConn.show();
+						}
+					} catch (JSONException e){
+						e.printStackTrace();
+					}
+				} else {
+					wait.dismiss();
+					AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
+					noConn.setMessage("Could not change user name");
+					noConn.setTitle("User Name");
+					noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {}
+				    });
+					noConn.setCancelable(false);
+					noConn.setCanceledOnTouchOutside(false);
+					noConn.show();
+				}
+			}      	
+        });
+        //changeName.execute(ip.concat("/users"), "update", );
+	}
+	
 	// Adds or updates the user
 	public void updateUser(View v) {
+		wait = ProgressDialog.show(NewUser.this,"Update User", "Updating user", true, false, null);
+		
 		// Update user
 		if (selectedUser != null){
+			// Check user name
+			if (nameField.getText().toString() != selectedUser.getName()){
+				changeUserName();
+			}
 			// Check enable status
 			if (enabledStatus.isChecked() != selectedUser.getEnabled()){
 				if (enabledStatus.isChecked()){
@@ -240,13 +310,10 @@ public class NewUser extends Activity {
 					changeUserStatus("delete");
 				}
 			}
-			// Check user name
 		// Add user
 		} else {
 			
 		}
-		// Close this activity
-		//finish();
 	}
 	
 // TODO: gray out listview
