@@ -41,6 +41,7 @@ public class NewUser extends Activity {
 	private static UserPrintAdapter userPrintAdapter;
 	private static UserRoleAdapter userRoleAdapter;
 	private static RoleAdapter roleAdapter;
+	private ProgressDialog wait;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		mContext = this;
@@ -49,7 +50,7 @@ public class NewUser extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		setContentView(R.layout.activity_new_user);
-		final ProgressDialog wait = ProgressDialog.show(NewUser.this,"User Information", "Loading user information", true, false, null);
+		wait = ProgressDialog.show(NewUser.this,"User Information", "Loading user information", true, false, null);
 
 		// Gets the ip address
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
@@ -64,44 +65,13 @@ public class NewUser extends Activity {
 			CheckBox enabledStatus = (CheckBox) findViewById(R.id.enabledUserStatusBox);
 			nameField.setText(selectedUser.getName());
 			enabledStatus.setChecked(selectedUser.getEnabled());
-			
-			// Obtain user's enrolled fingerprints
-			JSONParser parsePrints = new JSONParser(new JSONCallbackFunction() {
-				@Override
-				public void execute(JSONArray json) {
-					if (json != null){
-						final ListView printsList = (ListView) findViewById(R.id.userPrints);
-						ArrayList<UserPrint> printsArray = new ArrayList<UserPrint>();
-						userPrintAdapter = new UserPrintAdapter(mContext, printsArray);
-						UserPrint userPrint = new UserPrint();
-						printsArray = userPrint.fromJson(json);
-						userPrintAdapter.addAll(printsArray);
-						printsList.setAdapter(userPrintAdapter);
-					}
-				}
-				public void execute(Integer response) {}
-			});
-			//parsePrints.execute(ip.concat("/users/").concat(String.valueOf(selectedUser.getID())));
-			parsePrints.execute(ip.concat("/prints"));
-			
-			// Obtain user's roles
-			JSONParser parseRoles = new JSONParser(new JSONCallbackFunction() {
-				@Override
-				public void execute(JSONArray json) {
-					if (json != null){
-						final ListView rolesList = (ListView) findViewById(R.id.userRoles);
-						ArrayList<UserRole> rolesArray = new ArrayList<UserRole>();
-						userRoleAdapter = new UserRoleAdapter(mContext, rolesArray);
-						UserRole userRole = new UserRole();
-						rolesArray = userRole.fromJson(json);
-						userRoleAdapter.addAll(rolesArray);
-						rolesList.setAdapter(userRoleAdapter);
-						wait.dismiss();
-					}
-				}
-			});
-			parseRoles.execute(ip.concat("/userRole/").concat(String.valueOf(selectedUser.getID())));
-			//parseRoles.execute(ip.concat("/roles"));
+			// Obtain user prints and roles only if enabled
+			if (selectedUser.getEnabled()){
+				getPrints();
+				getRoles();
+			} else {
+				wait.dismiss();
+			}
 		} else {
 			wait.dismiss();
 		}
@@ -170,30 +140,21 @@ public class NewUser extends Activity {
             	// JSONPost to delete user
             	JSONPost deleteUser = new JSONPost(new JSONCallbackFunction() {
             		@Override
-					public void execute(Integer response) {
-						if (response == 200){
-							// User deleted
-							wait.dismiss();
-							finish();
-						} else {
-							// User could not be deleted
-							AlertDialog result  = new AlertDialog.Builder(mContext).create();
-							result.setTitle("Delete");
-							result.setMessage("User could not be deleted");
-							result.setCancelable(false);
-							result.setCanceledOnTouchOutside(false);
-							result.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-				                public void onClick(DialogInterface dialog, int which) {}
-				            });
-							wait.dismiss();
-							result.show();
+					public void execute(JSONArray json) {
+						if (json != null) {
+							try {
+								JSONObject response = (JSONObject) json.get(0);
+								if (!response.getString("success").equalsIgnoreCase("false")){
+									// User deleted successfully
+								}
+							} catch (JSONException e) {
+								e.printStackTrace();
+							}
 						}
-						
 					}
-					public void execute(JSONArray json) {}
             	});
-            	//deleteUser.execute(ip.concat("/users/".concat(String.valueOf(selectedUser.getID()))), "delete", selectedUser.toString());
-            	deleteUser.execute(ip.concat("/users"));
+            	deleteUser.execute(ip.concat("/users"), "delete", selectedUser.toJson().toString());
+            	//deleteUser.execute(ip.concat("/users"));
             }
         });
 		deleteConfirm.setButton(AlertDialog.BUTTON_NEGATIVE, "No", new DialogInterface.OnClickListener() {
@@ -211,5 +172,67 @@ public class NewUser extends Activity {
 
 		// Close this activity
 		finish();
+	}
+	
+	public void getPrints(){
+		// Obtain user's enrolled fingerprints
+		JSONParser parsePrints = new JSONParser(new JSONCallbackFunction() {
+			@Override
+			public void execute(JSONArray json) {
+				if (json != null){
+					final ListView printsList = (ListView) findViewById(R.id.userPrints);
+					ArrayList<UserPrint> printsArray = new ArrayList<UserPrint>();
+					userPrintAdapter = new UserPrintAdapter(mContext, printsArray);
+					UserPrint userPrint = new UserPrint();
+					printsArray = userPrint.fromJson(json);
+					userPrintAdapter.addAll(printsArray);
+					printsList.setAdapter(userPrintAdapter);
+				} else {
+					AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
+					noConn.setMessage("Could not get user prints");
+					noConn.setTitle("User Prints");
+					noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+		                public void onClick(DialogInterface dialog, int which) {}
+		            });
+					noConn.setCancelable(false);
+					noConn.setCanceledOnTouchOutside(false);
+					noConn.show();
+				}
+			}
+		});
+		parsePrints.execute(ip.concat("/prints/").concat(String.valueOf(selectedUser.getID())));
+		//parsePrints.execute(ip.concat("/prints"));
+	}
+	
+	public void getRoles(){
+		// Obtain user's roles
+		JSONParser parseRoles = new JSONParser(new JSONCallbackFunction() {
+			@Override
+			public void execute(JSONArray json) {
+				if (json != null){
+					final ListView rolesList = (ListView) findViewById(R.id.userRoles);
+					ArrayList<UserRole> rolesArray = new ArrayList<UserRole>();
+					userRoleAdapter = new UserRoleAdapter(mContext, rolesArray);
+					UserRole userRole = new UserRole();
+					rolesArray = userRole.fromJson(json);
+					userRoleAdapter.addAll(rolesArray);
+					rolesList.setAdapter(userRoleAdapter);
+					wait.dismiss();
+				} else {
+					wait.dismiss();
+					AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
+					noConn.setMessage("Could not get user roles");
+					noConn.setTitle("User Roles");
+					noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+		                public void onClick(DialogInterface dialog, int which) {}
+		            });
+					noConn.setCancelable(false);
+					noConn.setCanceledOnTouchOutside(false);
+					noConn.show();
+				}
+			}
+		});
+		parseRoles.execute(ip.concat("/userRole/").concat(String.valueOf(selectedUser.getID())));
+		//parseRoles.execute(ip.concat("/roles"));
 	}
 }
