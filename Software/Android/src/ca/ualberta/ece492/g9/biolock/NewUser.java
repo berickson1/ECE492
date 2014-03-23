@@ -185,15 +185,32 @@ public class NewUser extends Activity {
 			public void execute(JSONArray json) {
 				if (json != null) {
 					try {
+						if (json.toString().contains("1")){
+							wait.dismiss();
+							finish();
+							return;
+						}
 						JSONObject response = (JSONObject) json.get(0);
 						if (!response.getString("success").equalsIgnoreCase("false")){
-							// User disabled successfully
+							// User status changed successfully
+							wait.dismiss();
+							finish();
+							return;
+						} else {
+							wait.dismiss();
+							AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
+							noConn.setMessage("Could not change user status");
+							noConn.setTitle("Enable/Disable User");
+							noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog, int which) {}
+						    });
+							noConn.setCancelable(false);
+							noConn.setCanceledOnTouchOutside(false);
+							noConn.show();
 						}
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
-					wait.dismiss();
-					finish();
 				} else {
 					wait.dismiss();
 					AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
@@ -219,7 +236,7 @@ public class NewUser extends Activity {
 			// Check enable status
 			if (enabledStatus.isChecked() != selectedUser.getEnabled()){
 				if (enabledStatus.isChecked()){
-					changeUserStatus("insert");
+					changeUserStatus("enable");
 				} else {
 					changeUserStatus("delete");
 				}
