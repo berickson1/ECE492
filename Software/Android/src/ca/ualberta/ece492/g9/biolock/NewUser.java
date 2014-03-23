@@ -52,7 +52,8 @@ public class NewUser extends Activity {
 	private TextView addRole;
 	private TextView update;
 	private ProgressDialog wait;
-	
+	private JSONPost changeName;
+	private JSONPost changeStatus;
 	protected void onCreate(Bundle savedInstanceState) {
 		JSONArray userPrints = null;
 		JSONArray userRoles = null;
@@ -184,19 +185,25 @@ public class NewUser extends Activity {
 	// Enables or disables user
 	public void changeUserStatus(String status) {
 		// JSONPost to enable or disable user
-        JSONPost changeStatus = new JSONPost(new JSONCallbackFunction() {
+        changeStatus = new JSONPost(new JSONCallbackFunction() {
         	@Override
 			public void execute(JSONArray json) {
 				if (json != null) {
 					try {
 						JSONObject response = (JSONObject) json.get(0);
-						if (!response.getString("success").equalsIgnoreCase("false")){
+						if (response.getString("success").equalsIgnoreCase("true")){
 							// User status changed successfully
 							// Don't need to wait for other asynctask
-							if (nameField.getText().toString() == selectedUser.getName()){
+							if (nameField.getText().toString().equals(selectedUser.getName())){
 								wait.dismiss();
 								finish();
-								return;
+							} else {
+								// Check if asynctask is done
+								if(changeName.getStatus().toString().equals("FINISHED")){
+									wait.dismiss();
+									finish();
+									return;
+								}
 							}
 						} else {
 							wait.dismiss();
@@ -234,19 +241,25 @@ public class NewUser extends Activity {
 	// Updates user name
 	public void changeUserName(){
 		// JSONPost to change user name
-        JSONPost changeName = new JSONPost(new JSONCallbackFunction() {
+        changeName = new JSONPost(new JSONCallbackFunction() {
 			@Override
 			public void execute(JSONArray json) {		
 				if (json != null){
 					try {
 						JSONObject response = (JSONObject) json.get(0);
-						if (!response.getString("success").equalsIgnoreCase("false")){
+						if (response.getString("success").equalsIgnoreCase("true")){
 							// User name changed successfully
 							// Don't need to wait for other asynctask
 							if (enabledStatus.isChecked() == selectedUser.getEnabled()){
 								wait.dismiss();
 								finish();
-								return;
+							} else {
+								// Check if asynctask is done
+								if(changeStatus.getStatus().toString().equals("FINISHED")){
+									wait.dismiss();
+									finish();
+									return;
+								}
 							}
 						} else {
 							wait.dismiss();
@@ -277,7 +290,13 @@ public class NewUser extends Activity {
 				}
 			}      	
         });
-        //changeName.execute(ip.concat("/users"), "update", );
+        User updateUser = new User();
+        updateUser.setID(selectedUser.getID());
+        updateUser.setName(nameField.getText().toString());
+        updateUser.setEnabled(selectedUser.getEnabled());
+        updateUser.setStartDate(selectedUser.getStartDate());
+        updateUser.setEndDate(selectedUser.getEndDate());
+        changeName.execute(ip.concat("/users"), "update", updateUser.toJson().toString());
 	}
 	
 	// Adds or updates the user
@@ -287,7 +306,7 @@ public class NewUser extends Activity {
 		// Update user
 		if (selectedUser != null){
 			// Check user name
-			if (nameField.getText().toString() != selectedUser.getName()){
+			if (!nameField.getText().toString().equals(selectedUser.getName())){
 				changeUserName();
 			}
 			// Check enable status
