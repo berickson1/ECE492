@@ -10,8 +10,10 @@ import ca.ualberta.ece492.g9.biolock.customs.UserAdapter;
 import ca.ualberta.ece492.g9.biolock.types.User;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -28,6 +30,8 @@ public class Users extends Activity {
 	private static String ip;
 	private static Context mContext;
 	private static UserAdapter adapter;
+	private Intent updateUser;
+	private ProgressDialog wait;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		mContext = this;
@@ -36,7 +40,7 @@ public class Users extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_users);
-		final ProgressDialog wait = ProgressDialog.show(Users.this,"Users", "Loading users", true, false, null);
+		wait = ProgressDialog.show(Users.this,"Users", "Loading users", true, false, null);
 
 		// Gets the ip address
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
@@ -59,10 +63,12 @@ public class Users extends Activity {
 					userList.setOnItemClickListener(new OnItemClickListener() {
 						@Override
 						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+							wait = ProgressDialog.show(Users.this,"User Information", "Loading user information", true, false, null);
 							User userSelected = (User) userList.getItemAtPosition(position);
-							Intent updateUser = new Intent(Users.this, NewUser.class);
+							updateUser = new Intent(Users.this, NewUser.class);
 							updateUser.putExtra("User", userSelected);
-							startActivity(updateUser);
+							getPrints(userSelected);
+							//startActivity(updateUser);
 						}
 					});
 				}
@@ -84,4 +90,58 @@ public class Users extends Activity {
 		Intent newUser = new Intent(Users.this, NewUser.class);
 		startActivity(newUser);
 	}
+	
+	// Get user prints
+	public void getPrints(final User selectedUser){
+		// Obtain user's enrolled fingerprints
+		JSONParser parsePrints = new JSONParser(new JSONCallbackFunction() {
+			@Override
+			public void execute(JSONArray json) {
+				if (json != null){
+					updateUser.putExtra("User Prints", json.toString());
+					getRoles(selectedUser);
+				} else {
+					AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
+					noConn.setMessage("Could not get user prints");
+					noConn.setTitle("User Prints");
+					noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+		                public void onClick(DialogInterface dialog, int which) {}
+		            });
+					noConn.setCancelable(false);
+					noConn.setCanceledOnTouchOutside(false);
+					noConn.show();
+				}
+			}
+		});
+		parsePrints.execute(ip.concat("/prints/").concat(String.valueOf(selectedUser.getID())));
+		//parsePrints.execute(ip.concat("/prints"));
+	}
+	
+	public void getRoles(User selectedUser){
+		// Obtain user's roles
+		JSONParser parseRoles = new JSONParser(new JSONCallbackFunction() {
+			@Override
+			public void execute(JSONArray json) {
+				if (json != null){
+					updateUser.putExtra("User Roles", json.toString());
+					wait.dismiss();
+					startActivity(updateUser);
+				} else {
+					wait.dismiss();
+					AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
+					noConn.setMessage("Could not get user roles");
+					noConn.setTitle("User Roles");
+					noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+		                public void onClick(DialogInterface dialog, int which) {}
+		            });
+					noConn.setCancelable(false);
+					noConn.setCanceledOnTouchOutside(false);
+					noConn.show();
+				}
+			}
+		});
+		parseRoles.execute(ip.concat("/userRole/").concat(String.valueOf(selectedUser.getID())));
+		//parseRoles.execute(ip.concat("/roles"));
+	}
+	
 }
