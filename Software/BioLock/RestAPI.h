@@ -33,6 +33,11 @@ public:
 	string insertUserRole(string data);
 	string insertRoleSchedule(string data);
 	string insertPrint(string data);
+	string updateUser(string data);
+	string updateRole(string data);
+	string updateUserRole(string data);
+	string updateRoleSchedule(string data);
+	string updatePrint(string data);
 	string deleteUser(int id);
 	string deleteRole(int id);
 	string deleteUserRole(int id);

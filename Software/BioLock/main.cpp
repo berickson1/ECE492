@@ -344,6 +344,8 @@ const char * handleHTTPPost(http_conn* conn, int *replyLen) {
 			retString = api.insertUser(jsonData);
 		} else if (postType == "enable"){
 			retString = api.enableUser(jsonData);
+		} else if (postType == "update"){
+			retString = api.updateUser(jsonData);
 		}
 	} else if (uriString.compare(0, 6, "/roles") == 0) {
 		if (postType == "delete"){
@@ -352,6 +354,8 @@ const char * handleHTTPPost(http_conn* conn, int *replyLen) {
 			retString = api.deleteRole(role.id);
 		} else if (postType == "insert"){
 			retString = api.insertRole(jsonData);
+		} else if (postType == "update"){
+			retString = api.updateRole(jsonData);
 		}
 	} else if (uriString.compare(0, 14, "/roleSchedules") == 0) {
 		if (postType == "delete"){
@@ -360,6 +364,8 @@ const char * handleHTTPPost(http_conn* conn, int *replyLen) {
 			retString = api.deleteUser(schedule.id);
 		} else if (postType == "insert"){
 			retString = api.insertRoleSchedule(jsonData);
+		} else if (postType == "update"){
+			retString = api.updateRoleSchedule(jsonData);
 		}
 	} else if (uriString.compare(0, 6, "/userRole") == 0) {
 		if (postType == "delete"){
@@ -368,6 +374,8 @@ const char * handleHTTPPost(http_conn* conn, int *replyLen) {
 			retString = api.deleteUserRole(userrole.id);
 		} else if (postType == "insert"){
 			retString = api.insertUserRole(jsonData);
+		} else if (postType == "update"){
+			retString = api.updateUserRole(jsonData);
 		}
 	}else if (uriString.compare(0, 8, "/history") == 0) {
 		//retString = api.insertHistory(jsonData);
@@ -378,6 +386,8 @@ const char * handleHTTPPost(http_conn* conn, int *replyLen) {
 			retString = api.deletePrint(print.id);
 		} else if (postType == "insert"){
 			retString = api.insertPrint(jsonData);
+		} else if (postType == "update"){
+			retString = api.updatePrint(jsonData);
 		}
 	} else {
 		*replyLen = 0;

@@ -148,6 +148,51 @@ string RestAPI::insertPrint(string data){
 	return str.str();
 }
 
+string RestAPI::updateUser(string data){
+	Database db(m_databaseSem);
+	User user;
+	user.loadFromJson(data);
+	stringstream str;
+	str << db.editUser(user);
+	return str.str();
+}
+
+string RestAPI::updateRole(string data){
+	Database db(m_databaseSem);
+	Role role;
+	role.loadFromJson(data);
+	stringstream str;
+	str << db.editRole(role);
+	return str.str();
+}
+
+string RestAPI::updateUserRole(string data){
+	Database db(m_databaseSem);
+	UserRole userRole;
+	userRole.loadFromJson(data);
+	stringstream str;
+	str << db.editUserRole(userRole);
+	return str.str();
+}
+
+string RestAPI::updateRoleSchedule(string data){
+	Database db(m_databaseSem);
+	RoleSchedule roleSchedule;
+	roleSchedule.loadFromJson(data);
+	stringstream str;
+	str << db.editRoleSched(roleSchedule);
+	return str.str();
+}
+
+string RestAPI::updatePrint(string data){
+	Database db(m_databaseSem);
+	UserPrint print;
+	print.loadFromJson(data);
+	stringstream str;
+	str << db.editUserPrint(print);
+	return str.str();
+}
+
 string RestAPI::deleteUser(int id){
 	Database db(m_databaseSem);
 	stringstream result;
