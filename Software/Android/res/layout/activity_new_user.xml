@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/userName"
         android:layout_alignBottom="@+id/userName"
-        android:layout_alignRight="@+id/deleteUser"
+        android:layout_alignRight="@+id/enabledUserStatusBox"
         android:layout_marginLeft="30dp"
         android:layout_toRightOf="@+id/userName"
         android:ems="10"
@@ -45,14 +45,6 @@
         android:layout_marginTop="25sp"
         android:text="@string/userName"
         android:textSize="20sp" />
-
-    <CheckBox
-        android:id="@+id/enabledUserStatusBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/userNameFill"
-        android:layout_alignTop="@+id/enabledStatus"
-        android:layout_marginRight="16dp" />
     
     <TextView
         android:id="@+id/enabledStatus"
@@ -68,9 +60,9 @@
         android:id="@+id/userPrints"
         android:layout_width="wrap_content"
         android:layout_height="55sp"
-        android:layout_alignRight="@+id/enabledUserStatusBox"
         android:layout_alignTop="@+id/newUserTitle"
         android:layout_marginTop="220dp"
+        android:layout_toLeftOf="@+id/enabledUserStatusBox"
         android:layout_toRightOf="@+id/userName"
         android:focusable="false" >
 
@@ -119,31 +111,6 @@
         android:layout_marginTop="30dp"
         android:text="@string/fingerprint"
         android:textSize="20sp" />
-        
-    <TextView
-        android:id="@+id/deleteUser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/userRoles"
-        android:layout_marginLeft="54dp"
-        android:layout_marginTop="50dp"
-        android:layout_toRightOf="@+id/updateUser"
-        android:clickable="true"
-        android:onClick="confirmDelete"
-        android:text="@string/delete"
-        android:textSize="25sp" />
-
-    <TextView
-        android:id="@+id/updateUser"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/deleteUser"
-        android:layout_alignBottom="@+id/deleteUser"
-        android:layout_toRightOf="@+id/userName"
-        android:clickable="true"
-        android:onClick="updateUser"
-        android:text="@string/update"
-        android:textSize="25sp" />
 
     <TextView
         android:id="@+id/enrollRole"
@@ -156,5 +123,25 @@
         android:onClick="addRole"
         android:text="@string/add_role"
         android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/updateUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/enrollRole"
+        android:layout_marginTop="41dp"
+        android:layout_centerInParent="true"
+        android:clickable="true"
+        android:onClick="updateUser"
+        android:text="@string/update"
+        android:textSize="25sp" />
+
+    <CheckBox
+        android:id="@+id/enabledUserStatusBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/enabledStatus"
+        android:layout_marginLeft="21dp"
+        android:layout_toRightOf="@+id/enrollPrint" />
 
 </RelativeLayout>
