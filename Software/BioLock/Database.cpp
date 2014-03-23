@@ -456,41 +456,26 @@ int Database::deleteRole(int rid) {
 			ret = deleteEntry(USER_ROLES, rid);
 		}
 	}
-	return 1;
+	return ret;
 }
 
 // Enables/disables user entry with corresponding uid
 int Database::enableUser(int uid, bool enable) {
 	User updatedUser;
-	File tuple;
-	int ret;
-	char filename[MAXBUF_LENGTH];
+	int ret = -1;
 
 	User user;
 	user.loadFromJson(findUser(uid));
 	ret = deleteEntry(USERS, uid);
-	if (ret != 0) {
+	if (ret == -1) {
 		printf(
 				"User enable status could not be changed, please try again later\n");
 		return -1;
 	}
 	user.enabled = enable;
-	string jsonValue = user.toJSONString();
-	file_fopen(&tuple, &db.myFs, filename, 'w');
-	ret = file_fwrite(&tuple, 0, jsonValue.length(),
-			(euint8*) jsonValue.c_str());
-	if (ret == 0) {
-		printf(
-				"User enable status could not be changed, please try again later\n");
-		return -1;
-	}
-	ret = file_fclose(&tuple);
-	if (ret != 0) {
-		printf("User enable status could not be changed\n");
-		return -1;
-	}
+	ret = insertUser(user);
 
-	return 1;
+	return ret;
 }
 
 // Deletes role schedule entry with corresponding id
