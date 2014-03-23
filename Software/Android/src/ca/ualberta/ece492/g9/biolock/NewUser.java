@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -30,6 +31,7 @@ import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 //From AdminLogin - addition of new user
 //From Users - displaying of user info
@@ -42,6 +44,13 @@ public class NewUser extends Activity {
 	private static UserRoleAdapter userRoleAdapter;
 	private static RoleAdapter roleAdapter;
 	private ProgressDialog wait;
+	private EditText nameField;
+	private CheckBox enabledStatus;
+	private ListView printsList;
+	private ListView rolesList;
+	private TextView addPrint;
+	private TextView addRole;
+	private JSONParser parseRoles;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		mContext = this;
@@ -50,6 +59,12 @@ public class NewUser extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		setContentView(R.layout.activity_new_user);
+		nameField = (EditText) findViewById(R.id.userNameFill);
+		enabledStatus = (CheckBox) findViewById(R.id.enabledUserStatusBox);
+		printsList = (ListView) findViewById(R.id.userPrints);
+		rolesList = (ListView) findViewById(R.id.userRoles);
+		addPrint = (TextView) findViewById(R.id.enrollPrint);
+		addRole = (TextView) findViewById(R.id.enrollRole);
 		wait = ProgressDialog.show(NewUser.this,"User Information", "Loading user information", true, false, null);
 
 		// Gets the ip address
@@ -61,17 +76,11 @@ public class NewUser extends Activity {
 		selectedUser = (User) intent.getParcelableExtra("User");
 		if (selectedUser != null){
 			// Displays retrieved information on screen
-			EditText nameField = (EditText) findViewById(R.id.userNameFill);
-			CheckBox enabledStatus = (CheckBox) findViewById(R.id.enabledUserStatusBox);
 			nameField.setText(selectedUser.getName());
 			enabledStatus.setChecked(selectedUser.getEnabled());
-			// Obtain user prints and roles only if enabled
-			if (selectedUser.getEnabled()){
-				getPrints();
-				getRoles();
-			} else {
-				wait.dismiss();
-			}
+			// Obtain user prints and roles
+			getPrints();
+			getRoles();
 		} else {
 			wait.dismiss();
 		}
@@ -117,7 +126,18 @@ public class NewUser extends Activity {
 					roles.setAdapter(roleAdapter, new DialogInterface.OnClickListener() {
 					    @Override
 					    public void onClick(DialogInterface dialog, int which) {
-					    	// Add role to user
+					    	if (selectedUser != null) {
+					    	// Add role to existing user
+					    		JSONPost postRole = new JSONPost(new JSONCallbackFunction() {
+									@Override
+									public void execute(JSONArray json) {
+
+									}
+					    		});
+					    		postRole.execute(ip.concat("/userRole"), "insert", selectedUser.toJson().toString());
+					    	} else {
+					    		// Add role to new user
+					    	}
 					    }
 					});
 					roles.show();
@@ -128,52 +148,62 @@ public class NewUser extends Activity {
 		});
 		parseRoles.execute(ip.concat("/roles"));
 	}
-
-	// Confirms deletion of user before deletion
-	public void confirmDelete(View v) {
-		AlertDialog deleteConfirm  = new AlertDialog.Builder(mContext).create();
-		deleteConfirm.setTitle("Delete user");
-		deleteConfirm.setMessage("Are you sure you want to delete this user?");
-		deleteConfirm.setCancelable(false);
-		deleteConfirm.setCanceledOnTouchOutside(false);
-		deleteConfirm.setButton(AlertDialog.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-            	final ProgressDialog wait = ProgressDialog.show(NewUser.this,"Delete User", "Deleting user", true, false, null);
-            	// JSONPost to delete user
-            	JSONPost deleteUser = new JSONPost(new JSONCallbackFunction() {
-            		@Override
-					public void execute(JSONArray json) {
-						if (json != null) {
-							try {
-								JSONObject response = (JSONObject) json.get(0);
-								if (!response.getString("success").equalsIgnoreCase("false")){
-									// User deleted successfully
-								}
-							} catch (JSONException e) {
-								e.printStackTrace();
-							}
+	
+	// Enables or disables user
+	public void changeUserStatus(String status) {
+		final ProgressDialog wait = ProgressDialog.show(NewUser.this,"Update User Status", "Updating user status", true, false, null);
+		// JSONPost to enable or disable user
+        JSONPost changeStatus = new JSONPost(new JSONCallbackFunction() {
+        	@Override
+			public void execute(JSONArray json) {
+				if (json != null) {
+					try {
+						JSONObject response = (JSONObject) json.get(0);
+						if (!response.getString("success").equalsIgnoreCase("false")){
+							// User disabled successfully
 						}
+					} catch (JSONException e) {
+						e.printStackTrace();
 					}
-            	});
-            	deleteUser.execute(ip.concat("/users"), "delete", selectedUser.toJson().toString());
-            	//deleteUser.execute(ip.concat("/users"));
-            }
+					wait.dismiss();
+					finish();
+				} else {
+					wait.dismiss();
+					AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
+					noConn.setMessage("Could not change user status");
+					noConn.setTitle("Enable/Disable User");
+					noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {}
+				    });
+					noConn.setCancelable(false);
+					noConn.setCanceledOnTouchOutside(false);
+					noConn.show();
+				}
+			}
         });
-		deleteConfirm.setButton(AlertDialog.BUTTON_NEGATIVE, "No", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-		deleteConfirm.show();
+        changeStatus.execute(ip.concat("/users"), status, selectedUser.toJson().toString());
+        //changeStatus.execute(ip.concat("/users"));
 	}
 
-	// TODO: Check updated values before updating users
-	// Jumps to Users
+	// Adds or updates the user
 	public void updateUser(View v) {
-		// Runs Users
-		//Intent i = new Intent(NewUser.this, Users.class);
-		//startActivity(i);
-
+		// Update user
+		if (selectedUser != null){
+			// Check enable status
+			if (enabledStatus.isChecked() != selectedUser.getEnabled()){
+				if (enabledStatus.isChecked()){
+					changeUserStatus("insert");
+				} else {
+					changeUserStatus("delete");
+				}
+			}
+			// Check user name
+		// Add user
+		} else {
+			
+		}
 		// Close this activity
-		finish();
+		//finish();
 	}
 	
 	public void getPrints(){
@@ -182,7 +212,6 @@ public class NewUser extends Activity {
 			@Override
 			public void execute(JSONArray json) {
 				if (json != null){
-					final ListView printsList = (ListView) findViewById(R.id.userPrints);
 					ArrayList<UserPrint> printsArray = new ArrayList<UserPrint>();
 					userPrintAdapter = new UserPrintAdapter(mContext, printsArray);
 					UserPrint userPrint = new UserPrint();
@@ -208,17 +237,19 @@ public class NewUser extends Activity {
 	
 	public void getRoles(){
 		// Obtain user's roles
-		JSONParser parseRoles = new JSONParser(new JSONCallbackFunction() {
+		parseRoles = new JSONParser(new JSONCallbackFunction() {
 			@Override
 			public void execute(JSONArray json) {
 				if (json != null){
-					final ListView rolesList = (ListView) findViewById(R.id.userRoles);
 					ArrayList<UserRole> rolesArray = new ArrayList<UserRole>();
 					userRoleAdapter = new UserRoleAdapter(mContext, rolesArray);
 					UserRole userRole = new UserRole();
 					rolesArray = userRole.fromJson(json);
 					userRoleAdapter.addAll(rolesArray);
 					rolesList.setAdapter(userRoleAdapter);
+					if (!selectedUser.getEnabled()){
+						disableScreen();
+					}
 					wait.dismiss();
 				} else {
 					wait.dismiss();
@@ -236,5 +267,21 @@ public class NewUser extends Activity {
 		});
 		parseRoles.execute(ip.concat("/userRole/").concat(String.valueOf(selectedUser.getID())));
 		//parseRoles.execute(ip.concat("/roles"));
+	}
+	
+	public void disableScreen(){
+		TextView listView = (TextView) findViewById(R.id.listDetailName);
+		nameField.setEnabled(false);
+		printsList.setEnabled(false);
+		rolesList.setEnabled(false);
+		listView.setTextColor(Color.GRAY);
+		addPrint.setClickable(false);
+		addPrint.setTextColor(Color.GRAY);
+		addRole.setClickable(false);
+		addRole.setTextColor(Color.GRAY);
+	}
+	
+	public void onBackPressed() {
+	    finish();
 	}
 }
