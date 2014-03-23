@@ -45,6 +45,20 @@ public class User implements Parcelable{
           return users;
     }
 	
+    public JSONObject toJson(){
+    	JSONObject jsonObj = new JSONObject();
+    	try {
+			jsonObj.put("id", id);
+			jsonObj.put("name", name);
+			jsonObj.put("enabled", enabled);
+			jsonObj.put("startDate", startDate);
+			jsonObj.put("endDate", endDate);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+    	return jsonObj;
+    }
+    
 	public int getID(){
 		return id;
 	}

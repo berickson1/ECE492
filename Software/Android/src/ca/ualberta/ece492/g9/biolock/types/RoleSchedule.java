@@ -43,6 +43,22 @@ public class RoleSchedule{
        return rolesSched;
 	}
 	
+	public JSONObject toJson(){
+    	JSONObject jsonObj = new JSONObject();
+    	try {
+			jsonObj.put("id", id);
+			jsonObj.put("rid", rid);
+			jsonObj.put("startTime", startTime);
+			jsonObj.put("endTime", endTime);
+			jsonObj.put("days", days);
+			jsonObj.put("startDate", startDate);
+			jsonObj.put("endDate", endDate);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+    	return jsonObj;
+    }
+	
 	public int getID(){
 		return id;
 	}

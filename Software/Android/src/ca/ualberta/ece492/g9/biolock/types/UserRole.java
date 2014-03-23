@@ -41,6 +41,20 @@ public class UserRole{
        return userRoles;
 	}
 	
+	public JSONObject toJson(){
+    	JSONObject jsonObj = new JSONObject();
+    	try {
+			jsonObj.put("id", id);
+			jsonObj.put("uid", uid);
+			jsonObj.put("rid", rid);
+			jsonObj.put("startDate", startDate);
+			jsonObj.put("endDate", endDate);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+    	return jsonObj;
+    }
+	
 	public int getID(){
 		return id;
 	}

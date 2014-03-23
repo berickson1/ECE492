@@ -37,6 +37,17 @@ public class UserPrint implements Parcelable{
           return prints;
     }
     
+    public JSONObject toJson(){
+    	JSONObject jsonObj = new JSONObject();
+    	try {
+			jsonObj.put("id", id);
+			jsonObj.put("uid", uid);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+    	return jsonObj;
+    }
+    
     public int getUID(){
 		return uid;
 	}

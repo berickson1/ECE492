@@ -41,6 +41,19 @@ public class History {
        return history;
 	}	
 	
+	public JSONObject toJson(){
+    	JSONObject jsonObj = new JSONObject();
+    	try {
+			jsonObj.put("id", id);
+			jsonObj.put("uid", uid);
+			jsonObj.put("success", success);
+			jsonObj.put("time", time);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+    	return jsonObj;
+    }
+	
 	public int getID(){
 		return id;
 	}
