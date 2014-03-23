@@ -106,6 +106,15 @@ string RestAPI::insertUser(string data){
 	return str.str();
 }
 
+string RestAPI::enableUser(string data){
+	Database db(m_databaseSem);
+	User user;
+	user.loadFromJson(data);
+	stringstream str;
+	str << db.enableUser(user.id, true);
+	return str.str();
+}
+
 string RestAPI::insertRole(string data){
 	Database db(m_databaseSem);
 	Role role;

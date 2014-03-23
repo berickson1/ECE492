@@ -28,6 +28,7 @@ public:
 	string getPrints(string URI);
 	string getPrint(int uid);
 	string insertUser(string data);
+	string enableUser(string data);
 	string insertRole(string data);
 	string insertUserRole(string data);
 	string insertRoleSchedule(string data);

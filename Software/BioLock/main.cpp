@@ -334,11 +334,6 @@ const char * handleHTTPPost(http_conn* conn, int *replyLen) {
 	retString = "{\"success\":false}";
 	jsonData = getPOSTPayload(incomingData, "json");
 	postType = getPOSTPayload(incomingData, "type");
-	if (postType != "delete" && postType != "insert"){
-		*replyLen = retString.length();
-		const char * retval = retString.c_str();
-		return retval;
-	}
 	RestAPI api(&getCurrentFingerprintId, databaseSemaphore);
 	if (uriString.compare(0, 6, "/users") == 0) {
 		if (postType == "delete"){
@@ -347,6 +342,8 @@ const char * handleHTTPPost(http_conn* conn, int *replyLen) {
 			retString = api.deleteUser(user.id);
 		} else if (postType == "insert"){
 			retString = api.insertUser(jsonData);
+		} else if (postType == "enable"){
+			retString = api.enableUser(jsonData);
 		}
 	} else if (uriString.compare(0, 6, "/roles") == 0) {
 		if (postType == "delete"){
