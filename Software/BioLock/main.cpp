@@ -364,7 +364,15 @@ const char * handleHTTPPost(http_conn* conn, int *replyLen) {
 		} else if (postType == "insert"){
 			retString = api.insertRoleSchedule(jsonData);
 		}
-	} else if (uriString.compare(0, 8, "/history") == 0) {
+	} else if (uriString.compare(0, 6, "/userRole") == 0) {
+		if (postType == "delete"){
+			UserRole userrole;
+			userrole.loadFromJson(jsonData);
+			retString = api.deleteUserRole(userrole.id);
+		} else if (postType == "insert"){
+			retString = api.insertUserRole(jsonData);
+		}
+	}else if (uriString.compare(0, 8, "/history") == 0) {
 		//retString = api.insertHistory(jsonData);
 	} else if (uriString.compare(0, 7, "/prints") == 0) {
 		if (postType == "delete"){
