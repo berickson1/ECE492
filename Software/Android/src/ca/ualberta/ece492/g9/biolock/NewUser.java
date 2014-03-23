@@ -25,6 +25,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -43,30 +44,33 @@ public class NewUser extends Activity {
 	private static UserPrintAdapter userPrintAdapter;
 	private static UserRoleAdapter userRoleAdapter;
 	private static RoleAdapter roleAdapter;
-	private ProgressDialog wait;
 	private EditText nameField;
 	private CheckBox enabledStatus;
 	private ListView printsList;
 	private ListView rolesList;
 	private TextView addPrint;
 	private TextView addRole;
-	private JSONParser parseRoles;
+	private TextView update;
 	
 	protected void onCreate(Bundle savedInstanceState) {
+		JSONArray userPrints = null;
+		JSONArray userRoles = null;
 		mContext = this;
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		setContentView(R.layout.activity_new_user);
+		
+		// Get contents on screen
 		nameField = (EditText) findViewById(R.id.userNameFill);
 		enabledStatus = (CheckBox) findViewById(R.id.enabledUserStatusBox);
 		printsList = (ListView) findViewById(R.id.userPrints);
 		rolesList = (ListView) findViewById(R.id.userRoles);
 		addPrint = (TextView) findViewById(R.id.enrollPrint);
 		addRole = (TextView) findViewById(R.id.enrollRole);
-		wait = ProgressDialog.show(NewUser.this,"User Information", "Loading user information", true, false, null);
-
+		update = (TextView) findViewById(R.id.updateUser);
+		
 		// Gets the ip address
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		ip = settings.getString("ipAddress", "noConn");
@@ -74,15 +78,39 @@ public class NewUser extends Activity {
 		// Retrieves information of the selected user if exists
 		Intent intent = getIntent();
 		selectedUser = (User) intent.getParcelableExtra("User");
+		if (intent.getExtras() != null) {
+			try {
+				userPrints = new JSONArray(intent.getStringExtra("User Prints"));
+				userRoles = new JSONArray(intent.getStringExtra("User Roles"));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 		if (selectedUser != null){
 			// Displays retrieved information on screen
 			nameField.setText(selectedUser.getName());
 			enabledStatus.setChecked(selectedUser.getEnabled());
-			// Obtain user prints and roles
-			getPrints();
-			getRoles();
+			// Displays user prints
+			ArrayList<UserPrint> printsArray = new ArrayList<UserPrint>();
+			userPrintAdapter = new UserPrintAdapter(mContext, printsArray);
+			UserPrint userPrint = new UserPrint();
+			printsArray = userPrint.fromJson(userPrints);
+			userPrintAdapter.addAll(printsArray);
+			printsList.setAdapter(userPrintAdapter);
+			// Displays user roles
+			ArrayList<UserRole> rolesArray = new ArrayList<UserRole>();
+			userRoleAdapter = new UserRoleAdapter(mContext, rolesArray);
+			UserRole userRole = new UserRole();
+			rolesArray = userRole.fromJson(userRoles);
+			userRoleAdapter.addAll(rolesArray);
+			rolesList.setAdapter(userRoleAdapter);
+			// User is disabled
+			if (!selectedUser.getEnabled()){
+				disableScreen();
+			}
 		} else {
-			wait.dismiss();
+			// Change update button text to add
+			update.setText(Html.fromHtml("<u>Add</u>"));
 		}
 	}
 	
@@ -111,7 +139,6 @@ public class NewUser extends Activity {
 	// Popup to select from roles
 	public void addRole(View v) {
 		final ProgressDialog wait = ProgressDialog.show(NewUser.this,"User Information", "Loading roles", true, false, null);
-
 		JSONParser parseRoles = new JSONParser(new JSONCallbackFunction() {
 			@Override
 			public void execute(JSONArray json) {
@@ -127,7 +154,7 @@ public class NewUser extends Activity {
 					    @Override
 					    public void onClick(DialogInterface dialog, int which) {
 					    	if (selectedUser != null) {
-					    	// Add role to existing user
+					    		// Add role to existing user
 					    		JSONPost postRole = new JSONPost(new JSONCallbackFunction() {
 									@Override
 									public void execute(JSONArray json) {
@@ -206,82 +233,14 @@ public class NewUser extends Activity {
 		//finish();
 	}
 	
-	public void getPrints(){
-		// Obtain user's enrolled fingerprints
-		JSONParser parsePrints = new JSONParser(new JSONCallbackFunction() {
-			@Override
-			public void execute(JSONArray json) {
-				if (json != null){
-					ArrayList<UserPrint> printsArray = new ArrayList<UserPrint>();
-					userPrintAdapter = new UserPrintAdapter(mContext, printsArray);
-					UserPrint userPrint = new UserPrint();
-					printsArray = userPrint.fromJson(json);
-					userPrintAdapter.addAll(printsArray);
-					printsList.setAdapter(userPrintAdapter);
-				} else {
-					AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
-					noConn.setMessage("Could not get user prints");
-					noConn.setTitle("User Prints");
-					noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-		                public void onClick(DialogInterface dialog, int which) {}
-		            });
-					noConn.setCancelable(false);
-					noConn.setCanceledOnTouchOutside(false);
-					noConn.show();
-				}
-			}
-		});
-		parsePrints.execute(ip.concat("/prints/").concat(String.valueOf(selectedUser.getID())));
-		//parsePrints.execute(ip.concat("/prints"));
-	}
-	
-	public void getRoles(){
-		// Obtain user's roles
-		parseRoles = new JSONParser(new JSONCallbackFunction() {
-			@Override
-			public void execute(JSONArray json) {
-				if (json != null){
-					ArrayList<UserRole> rolesArray = new ArrayList<UserRole>();
-					userRoleAdapter = new UserRoleAdapter(mContext, rolesArray);
-					UserRole userRole = new UserRole();
-					rolesArray = userRole.fromJson(json);
-					userRoleAdapter.addAll(rolesArray);
-					rolesList.setAdapter(userRoleAdapter);
-					if (!selectedUser.getEnabled()){
-						disableScreen();
-					}
-					wait.dismiss();
-				} else {
-					wait.dismiss();
-					AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
-					noConn.setMessage("Could not get user roles");
-					noConn.setTitle("User Roles");
-					noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-		                public void onClick(DialogInterface dialog, int which) {}
-		            });
-					noConn.setCancelable(false);
-					noConn.setCanceledOnTouchOutside(false);
-					noConn.show();
-				}
-			}
-		});
-		parseRoles.execute(ip.concat("/userRole/").concat(String.valueOf(selectedUser.getID())));
-		//parseRoles.execute(ip.concat("/roles"));
-	}
-	
+// TODO: gray out listview
 	public void disableScreen(){
-		TextView listView = (TextView) findViewById(R.id.listDetailName);
 		nameField.setEnabled(false);
 		printsList.setEnabled(false);
 		rolesList.setEnabled(false);
-		listView.setTextColor(Color.GRAY);
 		addPrint.setClickable(false);
 		addPrint.setTextColor(Color.GRAY);
 		addRole.setClickable(false);
 		addRole.setTextColor(Color.GRAY);
-	}
-	
-	public void onBackPressed() {
-	    finish();
 	}
 }

@@ -68,7 +68,6 @@ public class Users extends Activity {
 							updateUser = new Intent(Users.this, NewUser.class);
 							updateUser.putExtra("User", userSelected);
 							getPrints(userSelected);
-							//startActivity(updateUser);
 						}
 					});
 				}
