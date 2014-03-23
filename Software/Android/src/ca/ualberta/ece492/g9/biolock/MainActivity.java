@@ -38,22 +38,23 @@ public class MainActivity extends Activity {
 	private static Context mContext;
 	
 	protected void onCreate(Bundle savedInstanceState) {
-		final ListView listLocks;
-		final ArrayList<HashMap<String, String>> lockArray = new ArrayList<HashMap<String, String>>();
-		ListAdapter adapter = new SimpleAdapter(getBaseContext(), lockArray, R.layout.list_view_row, new String[] { "Name" }, new int[] { R.id.listDeviceName });
-		List<LockInfo> locks;
-		DatabaseHandler db = new DatabaseHandler(this);
-
 		mContext = this;
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_main);
+	}
 
-		 // Test population of database
-		 //db.addLock(new LockInfo("http://192.168.1.120", "Group 9 Project"));
+	public void onResume() {
+		final ArrayList<HashMap<String, String>> lockArray = new ArrayList<HashMap<String, String>>();
+		ListAdapter adapter = new SimpleAdapter(getBaseContext(), lockArray, R.layout.list_view_row, new String[] { "Name" }, new int[] { R.id.listDeviceName });
+		List<LockInfo> locks;
+		DatabaseHandler db = new DatabaseHandler(this);
+
+		// Test population of database
+		//db.addLock(new LockInfo("http://192.168.1.120", "Group 9 Project"));
 		
-		listLocks = (ListView) findViewById(R.id.deviceList);
+		final ListView listLocks = (ListView) findViewById(R.id.deviceList);
 		// Display all locks
 		locks = db.getAllLocks();
 		for (LockInfo l : locks) {
@@ -114,9 +115,10 @@ public class MainActivity extends Activity {
 				});
 				parser.execute(ip.concat("/alive"));
 			}
-		});
+		});	
+		super.onResume();
 	}
-
+	
 	// User selected to add new lock
 	public void newLock(View v) {
 		Intent newLock = new Intent(MainActivity.this, NewLock.class);
