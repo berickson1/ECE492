@@ -28,6 +28,7 @@ public class Roles extends Activity {
 	private static String ip;
 	private static Context mContext;
 	private static RoleAdapter adapter;
+	private ProgressDialog wait;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		mContext = this;
@@ -36,11 +37,16 @@ public class Roles extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_roles);
-		final ProgressDialog wait = ProgressDialog.show(Roles.this, "Roles", "Loading roles", true, false, null);
+		
 
 		// Gets the ip address
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		ip = settings.getString("ipAddress", "noConn");
+	
+	}
+
+	public void onResume(){
+		wait = ProgressDialog.show(Roles.this, "Roles", "Loading roles", true, false, null);
 		
 		// Obtains roles from web server & displays role names
 		JSONParser parser = new JSONParser(new JSONCallbackFunction() {
@@ -50,6 +56,7 @@ public class Roles extends Activity {
 					final ListView roleList = (ListView) findViewById(R.id.listRoles);
 					ArrayList<Role> rolesArray = new ArrayList<Role>();
 					adapter = new RoleAdapter(mContext, rolesArray);
+					adapter.clear();
 					Role role = new Role();
 					rolesArray = role.fromJson(json);
 					adapter.addAll(rolesArray);
@@ -69,13 +76,6 @@ public class Roles extends Activity {
 			}
 		});
 		parser.execute(ip.concat("/roles"));
-	}
-
-	public void onResume(){
-		if (adapter != null){
-			// Updates listview 
-			adapter.notifyDataSetChanged();
-		}
 		super.onResume();
 	}
 	
