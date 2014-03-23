@@ -32,14 +32,14 @@ public:
 	Database(OS_EVENT * databaseSemaphore);
 	virtual ~Database();
 	string listAll(char *path);
-	int createTable(char *tableName);
+	string createTable(char *tableName);
 
-	int insertRole(Role value);
-	int insertUser(User value);
-	int insertRoleSched(RoleSchedule value);
-	int insertUserRole(UserRole value);
-	int insertUserPrint(UserPrint value);
-	int insertHistory(History value);
+	string insertRole(Role value);
+	string insertUser(User value);
+	string insertRoleSched(RoleSchedule value);
+	string insertUserRole(UserRole value);
+	string insertUserPrint(UserPrint value);
+	string insertHistory(History value);
 
 	string findEntry(const char *path, int id);
 	string findRole(int rid);
@@ -51,27 +51,29 @@ public:
 	int nextUserPrintId();
 	string findHistory(int id);
 
-	int editRole(Role value);
-	int editUser(User value);
-	int editRoleSched(RoleSchedule value);
-	int editUserRole(UserRole value);
-	int editUserPrint(UserPrint value);
+	string editRole(Role value);
+	string editUser(User value);
+	string editRoleSched(RoleSchedule value);
+	string editUserRole(UserRole value);
+	string editUserPrint(UserPrint value);
 
-	int deleteRole(int rid);
-	int deleteRoleSchedule(int id);
-	int deleteUserRole(int id);
-	int deleteUserPrint(int id);
-	int enableUser(int uid, bool enable);
+	string deleteRole(int rid);
+	string deleteRoleSchedule(int id);
+	string deleteUserRole(int id);
+	string deleteUserPrint(int id);
+	string enableUser(int uid, bool enable);
 
 	void testPopulate();
 	static string noRecord();
-	int clearAll();
+	static string success();
+	static string fail();
+	string clearAll();
 
 private:
 	OS_EVENT *m_databaseSemaphore;
 	EmbeddedFileSystem db;
-	int deleteEntry(char *path, int id);
-	int clearTable(char *path);
+	string deleteEntry(char *path, int id);
+	string clearTable(char *path);
 };
 
 #endif

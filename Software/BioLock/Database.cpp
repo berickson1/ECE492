@@ -48,6 +48,20 @@ string Database::noRecord() {
 	return noRecordString;
 }
 
+string Database::success(){
+	Json::Value success;
+	success["success"] = true;
+	string result = success.toStyledString();
+	return result;
+}
+
+string Database::fail(){
+	Json::Value fail;
+	fail["success"] = false;
+	string result = fail.toStyledString();
+	return result;
+}
+
 // Lists all tables (folders) or tuplets (files) in directory specified
 string Database::listAll(char *path) {
 	DirList list;
@@ -75,18 +89,18 @@ string Database::listAll(char *path) {
 }
 
 // Creates new tables (folders)
-int Database::createTable(char *tableName) {
+string Database::createTable(char *tableName) {
 	int ret;
 	ret = makedir(&db.myFs, tableName);
 	if (ret == -1) {
 		printf("Table already exists\n");
-		return -1;
+		return fail();
 	}
-	return 1;
+	return success();
 }
 
 // Adds a tuple to the role table
-int Database::insertRole(Role value) {
+string Database::insertRole(Role value) {
 
 	File tuple;
 	int ret;
@@ -97,7 +111,7 @@ int Database::insertRole(Role value) {
 	// File already exists
 	if (ret == -2) {
 		printf("Role already exists\n");
-		return -1;
+		return fail();
 	}
 
 	string jsonValue = value.toJSONString();
@@ -106,19 +120,19 @@ int Database::insertRole(Role value) {
 			(euint8*) jsonValue.c_str());
 	if (ret == 0) {
 		printf("Role could not be added\n");
-		return -1;
+		return fail();
 	}
 	ret = file_fclose(&tuple);
 	if (ret != 0) {
 		printf("Role could not be added\n");
-		return -1;
+		return fail();
 	}
 
-	return 1;
+	return success();
 }
 
 // Adds a tuple to the user table
-int Database::insertUser(User value) {
+string Database::insertUser(User value) {
 
 	File tuple;
 	int ret;
@@ -128,7 +142,7 @@ int Database::insertUser(User value) {
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	if (ret == -2) {
 		printf("User already exists\n");
-		return -1;
+		return fail();
 	}
 
 	string jsonValue = value.toJSONString();
@@ -137,20 +151,20 @@ int Database::insertUser(User value) {
 			(euint8*) jsonValue.c_str());
 	if (ret == 0) {
 		printf("User could not be added\n");
-		return -1;
+		return fail();
 	}
 
 	ret = file_fclose(&tuple);
 	if (ret != 0) {
 		printf("User could not be added\n");
-		return -1;
+		return fail();
 	}
 
-	return 1;
+	return success();
 }
 
 // Adds a tuple to the role schedule table
-int Database::insertRoleSched(RoleSchedule value) {
+string Database::insertRoleSched(RoleSchedule value) {
 
 	File tuple;
 	int ret;
@@ -160,7 +174,7 @@ int Database::insertRoleSched(RoleSchedule value) {
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	if (ret == -2) {
 		printf("Role schedule already exists\n");
-		return -1;
+		return fail();
 	}
 
 	string jsonValue = value.toJSONString();
@@ -169,20 +183,20 @@ int Database::insertRoleSched(RoleSchedule value) {
 			(euint8*) jsonValue.c_str());
 	if (ret == 0) {
 		printf("Role schedule could not be added\n");
-		return -1;
+		return fail();
 	}
 
 	ret = file_fclose(&tuple);
 	if (ret != 0) {
 		printf("Role schedule could not be added\n");
-		return -1;
+		return fail();
 	}
 
-	return 1;
+	return success();
 }
 
 // Adds a tuple to the user roles table
-int Database::insertUserRole(UserRole value) {
+string Database::insertUserRole(UserRole value) {
 
 	File tuple;
 	int ret;
@@ -192,7 +206,7 @@ int Database::insertUserRole(UserRole value) {
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	if (ret == -2) {
 		printf("User role already exists\n");
-		return -1;
+		return fail();
 	}
 
 	string jsonValue = value.toJSONString();
@@ -201,20 +215,20 @@ int Database::insertUserRole(UserRole value) {
 			(euint8*) jsonValue.c_str());
 	if (ret == 0) {
 		printf("User role could not be added\n");
-		return -1;
+		return fail();
 	}
 
 	ret = file_fclose(&tuple);
 	if (ret != 0) {
 		printf("User role could not be added\n");
-		return -1;
+		return fail();
 	}
 
-	return 1;
+	return success();
 }
 
 // Adds a tuple to the user prints table
-int Database::insertUserPrint(UserPrint value) {
+string Database::insertUserPrint(UserPrint value) {
 	File tuple;
 	int ret;
 	char filename[MAXBUF_LENGTH];
@@ -223,7 +237,7 @@ int Database::insertUserPrint(UserPrint value) {
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	if (ret == -2) {
 		printf("User prints already exists\n");
-		return -1;
+		return fail();
 	}
 
 	string jsonValue = value.toJSONString();
@@ -232,20 +246,20 @@ int Database::insertUserPrint(UserPrint value) {
 			(euint8*) jsonValue.c_str());
 	if (ret == 0) {
 		printf("User print could not be added\n");
-		return -1;
+		return fail();
 	}
 
 	ret = file_fclose(&tuple);
 	if (ret != 0) {
 		printf("User print could not be added\n");
-		return -1;
+		return fail();
 	}
 
-	return 1;
+	return success();
 }
 
 // Adds a tuple to the history table
-int Database::insertHistory(History value) {
+string Database::insertHistory(History value) {
 	File tuple;
 	int ret;
 	char filename[MAXBUF_LENGTH];
@@ -254,7 +268,7 @@ int Database::insertHistory(History value) {
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	if (ret == -2) {
 		printf("History already exists\n");
-		return -1;
+		return fail();
 	}
 
 	string jsonValue = value.toJSONString();
@@ -263,16 +277,16 @@ int Database::insertHistory(History value) {
 			(euint8*) jsonValue.c_str());
 	if (ret == 0) {
 		printf("History could not be added\n");
-		return -1;
+		return fail();
 	}
 
 	ret = file_fclose(&tuple);
 	if (ret != 0) {
 		printf("History could not be added\n");
-		return -1;
+		return fail();
 	}
 
-	return 1;
+	return success();
 }
 
 // Searches for specific file at the declared folder
@@ -293,7 +307,7 @@ string Database::findEntry(const char *path, int id) {
 	sizeRead = file_read(&tuple, tuple.FileSize, fileBuffer);
 	if (sizeRead == 0) {
 		printf("Attributes could not read\n");
-		return "";
+		return noRecord();
 	}
 
 	string attr = "";
@@ -390,47 +404,53 @@ string Database::findHistory(int id) {
 }
 
 // Updates role by deleting entry and creating new entry
-int Database::editRole(Role value) {
+string Database::editRole(Role value) {
 	deleteEntry(ROLES, value.id);
 	return insertRole(value);
 }
 
 // Updates user by deleting entry and creating new entry
-int Database::editUser(User value) {
+string Database::editUser(User value) {
 	deleteEntry(USERS, value.id);
 	return insertUser(value);
 }
 
 // Updates role sched by deleting entry and creating new entry
-int Database::editRoleSched(RoleSchedule value) {
+string Database::editRoleSched(RoleSchedule value) {
 	deleteEntry(ROLE_SCHEDULE, value.id);
 	return insertRoleSched(value);
 }
 
 // Updates user role by deleting entry and creating new entry
-int Database::editUserRole(UserRole value) {
+string Database::editUserRole(UserRole value) {
 	deleteEntry(USER_ROLES, value.id);
 	return insertUserRole(value);
 }
 
 // Updates user print by deleting entry and creating new entry
-int Database::editUserPrint(UserPrint value) {
+string Database::editUserPrint(UserPrint value) {
 	deleteEntry(USER_PRINTS, value.id);
 	return insertUserPrint(value);
 }
 
 // Deletes role entry with corresponding rid
-int Database::deleteRole(int rid) {
+string Database::deleteRole(int rid) {
 	DirList list;
 	int ret, file;
+	string result;
 
 	// Delete role
-	deleteEntry(ROLES, rid);
+	result = deleteEntry(ROLES, rid);
+	if (result.find("false") != string::npos){
+		return result;
+	}
 
 	// Delete role schedule with same rid
 	ret = ls_openDir(&list, &db.myFs, (eint8 *) ROLE_SCHEDULE);
-	if (ret == -1)
+	if (ret == -1) {
 		printf("Could not open directory\n");
+		return fail();
+	}
 	while (ls_getNext(&list) == 0) {
 		file = atoi((const char*) list.currentEntry.FileName);
 		if (file == 0)
@@ -438,14 +458,19 @@ int Database::deleteRole(int rid) {
 		RoleSchedule roleSchedule;
 		roleSchedule.loadFromJson(findEntry(ROLE_SCHEDULE, file));
 		if (roleSchedule.rid == rid) {
-			ret = deleteEntry(ROLE_SCHEDULE, rid);
+			result = deleteEntry(ROLE_SCHEDULE, rid);
+			if (result.find("false") != string::npos){
+				return result;
+			}
 		}
 	}
 
 	// Delete user roles with same rid
 	ret = ls_openDir(&list, &db.myFs, (eint8 *) USER_ROLES);
-	if (ret == -1)
+	if (ret == -1){
 		printf("Could not open directory\n");
+		return fail();
+	}
 	while (ls_getNext(&list) == 0) {
 		file = atoi((const char*) list.currentEntry.FileName);
 		if (file == 0)
@@ -453,96 +478,105 @@ int Database::deleteRole(int rid) {
 		UserRole userRole;
 		userRole.loadFromJson(findEntry(USER_ROLES, file));
 		if (userRole.rid == rid) {
-			ret = deleteEntry(USER_ROLES, rid);
+			result = deleteEntry(USER_ROLES, rid);
+			if (result.find("false") != string::npos){
+				return result;
+			}
 		}
 	}
-	return ret;
+	return success();
 }
 
 // Enables/disables user entry with corresponding uid
-int Database::enableUser(int uid, bool enable) {
+string Database::enableUser(int uid, bool enable) {
 	User updatedUser;
 	int ret = -1;
+	string result;
 
 	User user;
 	user.loadFromJson(findUser(uid));
-	ret = deleteEntry(USERS, uid);
-	if (ret == -1) {
-		printf(
-				"User enable status could not be changed, please try again later\n");
-		return -1;
+	result = deleteEntry(USERS, uid);
+	if (result.find("false") != string::npos){
+		printf("User enable status could not be changed, please try again later\n");
+		return result;
 	}
 	user.enabled = enable;
-	ret = insertUser(user);
+	result = insertUser(user);
 
-	return ret;
+	return result;
 }
 
 // Deletes role schedule entry with corresponding id
-int Database::deleteRoleSchedule(int id) {
+string Database::deleteRoleSchedule(int id) {
 	return deleteEntry(ROLE_SCHEDULE, id);
 }
 
 // Deletes user role entry with corresponding id
-int Database::deleteUserRole(int id) {
+string Database::deleteUserRole(int id) {
 	return deleteEntry(USER_ROLES, id);
 }
 
 // Deletes user print entry with corresponding id
-int Database::deleteUserPrint(int id) {
+string Database::deleteUserPrint(int id) {
 	return deleteEntry(USER_PRINTS, id);
 }
 
 //Clears the database
-int Database::clearAll() {
-	int ret;
+string Database::clearAll() {
+	string ret;
 
 	ret = clearTable(ROLES);
-	if (ret == -1) {
+	if (ret.find("false") != string::npos){
 		return ret;
 	}
 	ret = clearTable(USERS);
-	if (ret == -1) {
+	if (ret.find("false") != string::npos){
 		return ret;
 	}
 	ret = clearTable(ROLE_SCHEDULE);
-	if (ret == -1) {
+	if (ret.find("false") != string::npos){
 		return ret;
 	}
 	ret = clearTable(USER_ROLES);
-	if (ret == -1) {
+	if (ret.find("false") != string::npos){
 		return ret;
 	}
 	ret = clearTable(USER_PRINTS);
-	if (ret == -1) {
+	if (ret.find("false") != string::npos){
 		return ret;
 	}
 	ret = clearTable(HISTORY);
-	if (ret == -1) {
+	if (ret.find("false") != string::npos){
 		return ret;
 	}
-	return ret;
+	return success();
 }
 
 // Clears the table
-int Database::clearTable(char *path) {
+string Database::clearTable(char *path) {
+	string result;
 	int ret = -1, file;
 	DirList list;
 
 	ret = ls_openDir(&list, &db.myFs, (eint8 *) path);
-	if (ret == -1)
+	if (ret == -1){
 		printf("Could not open directory\n");
+		return fail();
+	}
 	while (ls_getNext(&list) == 0) {
 		file = atoi((const char*) list.currentEntry.FileName);
 		if (file == 0)
 			break;
-		ret = deleteEntry(path, file);
+		result = deleteEntry(path, file);
+		if (result.find("false") != string::npos){
+			return result;
+		}
 	}
-	return ret;
+	return success();
 }
 
 // Deletes the specified file
-int Database::deleteEntry(char *path, int id) {
+string Database::deleteEntry(char *path, int id) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
@@ -550,9 +584,9 @@ int Database::deleteEntry(char *path, int id) {
 	ret = rmfile(&db.myFs, (euint8*) filename);
 	if (ret != 0) {
 		printf("Entry could not be deleted, please try again later\n");
-		return -1;
+		return fail();
 	}
-	return id;
+	return success();
 }
 
 void Database::testPopulate() {
