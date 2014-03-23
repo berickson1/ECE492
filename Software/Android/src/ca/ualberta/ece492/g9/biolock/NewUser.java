@@ -94,6 +94,8 @@ public class NewUser extends Activity {
 	// Jumps to AdminLogin to add new print
 	public void enrollPrint(View v) {
 		Intent addPrint = new Intent(NewUser.this, AdminLogin.class);
+		// NewUser or UpdateUser
+		addPrint.putExtra("Caller", mContext.getClass().getSimpleName());
 		startActivity(addPrint);
 	}
 	

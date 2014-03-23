@@ -88,6 +88,7 @@ public class MainActivity extends Activity {
 								if (response.getString("alive").equalsIgnoreCase("true")){
 									// Lock is valid, will jump to admin login screen
 									Intent login = new Intent(MainActivity.this, AdminLogin.class);
+									login.putExtra("Caller", mContext.getClass().getSimpleName());
 									wait.dismiss();
 									listLocks.setEnabled(true);
 									startActivity(login);

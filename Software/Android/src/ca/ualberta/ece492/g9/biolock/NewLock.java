@@ -92,6 +92,7 @@ public class NewLock extends Activity {
 									public void run() {
 										// Runs AdminLogin
 										Intent login = new Intent(NewLock.this, AdminLogin.class);
+										login.putExtra("Caller", mContext.getClass().getSimpleName());
 										searchButton.setEnabled(true);
 										startActivity(login);
 										// Close this activity
