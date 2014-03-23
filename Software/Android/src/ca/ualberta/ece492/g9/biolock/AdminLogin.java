@@ -38,9 +38,6 @@ public class AdminLogin extends Activity {
 	public void onStart(Bundle savedInstanceState) {
 		JSONPost requestPrint = new JSONPost(new JSONCallbackFunction() {
 			@Override
-			public void execute(Integer response) {
-				System.out.println(response);
-			}
 			public void execute(JSONArray json) {}
 		});
 		requestPrint.execute(ip.concat("/print"), ip.concat("/print"), "fingerprint");

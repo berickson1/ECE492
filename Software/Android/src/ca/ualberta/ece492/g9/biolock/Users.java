@@ -67,7 +67,6 @@ public class Users extends Activity {
 					});
 				}
 			}
-			public void execute(Integer response) {}
 		});
 		parser.execute(ip.concat("/users"));
 	}

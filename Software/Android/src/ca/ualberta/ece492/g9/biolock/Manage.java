@@ -101,7 +101,6 @@ public class Manage extends Activity {
 				noConn.show();
 				unlockButton.setEnabled(true);
 			}
-			public void execute(Integer response) {}
 		});
 		unlock.execute(ip.concat("/unlock"), putRequest.toString());
 	}

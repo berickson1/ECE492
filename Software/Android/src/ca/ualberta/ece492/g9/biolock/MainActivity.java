@@ -110,7 +110,6 @@ public class MainActivity extends Activity {
 							listLocks.setEnabled(true);
 						}
 					}
-					public void execute(Integer response) {}
 				});
 				parser.execute(ip.concat("/alive"));
 			}

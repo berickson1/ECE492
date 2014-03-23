@@ -110,7 +110,6 @@ public class NewLock extends Activity {
 					searchButton.setEnabled(true);
 				}
 			}
-			public void execute(Integer response) {}
 		});
 		parser.execute(ip.concat("/alive"));
 	}

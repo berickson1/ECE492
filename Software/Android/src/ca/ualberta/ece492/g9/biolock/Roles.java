@@ -67,7 +67,6 @@ public class Roles extends Activity {
 					});
 				}
 			}
-			public void execute(Integer response) {}
 		});
 		parser.execute(ip.concat("/roles"));
 	}

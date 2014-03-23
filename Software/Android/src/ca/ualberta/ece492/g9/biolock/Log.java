@@ -62,7 +62,6 @@ public class Log extends Activity {
 					});*/
 				}
 			}
-			public void execute(Integer response) {}
 		});
 		parser.execute(ip.concat("/history"));
 	}

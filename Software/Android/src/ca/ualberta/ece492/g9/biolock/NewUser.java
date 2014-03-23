@@ -3,6 +3,8 @@ package ca.ualberta.ece492.g9.biolock;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import ca.ualberta.ece492.g9.biolock.customs.JSONCallbackFunction;
 import ca.ualberta.ece492.g9.biolock.customs.JSONParser;
@@ -97,10 +99,11 @@ public class NewUser extends Activity {
 						wait.dismiss();
 					}
 				}
-				public void execute(Integer response) {}
 			});
 			parseRoles.execute(ip.concat("/userRole/").concat(String.valueOf(selectedUser.getID())));
 			//parseRoles.execute(ip.concat("/roles"));
+		} else {
+			wait.dismiss();
 		}
 	}
 	
@@ -142,6 +145,7 @@ public class NewUser extends Activity {
 					roles.setAdapter(roleAdapter, new DialogInterface.OnClickListener() {
 					    @Override
 					    public void onClick(DialogInterface dialog, int which) {
+					    	// Add role to user
 					    }
 					});
 					roles.show();
@@ -149,7 +153,6 @@ public class NewUser extends Activity {
 				roleAdapter.notifyDataSetChanged();
 				wait.dismiss();
 			}
-			public void execute(Integer response) {}
 		});
 		parseRoles.execute(ip.concat("/roles"));
 	}
