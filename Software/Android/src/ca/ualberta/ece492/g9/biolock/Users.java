@@ -29,7 +29,6 @@ public class Users extends Activity {
 	public static final String PREFS_NAME = "CONNECTION";
 	private static String ip;
 	private static Context mContext;
-	private static UserAdapter adapter;
 	private Intent updateUser;
 	private ProgressDialog wait;
 	
@@ -40,11 +39,14 @@ public class Users extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_users);
-		wait = ProgressDialog.show(Users.this,"Users", "Loading users", true, false, null);
 
 		// Gets the ip address
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		ip = settings.getString("ipAddress", "noConn");
+	}
+	
+	public void onResume(){
+		wait = ProgressDialog.show(Users.this,"Users", "Loading users", true, false, null);
 		
 		// Obtains users from web server & displays user names
 		JSONParser parser = new JSONParser(new JSONCallbackFunction() {
@@ -53,11 +55,13 @@ public class Users extends Activity {
 				if (json != null) {
 					final ListView userList = (ListView) findViewById(R.id.listUsers);
 					ArrayList<User> usersArray = new ArrayList<User>();
-					adapter = new UserAdapter(mContext, usersArray);
+					UserAdapter adapter = new UserAdapter(mContext, usersArray);
+					adapter.clear();
 					User user = new User();
 					usersArray = user.fromJson(json);
 					adapter.addAll(usersArray);
 					userList.setAdapter(adapter);
+					adapter.notifyDataSetChanged();
 					wait.dismiss();
 					// User is clicked on
 					userList.setOnItemClickListener(new OnItemClickListener() {
@@ -74,13 +78,6 @@ public class Users extends Activity {
 			}
 		});
 		parser.execute(ip.concat("/users"));
-	}
-	
-	public void onResume(){
-		if (adapter != null){
-			// Updates listview 
-			adapter.notifyDataSetChanged();
-		}
 		super.onResume();
 	}
 

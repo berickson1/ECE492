@@ -195,7 +195,6 @@ public class NewUser extends Activity {
 							// User status changed successfully
 							wait.dismiss();
 							finish();
-							return;
 						} else {
 							wait.dismiss();
 							AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
