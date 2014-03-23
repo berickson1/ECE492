@@ -20,9 +20,7 @@ typedef struct History {
 		nodeToInsert["id"] = id;
 		nodeToInsert["uid"] = uid;
 		nodeToInsert["success"] = success;
-		ostringstream timeStr;
-		timeStr << static_cast<long int>(time);
-		nodeToInsert["time"] = timeStr.str();
+		nodeToInsert["time"] = time;
 
 		string jsonValue = nodeToInsert.toStyledString();
 		return jsonValue;
@@ -34,11 +32,11 @@ typedef struct History {
 		id = node["id"].asInt();
 		uid = node["uid"].asInt();
 		success = node["success"].asBool();
-		time = strtol(node["time"].asString().c_str(), NULL, 10);
+		time = node["time"].asDouble();
 	}
 	int id, uid;
 	bool success;
-	time_t time;
+	double time;
 } History;
 
 typedef struct User {
@@ -48,10 +46,8 @@ typedef struct User {
 		nodeToInsert["name"] = name;
 		nodeToInsert["enabled"] = enabled;
 		ostringstream start, end;
-		start << static_cast<long int>(startDate);
-		end << static_cast<long int>(endDate);
-		nodeToInsert["startDate"] = start.str();
-		nodeToInsert["endDate"] = end.str();
+		nodeToInsert["startDate"] = startDate;
+		nodeToInsert["endDate"] = endDate;
 
 		string jsonValue = nodeToInsert.toStyledString();
 		return jsonValue;
@@ -63,13 +59,13 @@ typedef struct User {
 		id = node["id"].asInt();
 		name = node["name"].asString();
 		enabled = node["enabled"].asBool();
-		startDate = strtol(node["startDate"].asString().c_str(), NULL, 10);
-		endDate = strtol(node["endDate"].asString().c_str(), NULL, 10);
+		startDate = node["startDate"].asDouble();
+		endDate = node["endDate"].asDouble();
 	}
 	int id;
 	string name;
 	bool enabled;
-	time_t startDate, endDate;
+	double startDate, endDate;
 } User;
 
 typedef struct UserPrint {
@@ -98,11 +94,8 @@ typedef struct Role {
 		nodeToInsert["name"] = name;
 		nodeToInsert["admin"] = admin;
 		nodeToInsert["enabled"] = enabled;
-		ostringstream start, end;
-		start << static_cast<long int>(startDate);
-		end << static_cast<long int>(endDate);
-		nodeToInsert["startDate"] = start.str();
-		nodeToInsert["endDate"] = end.str();
+		nodeToInsert["startDate"] = startDate;
+		nodeToInsert["endDate"] = endDate;
 
 		string jsonValue = nodeToInsert.toStyledString();
 		return jsonValue;
@@ -115,13 +108,13 @@ typedef struct Role {
 		name = node["name"].asString();
 		admin = node["admin"].asBool();
 		enabled = node["enabled"].asBool();
-		startDate = strtol(node["startDate"].asString().c_str(), NULL, 10);
-		endDate = strtol(node["endDate"].asString().c_str(), NULL, 10);
+		startDate = node["startDate"].asDouble();
+		endDate = node["endDate"].asDouble();
 	}
 	int id;
 	string name;
 	bool admin, enabled;
-	time_t startDate, endDate;
+	double startDate, endDate;
 } Role;
 
 typedef struct UserRole {
@@ -130,11 +123,8 @@ typedef struct UserRole {
 		nodeToInsert["id"] = id;
 		nodeToInsert["uid"] = uid;
 		nodeToInsert["rid"] = rid;
-		ostringstream start, end;
-		start << static_cast<long int>(startDate);
-		end << static_cast<long int>(endDate);
-		nodeToInsert["startDate"] = start.str();
-		nodeToInsert["endDate"] = end.str();
+		nodeToInsert["startDate"] = startDate;
+		nodeToInsert["endDate"] = endDate;
 
 		string jsonValue = nodeToInsert.toStyledString();
 		return jsonValue;
@@ -146,11 +136,11 @@ typedef struct UserRole {
 		id = node["id"].asInt();
 		uid = node["uid"].asInt();
 		rid = node["rid"].asInt();
-		startDate = strtol(node["startDate"].asString().c_str(), NULL, 10);
-		endDate = strtol(node["endDate"].asString().c_str(), NULL, 10);
+		startDate = node["startDate"].asDouble();
+		endDate = node["endDate"].asDouble();
 	}
 	int id, uid, rid;
-	time_t startDate, endDate;
+	double startDate, endDate;
 } UserRole;
 
 typedef struct RoleSchedule {
@@ -161,11 +151,8 @@ typedef struct RoleSchedule {
 		nodeToInsert["startTime"] = startTime;
 		nodeToInsert["endTime"] = endTime;
 		nodeToInsert["days"] = days;
-		ostringstream start, end;
-		start << static_cast<long int>(startDate);
-		end << static_cast<long int>(endDate);
-		nodeToInsert["startDate"] = start.str();
-		nodeToInsert["endDate"] = end.str();
+		nodeToInsert["startDate"] = startDate;
+		nodeToInsert["endDate"] = endDate;
 
 		string jsonValue = nodeToInsert.toStyledString();
 		return jsonValue;
@@ -179,11 +166,11 @@ typedef struct RoleSchedule {
 		startTime = node["startTime"].asInt();
 		endTime = node["endTime"].asInt();
 		days = node["days"].asInt();
-		startDate = strtol(node["startDate"].asString().c_str(), NULL, 10);
-		endDate = strtol(node["endDate"].asString().c_str(), NULL, 10);
+		startDate = node["startDate"].asDouble();
+		endDate = node["endDate"].asDouble();
 	}
 	int id, rid, startTime, endTime, days;
-	time_t startDate, endDate;
+	double startDate, endDate;
 } RoleSchedule;
 
 #endif /* DATABASE_TABLE_TYPES_H_ */
