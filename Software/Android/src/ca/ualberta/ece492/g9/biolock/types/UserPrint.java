@@ -51,9 +51,17 @@ public class UserPrint implements Parcelable{
     public int getUID(){
 		return uid;
 	}
+    
+    public void setUID(int uid){
+    	this.uid = uid;
+    }
 	
 	public int getID(){
 		return id;
+	}
+	
+	public void setID(int id){
+		this.id = id;
 	}
 	
 	public int describeContents() {

@@ -63,28 +63,56 @@ public class RoleSchedule{
 		return id;
 	}
 	
+	public void setID(int id){
+		this.id = id;
+	}
+	
 	public int getRID(){
 		return rid;
+	}
+	
+	public void setRID(int rid){
+		this.rid = rid;
 	}
 	
 	public int getStartTime(){
 		return startTime;
 	}
 	
+	public void setStartTime(int startTime){
+		this.startTime = startTime;
+	}
+	
 	public int getEndTime(){
 		return endTime;
+	}
+	
+	public void setEndTime(int endTime){
+		this.endTime = endTime;
 	}
 	
 	public int getDays(){
 		return days;
 	}
 	
-	public long getStartDate(){
+	public void setDays(int days){
+		this.days = days;
+	}
+	
+	public Long getStartDate(){
 		return startDate;
 	}
 	
-	public long getEndDate(){
+	public void setStartDate(Long startDate){
+		this.startDate = startDate;
+	}
+	
+	public Long getEndDate(){
 		return endDate;
+	}
+	
+	public void setEndDate(Long endDate){
+		this.endDate = endDate;
 	}
 	
 	public int describeContents() {

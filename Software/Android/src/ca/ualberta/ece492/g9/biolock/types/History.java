@@ -58,16 +58,32 @@ public class History {
 		return id;
 	}
 	
+	public void setID(int id){
+		this.id = id;
+	}
+	
 	public int getUID(){
 		return uid;
+	}
+	
+	public void setUID(int uid){
+		this.uid = uid;
 	}
 	
 	public boolean getSuccess(){
 		return success;
 	}
 	
-	public long getTime(){
+	public void setSuccess(boolean success){
+		this.success = success;
+	}
+	
+	public Long getTime(){
 		return time;
+	}
+	
+	public void setTime(Long time){
+		this.time = time;
 	}
 	
 	public int describeContents() {

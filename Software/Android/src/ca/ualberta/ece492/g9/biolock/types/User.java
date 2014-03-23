@@ -63,20 +63,40 @@ public class User implements Parcelable{
 		return id;
 	}
 	
+	public void setID(int id){
+		this.id = id;
+	}
+	
 	public String getName(){
 		return name;
+	}
+	
+	public void setName(String name){
+		this.name = name;
 	}
 	
 	public boolean getEnabled(){
 		return enabled;
 	}
 	
+	public void setEnabled(boolean enabled){
+		this.enabled = enabled;
+	}
+	
 	public Long getStartDate(){
 		return startDate;
 	}
 	
+	public void setStartDate(Long startDate){
+		this.startDate = startDate;
+	}
+	
 	public Long getEndDate(){
 		return endDate;
+	}
+	
+	public void setEndDate(Long endDate){
+		this.endDate = endDate;
 	}
 	
 	public int describeContents() {

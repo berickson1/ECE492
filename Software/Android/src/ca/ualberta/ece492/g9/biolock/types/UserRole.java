@@ -59,20 +59,40 @@ public class UserRole{
 		return id;
 	}
 	
+	public void setID(int id){
+		this.id = id;
+	}
+	
 	public int getUID(){
 		return uid;
+	}
+	
+	public void setUID(int uid){
+		this.uid = uid;
 	}
 	
 	public int getRID(){
 		return rid;
 	}
 	
-	public long getStartDate(){
+	public void setRID(int rid){
+		this.rid = rid;
+	}
+	
+	public Long getStartDate(){
 		return startDate;
 	}
 	
-	public long getEndDate(){
+	public void getStartDate(Long startDate){
+		this.startDate = startDate;
+	}
+	
+	public Long getEndDate(){
 		return endDate;
+	}
+	
+	public void setEndDate(Long endDate){
+		this.endDate = endDate;
 	}
 	
 	public int describeContents() {
