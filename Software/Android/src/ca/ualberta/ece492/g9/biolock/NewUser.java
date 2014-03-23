@@ -189,14 +189,6 @@ public class NewUser extends Activity {
 			public void execute(JSONArray json) {
 				if (json != null) {
 					try {
-						if (json.toString().contains("1")){
-							// Don't need to wait for other asynctask
-							if (nameField.getText().toString() == selectedUser.getName()){
-								wait.dismiss();
-								finish();
-								return;
-							}
-						}
 						JSONObject response = (JSONObject) json.get(0);
 						if (!response.getString("success").equalsIgnoreCase("false")){
 							// User status changed successfully
@@ -247,14 +239,6 @@ public class NewUser extends Activity {
 			public void execute(JSONArray json) {		
 				if (json != null){
 					try {
-						if (json.toString().contains("1")){
-							// Don't need to wait for other asynctask
-							if (enabledStatus.isChecked() == selectedUser.getEnabled()){
-								wait.dismiss();
-								finish();
-								return;
-							}
-						}
 						JSONObject response = (JSONObject) json.get(0);
 						if (!response.getString("success").equalsIgnoreCase("false")){
 							// User name changed successfully
