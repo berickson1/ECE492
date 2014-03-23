@@ -38,7 +38,6 @@ public:
 	string deleteUserRole(int id);
 	string deleteRoleSchedule(int id);
 	string deletePrint(int id);
-	string scanPrint();
 	string unlockLock();
 	string enroll1();
 	string enroll2();

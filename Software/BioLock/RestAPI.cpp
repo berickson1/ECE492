@@ -93,9 +93,6 @@ string RestAPI::getPrint(int uid){
 	return db.findUserPrint(uid);
 
 }
-string RestAPI::scanPrint(){
-
-}
 
 string RestAPI::insertUser(string data){
 	Database db(m_databaseSem);
