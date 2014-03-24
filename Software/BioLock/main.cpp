@@ -75,54 +75,7 @@ int getBufferNum(bool isFirstBuffer){
 	return isFirstBuffer ? 1 : 2;
 }
 
-bool checkAccess(int fid){
-	Json::Value userPrintRoot;
-	Json::Value userRoot;
-	Json::Value roleRoot;
-	Json::Value schedRoot;
-	Database dbAccess(databaseSemaphore);
-	string userPrintJSON = dbAccess.findUserPrint(fid);
-	Json::Reader jsonReader;
-	//Todo: handle schedule lookup
-	if (jsonReader.parse(userPrintJSON, userPrintRoot)){
-		int uid = userPrintRoot.get("uid", -1).asInt();
-		printf("User found. ID:%d", uid);
-		string userJSON = dbAccess.findUser(uid);
-		if (jsonReader.parse(userJSON, userRoot)){
-			printf(" Name:%s\n", userRoot.get("name", "Unknown").asCString());
-			//Check if user is enabled
-			if(userRoot.get("enabled", false).asBool()){
-				//Check if current date falls within allowed dates
-				//TODO: get current date/day/time
-				time_t currentDate = 1;
-				time_t startDate = strtol(userRoot.get("startDate", -1).asCString(), NULL, 10);
-				time_t endDate = strtol(userRoot.get("endDate", -1).asCString(), NULL, 10);
-				if ((currentDate > startDate) && (currentDate < endDate)){
-					//Check if role
-					if (jsonReader.parse(dbAccess.findUserRole(uid), roleRoot)) {
-						int rid = roleRoot.get("rid", -1).asInt();
-						printf("Role found. ID:%d\n", rid);
-						if (jsonReader.parse(dbAccess.findRoleSchedule(rid), schedRoot)){
-							int days = schedRoot.get("days",-1).asInt();
-							//Check days
-							int currentDay = 1;
-							if (currentDay < days){
-								//Check if current time falls within allowed times
-								int currentTime = 1;
-								int startTime = schedRoot.get("startTime", -1).asInt();
-								int endTime = schedRoot.get("endTime", -1).asInt();
-								if ((currentTime > startTime) && (currentTime < endTime)){
-									return true;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	return false;
-}
+
 
 /* Checks for fingerprint */
 void task1(void* pdata) {
@@ -179,7 +132,8 @@ void task1(void* pdata) {
 			//Check if fingerprint is allowed access and unlock door
 			//After this point, we fall through to the error if (uriString.compare(0, 7,
 			if (fid >= 0) {
-				if(checkAccess(fid)){
+				Database dbAccess(databaseSemaphore);
+				if(dbAccess.checkAccess(fid)){
 					//Success, unlock door!
 					char * ledBase = (char*) GREEN_LEDS_BASE;
 					for (int i = 0; i < GREEN_LEDS_DATA_WIDTH; i++){

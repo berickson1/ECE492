@@ -752,6 +752,58 @@ void Database::testPopulate() {
 	insertHistory(h4);
 }
 
+bool Database::checkAccess(int fid){
+	UserPrint userPrint;
+	User user;
+	UserRole userRole;
+	RoleSchedule roleSchedule;
+
+	string userPrintJSON = findUserPrint(fid);
+	userPrint.loadFromJson(userPrintJSON);
+
+	if (userPrint.uid != -1){
+		int uid = userPrint.uid;
+		printf("User found. ID:%d", uid);
+		string userJSON = findUser(uid);
+		user.loadFromJson(userJSON);
+		if (!user.name.empty()){
+			printf(" Name:%s\n", user.name);
+			//Check if user is enabled
+			if(user.enabled){
+				//Check if current date falls within allowed dates
+				double currentDate = 1;//TODO
+				double startDate = user.startDate;
+				double endDate = user.endDate;
+				if ((currentDate > startDate) && (currentDate < endDate)){
+					//Check if role
+					string userRoleJSON = findUserRole(uid);
+					userRole.loadFromJson(userRoleJSON);
+					if (userRole.rid != -1) {
+						int rid = userRole.rid;
+						printf("Role found. ID:%d\n", rid);
+						string roleScheduleJSON = findRoleSchedule(rid);
+						roleSchedule.loadFromJson(roleScheduleJSON);
+						int days = roleSchedule.days;
+						if (days != -1){
+							//Check days
+							int currentDay = 1;//TODO
+							if (currentDay < days){
+								//Check if current time falls within allowed times
+								int currentTime = 1;//TODO
+								int startTime = roleSchedule.startTime;
+								int endTime = roleSchedule.endTime;
+								if ((currentTime > startTime) && (currentTime < endTime)){
+									return true;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return false;
+}
 // Unmount the file system
 Database::~Database() {
 	fs_umount(&db.myFs);
