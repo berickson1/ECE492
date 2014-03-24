@@ -269,7 +269,7 @@ const char HEX2DEC[256] = {
 		/* F */-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 
 //http://www.codeguru.com/cpp/cpp/algorithms/strings/article.php/c12759/URI-Encoding-and-Decoding.htm
-string UriDecode(const string & sSrc) {
+string UriDecode(const string & sSrc, bool plusAsSpace = false) {
 	// Note from RFC1630:  "Sequences which start with a percent sign
 	// but are not followed by two hexadecimal characters (0-9, A-F) are reserved
 	// for future extension"
@@ -287,8 +287,13 @@ string UriDecode(const string & sSrc) {
 			char dec1, dec2;
 			if (-1 != (dec1 = HEX2DEC[*(pSrc + 1)])
 					&& -1 != (dec2 = HEX2DEC[*(pSrc + 2)])) {
-				*pEnd++ = (dec1 << 4) + dec2;
+				*pEnd = (dec1 << 4) + dec2;
+				//If we want '+' encoded as ' ', do the replacement
+				if(plusAsSpace && *pEnd == '+'){
+					*pEnd = ' ';
+				}
 				pSrc += 3;
+				pEnd++;
 				continue;
 			}
 		}
@@ -325,7 +330,7 @@ string getPOSTPayload(string data, string tag){
 		}
 	}
 	//Found Tag
-	return UriDecode(data.substr(tagEnd + 1, dataEnd - tagEnd - 1));
+	return UriDecode(data.substr(tagEnd + 1, dataEnd - tagEnd - 1), true);
 }
 
 const char * handleHTTPPost(http_conn* conn, int *replyLen) {
