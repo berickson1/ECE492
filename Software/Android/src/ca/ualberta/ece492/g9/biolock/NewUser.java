@@ -97,7 +97,7 @@ public class NewUser extends Activity {
 			
 			// Displays user prints
 			ArrayList<UserPrint> printsArray = new ArrayList<UserPrint>();
-			UserPrintAdapter userPrintAdapter = new UserPrintAdapter(mContext, printsArray);
+			UserPrintAdapter userPrintAdapter = new UserPrintAdapter(mContext, selectedUser.getEnabled(), printsArray);
 			userPrintAdapter.clear();
 			UserPrint userPrint = new UserPrint();
 			printsArray = userPrint.fromJson(userPrints);
@@ -392,7 +392,6 @@ public class NewUser extends Activity {
 		}
 	}
 	
-// TODO: gray out listview
 	public void disableScreen(){
 		nameField.setEnabled(false);
 		printsList.setEnabled(false);

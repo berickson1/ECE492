@@ -8,6 +8,7 @@ import ca.ualberta.ece492.g9.biolock.R;
 import ca.ualberta.ece492.g9.biolock.types.UserPrint;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +16,11 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 public class UserPrintAdapter extends ArrayAdapter<UserPrint> {
+	boolean enabled;
 	
-	public UserPrintAdapter(Context context, ArrayList<UserPrint> userPrints) {
+	public UserPrintAdapter(Context context, boolean enabled, ArrayList<UserPrint> userPrints) {
 		super(context, R.layout.list_view_row_details, userPrints);
+		this.enabled = enabled;
 	}
 	
 	@Override
@@ -32,6 +35,11 @@ public class UserPrintAdapter extends ArrayAdapter<UserPrint> {
        
        // Lookup view for data population
        TextView print = (TextView) convertView.findViewById(R.id.listDetailName);
+       
+       // Checks if user is disabled, set text to gray
+       if (!enabled){
+    	   print.setTextColor(Color.GRAY);
+       }
        
        // Populate the data into the template view using the data object
        if (userPrint.getID() == -1){
