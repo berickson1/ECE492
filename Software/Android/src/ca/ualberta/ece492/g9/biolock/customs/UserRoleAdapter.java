@@ -37,7 +37,7 @@ public class UserRoleAdapter extends ArrayAdapter<UserRole> {
        if (userRole.getID() == -1){
     	   role.setText("No role found");
        } else {
-    	   role.setText(String.valueOf(userRole.getRID()));
+    	   role.setText(String.valueOf(userRole.getName()));
        }
        
        // Return the completed view to render on screen

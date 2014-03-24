@@ -234,6 +234,7 @@ public class NewUser extends Activity {
     		// Create the user role
     		UserRole addUserRole = new UserRole();
     		Role role = roleAdapter.getItem(which);
+    		addUserRole.setName(role.getName());
     		addUserRole.setID(0);
     		addUserRole.setUID(selectedUser.getID());
     		addUserRole.setRID(role.getID());

@@ -46,7 +46,8 @@ public class UserRole{
 	public JSONObject toJson(){
     	JSONObject jsonObj = new JSONObject();
     	try {
-			jsonObj.put("id", id);
+    		jsonObj.put("id", id);
+    		jsonObj.put("name", name);
 			jsonObj.put("uid", uid);
 			jsonObj.put("rid", rid);
 			jsonObj.put("startDate", startDate);
