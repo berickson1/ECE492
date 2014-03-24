@@ -402,10 +402,8 @@ const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 
 extern "C" {
 void startTasks() {
-#ifndef NOSENSOR
 	OSTaskCreateExt(task1, NULL, &task1_stk[TASK_STACKSIZE - 1], TASK1_PRIORITY,
 			TASK1_PRIORITY, task1_stk, TASK_STACKSIZE, NULL, 0);
-#endif
 	OSTaskCreateExt(task2, NULL, &task2_stk[TASK_STACKSIZE - 1], TASK2_PRIORITY,
 			TASK2_PRIORITY, task2_stk, TASK_STACKSIZE, NULL, 0);
 
