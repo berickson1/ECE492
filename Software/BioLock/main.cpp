@@ -237,14 +237,16 @@ string UriDecode(const string & sSrc, bool plusAsSpace = false) {
 			if (-1 != (dec1 = HEX2DEC[*(pSrc + 1)])
 					&& -1 != (dec2 = HEX2DEC[*(pSrc + 2)])) {
 				*pEnd = (dec1 << 4) + dec2;
-				//If we want '+' encoded as ' ', do the replacement
-				if(plusAsSpace && *pEnd == '+'){
-					*pEnd = ' ';
-				}
 				pSrc += 3;
 				pEnd++;
 				continue;
 			}
+		} else if(plusAsSpace && *pSrc == '+'){
+			//If we want '+' encoded as ' ', do the replacement
+			*pEnd = ' ';
+			pSrc++;
+			pEnd++;
+			continue;
 		}
 
 		*pEnd++ = *pSrc++;
