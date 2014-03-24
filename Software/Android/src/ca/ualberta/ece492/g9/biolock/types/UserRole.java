@@ -83,7 +83,7 @@ public class UserRole{
 		return startDate;
 	}
 	
-	public void getStartDate(Long startDate){
+	public void setStartDate(Long startDate){
 		this.startDate = startDate;
 	}
 	
