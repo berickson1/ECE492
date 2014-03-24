@@ -41,8 +41,6 @@ public class NewUser extends Activity {
 	private static String ip;
 	private static Context mContext;
 	private static User selectedUser;
-	private static UserPrintAdapter userPrintAdapter;
-	private static UserRoleAdapter userRoleAdapter;
 	private static RoleAdapter roleAdapter;
 	private EditText nameField;
 	private CheckBox enabledStatus;
@@ -69,9 +67,6 @@ public class NewUser extends Activity {
 		// Gets the ip address
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		ip = settings.getString("ipAddress", "noConn");
-	}
-	
-	public void onResume(){
 		// Get contents on screen
 		nameField = (EditText) findViewById(R.id.userNameFill);
 		enabledStatus = (CheckBox) findViewById(R.id.enabledUserStatusBox);
@@ -80,7 +75,9 @@ public class NewUser extends Activity {
 		addPrint = (TextView) findViewById(R.id.enrollPrint);
 		addRole = (TextView) findViewById(R.id.enrollRole);
 		update = (TextView) findViewById(R.id.updateUser);
-		
+	}
+	
+	public void onResume(){
 		// Retrieves information of the selected user if exists
 		Intent intent = getIntent();
 		selectedUser = (User) intent.getParcelableExtra("User");
@@ -92,26 +89,30 @@ public class NewUser extends Activity {
 				e.printStackTrace();
 			}
 		}
+		
+		// Displays retrieved information on screen
 		if (selectedUser != null){
-			// Displays retrieved information on screen
 			nameField.setText(selectedUser.getName());
 			enabledStatus.setChecked(selectedUser.getEnabled());
+			
 			// Displays user prints
 			ArrayList<UserPrint> printsArray = new ArrayList<UserPrint>();
-			userPrintAdapter = new UserPrintAdapter(mContext, printsArray);
+			UserPrintAdapter userPrintAdapter = new UserPrintAdapter(mContext, printsArray);
 			userPrintAdapter.clear();
 			UserPrint userPrint = new UserPrint();
 			printsArray = userPrint.fromJson(userPrints);
 			userPrintAdapter.addAll(printsArray);
 			printsList.setAdapter(userPrintAdapter);
+			
 			// Displays user roles
 			userRolesArray = new ArrayList<UserRole>();
-			userRoleAdapter = new UserRoleAdapter(mContext, userRolesArray);
+			UserRoleAdapter userRoleAdapter = new UserRoleAdapter(mContext, userRolesArray);
 			userRoleAdapter.clear();
 			UserRole userRole = new UserRole();
 			userRolesArray = userRole.fromJson(userRoles);
 			userRoleAdapter.addAll(userRolesArray);
 			rolesList.setAdapter(userRoleAdapter);
+			
 			// User is disabled
 			if (!selectedUser.getEnabled()){
 				disableScreen();
@@ -174,8 +175,8 @@ public class NewUser extends Activity {
 		roles.setAdapter(roleAdapter, new DialogInterface.OnClickListener() {
 		    @Override
 		    public void onClick(DialogInterface dialog, int which) {
+		    	// Checks if user already has the role
 		    	for (int i = 0; i < userRolesArray.size(); i++){
-		    		// Checks if user already has the role
 		    		if (userRolesArray.get(i).getRID() == roleAdapter.getItem(which).getID()){
 		    			AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
 						noConn.setMessage("User already has this role");
@@ -206,47 +207,31 @@ public class NewUser extends Activity {
 					if (json != null){
 						try {
 							JSONObject response = (JSONObject) json.get(0);
-							if (response.getString("success").equalsIgnoreCase("false")){
-								wait.dismiss();
-								AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
-								noConn.setMessage("Could not add user role");
-								noConn.setTitle("Add User Role");
-								noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-									public void onClick(DialogInterface dialog, int which) {}
-							    });
-								noConn.setCancelable(false);
-								noConn.setCanceledOnTouchOutside(false);
-								noConn.show();
-							} else {
+							if (response.getString("success").equalsIgnoreCase("true")){
 								// Remove 'no record' entry if exists
 								UserRole noRecord = new UserRole(userRoles.getJSONObject(0));
 								if (noRecord.getID() == -1){
 									userRoles.remove(0);
 								}
 								wait.dismiss();
-								finish();
+								// Restarts this screen
 								Intent restart = getIntent();
 								restart.putExtra("User Prints", userPrints.toString());
 								restart.putExtra("User Roles", userRoles.toString());
-								startActivity(getIntent());
+								finish();
+								startActivity(restart);
+							} else {
+								updateFail();
 							}
 						} catch (JSONException e){
 							e.printStackTrace();
 						}
 					} else {
-						wait.dismiss();
-						AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
-						noConn.setMessage("Could not add user role");
-						noConn.setTitle("Add User Role");
-						noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int which) {}
-					    });
-						noConn.setCancelable(false);
-						noConn.setCanceledOnTouchOutside(false);
-						noConn.show();
+						updateFail();
 					}
 				}
     		});
+    		// Create the user role
     		UserRole addUserRole = new UserRole();
     		Role role = roleAdapter.getItem(which);
     		addUserRole.setID(0);
@@ -260,6 +245,20 @@ public class NewUser extends Activity {
 		} else {
     		
     	}
+	}
+	
+	// Displays popup when failure to add user role
+	public void updateFail(){
+		wait.dismiss();
+		AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
+		noConn.setMessage("Failed to update user");
+		noConn.setTitle("Update");
+		noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {}
+	    });
+		noConn.setCancelable(false);
+		noConn.setCanceledOnTouchOutside(false);
+		noConn.show();
 	}
 	
 	// Add user 
@@ -283,8 +282,8 @@ public class NewUser extends Activity {
 				if (json != null) {
 					try {
 						JSONObject response = (JSONObject) json.get(0);
+						// User status changed successfully
 						if (response.getString("success").equalsIgnoreCase("true")){
-							// User status changed successfully
 							// Don't need to wait for other asynctask
 							if (nameField.getText().toString().equals(selectedUser.getName())){
 								wait.dismiss();
@@ -298,31 +297,13 @@ public class NewUser extends Activity {
 								}
 							}
 						} else {
-							wait.dismiss();
-							AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
-							noConn.setMessage("Could not change user status");
-							noConn.setTitle("Enable/Disable User");
-							noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog, int which) {}
-						    });
-							noConn.setCancelable(false);
-							noConn.setCanceledOnTouchOutside(false);
-							noConn.show();
+							updateFail();
 						}
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
 				} else {
-					wait.dismiss();
-					AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
-					noConn.setMessage("Could not change user status");
-					noConn.setTitle("Enable/Disable User");
-					noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {}
-				    });
-					noConn.setCancelable(false);
-					noConn.setCanceledOnTouchOutside(false);
-					noConn.show();
+					updateFail();
 				}
 			}
         });
@@ -339,8 +320,8 @@ public class NewUser extends Activity {
 				if (json != null){
 					try {
 						JSONObject response = (JSONObject) json.get(0);
+						// User name changed successfully
 						if (response.getString("success").equalsIgnoreCase("true")){
-							// User name changed successfully
 							// Don't need to wait for other asynctask
 							if (enabledStatus.isChecked() == selectedUser.getEnabled()){
 								wait.dismiss();
@@ -354,34 +335,17 @@ public class NewUser extends Activity {
 								}
 							}
 						} else {
-							wait.dismiss();
-							AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
-							noConn.setMessage("Could not change user name");
-							noConn.setTitle("User Name");
-							noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog, int which) {}
-						    });
-							noConn.setCancelable(false);
-							noConn.setCanceledOnTouchOutside(false);
-							noConn.show();
+							updateFail();
 						}
 					} catch (JSONException e){
 						e.printStackTrace();
 					}
 				} else {
-					wait.dismiss();
-					AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
-					noConn.setMessage("Could not change user name");
-					noConn.setTitle("User Name");
-					noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {}
-				    });
-					noConn.setCancelable(false);
-					noConn.setCanceledOnTouchOutside(false);
-					noConn.show();
+					updateFail();
 				}
 			}      	
         });
+        // Change user info
         User updateUser = new User();
         updateUser.setID(selectedUser.getID());
         updateUser.setName(nameField.getText().toString());
@@ -394,7 +358,6 @@ public class NewUser extends Activity {
 	// Adds or updates the user
 	public void updateUser(View v) {
 		wait = ProgressDialog.show(NewUser.this,"Update User", "Updating user", true, false, null);
-		
 		// Update user
 		if (selectedUser != null){
 			// Check user name
