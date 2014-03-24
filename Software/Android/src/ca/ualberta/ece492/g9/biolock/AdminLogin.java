@@ -8,6 +8,9 @@ import ca.ualberta.ece492.g9.biolock.customs.JSONCallbackFunction;
 import ca.ualberta.ece492.g9.biolock.customs.JSONParser;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -22,11 +25,13 @@ import android.widget.TextView;
  */
 public class AdminLogin extends Activity {
 	public static final String PREFS_NAME = "CONNECTION";
+	private static Context mContext;
 	private static String ip;
 	private static String className;
 	private TextView printStatus;
 	
 	protected void onCreate(Bundle savedInstanceState) {
+		mContext = this;
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -63,15 +68,29 @@ public class AdminLogin extends Activity {
 					try{
 						JSONObject response = (JSONObject) json.get(0);
 						if (response.getString("success").equalsIgnoreCase("true")){
-							printStatus.setText("Fingerprint authorized");
-							goNext();
+							AlertDialog auth  = new AlertDialog.Builder(mContext).create();
+							auth.setMessage("Fingerprint Authorized");
+							auth.setTitle("Fingerprint");
+							auth.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog, int which) {
+									// Go to manage
+									Intent authorized = new Intent(AdminLogin.this, Manage.class);
+									startActivity(authorized);
+									// Close this activity
+									finish();
+								}
+						    });
+							auth.setCancelable(false);
+							auth.setCanceledOnTouchOutside(false);
+							auth.show();
 						} else {
-							printStatus.setText("Fingerprint unauthorized");
-							goBack();
+							displayFail();
 						}
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
+				} else {
+					displayFail();
 				}
 			}
 		});
@@ -88,69 +107,85 @@ public class AdminLogin extends Activity {
 					try{
 						JSONObject response = (JSONObject) json.get(0);
 						if (response.getString("success").equalsIgnoreCase("true")){
-							printStatus.setText("Scan fingerprint again");
-							JSONParser enrollUser2 = new JSONParser(new JSONCallbackFunction() {
-								@Override
-								public void execute(JSONArray json) {
-									if (json != null) {
-										try{
-											JSONObject response = (JSONObject) json.get(0);
-											if (response.getString("success").equalsIgnoreCase("true")){
-												printStatus.setText("Fingerprint enrolled");
-											} else {
-												printStatus.setText("Enrollment failed");
-											}
-											goBack();
-										} catch (JSONException e){
-											e.printStackTrace();
-										}
-									}
-								}
-							});
-							enrollUser2.execute(ip.concat("/enroll2"));
+							addPrintAgain();
 						} else {
-							printStatus.setText("Enrollment failed");
-							goBack();
+							displayFail();
 						}
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
+				} else{
+					displayFail();
 				}
 			}
 		});
 		//enrollUser1.execute(ip.concat("/enroll1"));
 	}
 	
-	public void goNext(){
-		int DELAY = 500;
-		
-		// Jumps to Manage screen after 1 second delay
-		new Handler().postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				// Runs Manage
-				Intent authorized = new Intent(AdminLogin.this, Manage.class);
-				startActivity(authorized);
-
-				// Close this activity
-				finish();
+	// Requests user to scan print again for adding
+	public void addPrintAgain(){
+		AlertDialog scanAgain  = new AlertDialog.Builder(mContext).create();
+		scanAgain.setMessage("Scan fingerprint again");
+		scanAgain.setTitle("Fingerprint");
+		scanAgain.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				JSONParser enrollUser2 = new JSONParser(new JSONCallbackFunction() {
+					@Override
+					public void execute(JSONArray json) {
+						if (json != null) {
+							try{
+								JSONObject response = (JSONObject) json.get(0);
+								if (response.getString("success").equalsIgnoreCase("true")){
+									AlertDialog added  = new AlertDialog.Builder(mContext).create();
+									added.setMessage("Fingerprint Added");
+									added.setTitle("Fingerprint");
+									added.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+										public void onClick(DialogInterface dialog, int which) {
+											// Go to manage
+											Intent addedPrint = new Intent(AdminLogin.this, NewUser.class);
+											startActivity(addedPrint);
+											// Close this activity
+											finish();
+										}
+								    });
+									added.setCancelable(false);
+									added.setCanceledOnTouchOutside(false);
+									added.show();
+								} else {
+									displayFail();
+								}
+							} catch (JSONException e){
+								e.printStackTrace();
+							}
+						} else {
+							displayFail();
+						}
+					}
+				});
+				enrollUser2.execute(ip.concat("/enroll2"));
 			}
-		}, DELAY);
+	    });
+		scanAgain.setCancelable(false);
+		scanAgain.setCanceledOnTouchOutside(false);
+		scanAgain.show();
 	}
 	
-	public void goBack(){
-		int DELAY = 500;
-		
-		// Jumps to Manage screen after 1 second delay
-		new Handler().postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				// Goes back to caller screen
+	// Displays message for failure
+	public void displayFail(){
+		AlertDialog fail  = new AlertDialog.Builder(mContext).create();
+		fail.setMessage("Fingerprint sensor could not detect print");
+		fail.setTitle("Fingerprint");
+		fail.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				// Go back to devices screen
 				finish();
 			}
-		}, DELAY);
+	    });
+		fail.setCancelable(false);
+		fail.setCanceledOnTouchOutside(false);
+		fail.show();
 	}
-		
+	
 	// Temp button to simulate fingerprint detected & accepted
 	public void tempPrintDetected(View v) {
 
