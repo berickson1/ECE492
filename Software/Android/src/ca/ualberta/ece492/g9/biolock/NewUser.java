@@ -54,9 +54,8 @@ public class NewUser extends Activity {
 	private ProgressDialog wait;
 	private JSONPost changeName;
 	private JSONPost changeStatus;
+	
 	protected void onCreate(Bundle savedInstanceState) {
-		JSONArray userPrints = null;
-		JSONArray userRoles = null;
 		mContext = this;
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -64,6 +63,14 @@ public class NewUser extends Activity {
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		setContentView(R.layout.activity_new_user);
 		
+		// Gets the ip address
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		ip = settings.getString("ipAddress", "noConn");
+	}
+	
+	public void onResume(){
+		JSONArray userPrints = null;
+		JSONArray userRoles = null;
 		// Get contents on screen
 		nameField = (EditText) findViewById(R.id.userNameFill);
 		enabledStatus = (CheckBox) findViewById(R.id.enabledUserStatusBox);
@@ -73,10 +80,6 @@ public class NewUser extends Activity {
 		addRole = (TextView) findViewById(R.id.enrollRole);
 		update = (TextView) findViewById(R.id.updateUser);
 		
-		// Gets the ip address
-		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		ip = settings.getString("ipAddress", "noConn");
-				
 		// Retrieves information of the selected user if exists
 		Intent intent = getIntent();
 		selectedUser = (User) intent.getParcelableExtra("User");
@@ -95,6 +98,7 @@ public class NewUser extends Activity {
 			// Displays user prints
 			ArrayList<UserPrint> printsArray = new ArrayList<UserPrint>();
 			userPrintAdapter = new UserPrintAdapter(mContext, printsArray);
+			userPrintAdapter.clear();
 			UserPrint userPrint = new UserPrint();
 			printsArray = userPrint.fromJson(userPrints);
 			userPrintAdapter.addAll(printsArray);
@@ -102,6 +106,7 @@ public class NewUser extends Activity {
 			// Displays user roles
 			ArrayList<UserRole> rolesArray = new ArrayList<UserRole>();
 			userRoleAdapter = new UserRoleAdapter(mContext, rolesArray);
+			userRoleAdapter.clear();
 			UserRole userRole = new UserRole();
 			rolesArray = userRole.fromJson(userRoles);
 			userRoleAdapter.addAll(rolesArray);
@@ -113,20 +118,7 @@ public class NewUser extends Activity {
 		} else {
 			// Change update button text to add
 			update.setText(Html.fromHtml("<u>Add</u>"));
-		}
-	}
-	
-	public void onResume(){
-		// Updates listview 
-		if (userPrintAdapter != null){
-			userPrintAdapter.notifyDataSetChanged();
-		}
-		if (userRoleAdapter != null) {
-			userRoleAdapter.notifyDataSetChanged();
-		}
-		if (roleAdapter != null){
-			roleAdapter.notifyDataSetChanged();
-		}
+		}			
 		super.onResume();
 	}
 	
@@ -149,37 +141,108 @@ public class NewUser extends Activity {
 			@Override
 			public void execute(JSONArray json) {
 				if (json != null){
-					ArrayList<Role> rolesArray = new ArrayList<Role>();
-					roleAdapter = new RoleAdapter(mContext, rolesArray);
-					Role role = new Role();
-					rolesArray = role.fromJson(json);
-					roleAdapter.addAll(rolesArray);
-					AlertDialog.Builder roles = new AlertDialog.Builder(mContext);
-					roles.setTitle("Roles");
-					roles.setAdapter(roleAdapter, new DialogInterface.OnClickListener() {
-					    @Override
-					    public void onClick(DialogInterface dialog, int which) {
-					    	if (selectedUser != null) {
-					    		// Add role to existing user
-					    		JSONPost postRole = new JSONPost(new JSONCallbackFunction() {
-									@Override
-									public void execute(JSONArray json) {
-
-									}
-					    		});
-					    		postRole.execute(ip.concat("/userRole"), "insert", selectedUser.toJson().toString());
-					    	} else {
-					    		// Add role to new user
-					    	}
-					    }
-					});
-					roles.show();
+					wait.dismiss();
+					displayRoles(json);
+				} else {
+					wait.dismiss();
+					AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
+					noConn.setMessage("Could not get roles");
+					noConn.setTitle("Roles");
+					noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {}
+				    });
+					noConn.setCancelable(false);
+					noConn.setCanceledOnTouchOutside(false);
+					noConn.show();
 				}
-				roleAdapter.notifyDataSetChanged();
-				wait.dismiss();
 			}
 		});
 		parseRoles.execute(ip.concat("/roles"));
+	}
+	
+	//Displays role in popup
+	public void displayRoles(JSONArray json){
+		ArrayList<Role> rolesArray = new ArrayList<Role>();
+		roleAdapter = new RoleAdapter(mContext, rolesArray);
+		roleAdapter.clear();
+		Role role = new Role();
+		rolesArray = role.fromJson(json);
+		roleAdapter.addAll(rolesArray);
+		AlertDialog.Builder roles = new AlertDialog.Builder(mContext);
+		roles.setTitle("Roles");
+		roles.setAdapter(roleAdapter, new DialogInterface.OnClickListener() {
+		    @Override
+		    public void onClick(DialogInterface dialog, int which) {
+		    	addUserRole(which);
+		    }
+		});
+		roles.show();
+	}
+	
+	// Add user role for user
+	public void addUserRole(int which){
+		final ProgressDialog wait = ProgressDialog.show(NewUser.this,"User Role", "Adding user role", true, false, null);
+		// Add role to existing user
+		if (selectedUser != null) {
+    		JSONPost postRole = new JSONPost(new JSONCallbackFunction() {
+				@Override
+				public void execute(JSONArray json) {
+					if (json != null){
+						try {
+							JSONObject response = (JSONObject) json.get(0);
+							if (response.getString("success").equalsIgnoreCase("false")){
+								wait.dismiss();
+								AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
+								noConn.setMessage("Could not add user role");
+								noConn.setTitle("Add User Role");
+								noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog, int which) {}
+							    });
+								noConn.setCancelable(false);
+								noConn.setCanceledOnTouchOutside(false);
+								noConn.show();
+							}
+						} catch (JSONException e){
+							e.printStackTrace();
+						}
+					} else {
+						wait.dismiss();
+						AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
+						noConn.setMessage("Could not add user role");
+						noConn.setTitle("Add User Role");
+						noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {}
+					    });
+						noConn.setCancelable(false);
+						noConn.setCanceledOnTouchOutside(false);
+						noConn.show();
+					}
+				}
+    		});
+    		UserRole addUserRole = new UserRole();
+    		Role role = roleAdapter.getItem(which);
+    		addUserRole.setID(-1);
+    		addUserRole.setUID(selectedUser.getID());
+    		addUserRole.setRID(role.getID());
+    		addUserRole.setStartDate(role.getStartDate());
+    		addUserRole.setEndDate(role.getEndDate());
+    		postRole.execute(ip.concat("/userRole"), "insert", addUserRole.toJson().toString());
+    	// Add role to new user
+		} else {
+    		
+    	}
+	}
+	
+	// Add user 
+	public void addUser(){
+		JSONPost addUser = new JSONPost(new JSONCallbackFunction(){
+			@Override
+			public void execute(JSONArray json) {
+			}
+		});
+		User newUser = new User();
+		
+		//addUser.execute(ip.concat("/users"), "insert", )
 	}
 	
 	// Enables or disables user
@@ -319,7 +382,20 @@ public class NewUser extends Activity {
 			}
 		// Add user
 		} else {
-			
+			if (nameField.getText().toString().matches("")){
+				wait.dismiss();
+				AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
+				noConn.setMessage("User name cannot be empty");
+				noConn.setTitle("User Name");
+				noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {}
+			    });
+				noConn.setCancelable(false);
+				noConn.setCanceledOnTouchOutside(false);
+				noConn.show();
+			} else {
+				addUser();
+			}
 		}
 	}
 	
