@@ -680,6 +680,7 @@ void Database::testPopulate() {
 	insertRoleSched(rs3);
 
 	UserRole ur1;
+	ur1.name = "Owner";
 	ur1.id = 1;
 	ur1.uid = 1;
 	ur1.rid = 1;
@@ -688,6 +689,7 @@ void Database::testPopulate() {
 	insertUserRole(ur1);
 
 	UserRole ur2;
+	ur2.name = "Owner";
 	ur2.id = 2;
 	ur2.uid = 2;
 	ur2.rid = 1;
@@ -696,6 +698,7 @@ void Database::testPopulate() {
 	insertUserRole(ur2);
 
 	UserRole ur3;
+	ur3.name = "Guest";
 	ur3.id = 3;
 	ur3.uid = 3;
 	ur3.rid = 2;
