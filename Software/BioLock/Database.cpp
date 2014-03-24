@@ -106,7 +106,7 @@ string Database::insertRole(Role value) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
-	if (value.id == -1){
+	if (value.id == 0){
 		value.id = findNextID(ROLES);
 	}
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLES, value.id);
@@ -141,7 +141,7 @@ string Database::insertUser(User value) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
-	if (value.id == -1){
+	if (value.id == 0){
 		value.id = findNextID(USERS);
 	}
 
@@ -177,7 +177,7 @@ string Database::insertRoleSched(RoleSchedule value) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
-	if (value.id == -1){
+	if (value.id == 0){
 		value.id = findNextID(ROLE_SCHEDULE);
 	}
 
@@ -213,7 +213,7 @@ string Database::insertUserRole(UserRole value) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
-	if (value.id == -1){
+	if (value.id == 0){
 		value.id = findNextID(USER_ROLES);
 	}
 
@@ -248,7 +248,7 @@ string Database::insertUserPrint(UserPrint value) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
-	if (value.id == -1){
+	if (value.id == 0){
 		value.id = findNextID(USER_PRINTS);
 	}
 
@@ -283,7 +283,7 @@ string Database::insertHistory(History value) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
-	if (value.id == -1){
+	if (value.id == 0){
 		value.id = findNextID(HISTORY);
 	}
 
