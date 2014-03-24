@@ -289,6 +289,44 @@ string Database::insertHistory(History value) {
 	return success();
 }
 
+// Finds next lowest id number for filename
+string Database::findNextID(char *path){
+	DirList list;
+	int ret, file;
+	int id = 1;
+	Json::Value nextID;
+
+	ret = ls_openDir(&list, &db.myFs, path);
+	if (ret == -1){
+		printf("Could not open directory. Please check definition of path\n");
+	}
+	if (ls_getNext(&list) == 0) {
+		file = atoi((const char*) list.currentEntry.FileName);
+		if(file >= id){
+			id = file + 1;
+		} else {
+			//ID 1 open, or no entries
+			nextID["id"] = id;
+			string idString = nextID.toStyledString();
+			return idString;
+		}
+	}
+	while (ls_getNext(&list) == 0) {
+		file = atoi((const char*) list.currentEntry.FileName);
+		if(file >= id){
+			id = file + 1;
+		} else {
+			//ID 1 open, or no entries left
+			nextID["id"] = id;
+			string idString = nextID.toStyledString();
+			return idString;
+		}
+	}
+	nextID["id"] = id;
+	string idString = nextID.toStyledString();
+	return idString;
+}
+
 // Searches for specific file at the declared folder
 string Database::findEntry(const char *path, int id) {
 	File tuple;
