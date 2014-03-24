@@ -41,7 +41,6 @@ public:
 	string insertUserPrint(UserPrint value);
 	string insertHistory(History value);
 
-	int findNextID(char *path);
 	string findEntry(const char *path, int id);
 	string findRole(int rid);
 	string findUser(int uid);
@@ -49,7 +48,7 @@ public:
 	string findUserRole(int id);
 	string findRoleUser(int rid);
 	string findUserPrint(int id);
-	int nextUserPrintId();
+	int findNextID(char *path);
 	string findHistory(int id);
 
 	string editRole(Role value);

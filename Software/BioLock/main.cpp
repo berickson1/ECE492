@@ -154,7 +154,7 @@ void task1(void* pdata) {
 				firstBuffer = !firstBuffer;
 				if(m_enrollNow){
 					Database dbAccess(databaseSemaphore);
-					fid = dbAccess.nextUserPrintId();
+					fid = dbAccess.findNextID(USER_PRINTS);
 					fingerprintSensor.storeFingerprint(fid);
 					m_enrollNow = false;
 				}

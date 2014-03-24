@@ -312,37 +312,6 @@ string Database::insertHistory(History value) {
 	return success();
 }
 
-// Finds next lowest id number for filename
-int Database::findNextID(char *path){
-	DirList list;
-	int ret, file;
-	int id = 1;
-
-	ret = ls_openDir(&list, &db.myFs, path);
-	if (ret == -1){
-		printf("Could not open directory. Please check definition of path\n");
-	}
-	if (ls_getNext(&list) == 0) {
-		file = atoi((const char*) list.currentEntry.FileName);
-		if(file >= id){
-			id = file + 1;
-		} else {
-			//ID 1 open, or no entries
-			return id;
-		}
-	}
-	while (ls_getNext(&list) == 0) {
-		file = atoi((const char*) list.currentEntry.FileName);
-		if(file >= id){
-			id = file + 1;
-		} else {
-			//ID 1 open, or no entries left
-			return id;
-		}
-	}
-	return id;
-}
-
 // Searches for specific file at the declared folder
 string Database::findEntry(const char *path, int id) {
 	File tuple;
@@ -422,34 +391,28 @@ string Database::findUserPrint(int id) {
 	return findEntry(USER_PRINTS, id);
 }
 
-// Finds the lowest unused fingerprint id
-int Database::nextUserPrintId() {
+// Finds next lowest id number for filename
+int Database::findNextID(char *path) {
 	DirList list;
 	int ret, file;
-	int testId = 1;
+	int id = 1;
 
-	ret = ls_openDir(&list, &db.myFs, USER_PRINTS);
+	ret = ls_openDir(&list, &db.myFs, path);
 	if (ret == -1)
 		printf("Could not open directory. Please check definition of path\n");
 	if (ls_getNext(&list) == 0) {
 		file = atoi((const char*) list.currentEntry.FileName);
-		if(file == testId){
-			testId = file + 1;
-		} else {
-			//ID 1 open, or no entries
-			return testId;
+		if(file >= id){
+			id = file + 1;
 		}
 	}
 	while (ls_getNext(&list) == 0) {
 		file = atoi((const char*) list.currentEntry.FileName);
-		if(file == testId){
-			testId = file + 1;
-		} else {
-			//ID 1 open, or no entries left
-			return testId;
+		if(file >= id){
+			id = file + 1;
 		}
 	}
-	return testId;
+	return id;
 }
 
 // Searches for a history by id
