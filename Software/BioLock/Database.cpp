@@ -79,10 +79,10 @@ string Database::listAll(char *path) {
 	}
 	while (ls_getNext(&list) == 0) {
 		file = atoi((const char*) list.currentEntry.FileName);
-		if (file == 0)
-			break;
-		results.append(",");
-		results.append(findEntry(path, file));
+		if (file != 0){
+			results.append(",");
+			results.append(findEntry(path, file));
+		}
 	}
 	results.append("]");
 	return results;
@@ -375,13 +375,13 @@ string Database::findRoleUser(int rid) {
 	}
 	while (ls_getNext(&list) == 0) {
 		file = atoi((const char*) list.currentEntry.FileName);
-		if (file == 0)
-			break;
-		UserRole userRole ;
-		userRole.loadFromJson(findEntry(USER_ROLES, file));
-		// User role with matching rid found
-		if (userRole.rid == rid)
-			results.append(userRole.toJSONString());
+		if (file != 0){
+			UserRole userRole ;
+			userRole.loadFromJson(findEntry(USER_ROLES, file));
+			// User role with matching rid found
+			if (userRole.rid == rid)
+				results.append(userRole.toJSONString());
+		}
 	}
 	return results;
 }
@@ -470,14 +470,14 @@ string Database::deleteRole(int rid) {
 	}
 	while (ls_getNext(&list) == 0) {
 		file = atoi((const char*) list.currentEntry.FileName);
-		if (file == 0)
-			break;
-		RoleSchedule roleSchedule;
-		roleSchedule.loadFromJson(findEntry(ROLE_SCHEDULE, file));
-		if (roleSchedule.rid == rid) {
-			result = deleteEntry(ROLE_SCHEDULE, rid);
-			if (result.find("false") != string::npos){
-				return result;
+		if (file != 0){
+			RoleSchedule roleSchedule;
+			roleSchedule.loadFromJson(findEntry(ROLE_SCHEDULE, file));
+			if (roleSchedule.rid == rid) {
+				result = deleteEntry(ROLE_SCHEDULE, rid);
+				if (result.find("false") != string::npos){
+					return result;
+				}
 			}
 		}
 	}
@@ -490,14 +490,14 @@ string Database::deleteRole(int rid) {
 	}
 	while (ls_getNext(&list) == 0) {
 		file = atoi((const char*) list.currentEntry.FileName);
-		if (file == 0)
-			break;
-		UserRole userRole;
-		userRole.loadFromJson(findEntry(USER_ROLES, file));
-		if (userRole.rid == rid) {
-			result = deleteEntry(USER_ROLES, rid);
-			if (result.find("false") != string::npos){
-				return result;
+		if (file != 0){
+			UserRole userRole;
+			userRole.loadFromJson(findEntry(USER_ROLES, file));
+			if (userRole.rid == rid) {
+				result = deleteEntry(USER_ROLES, rid);
+				if (result.find("false") != string::npos){
+					return result;
+				}
 			}
 		}
 	}
@@ -582,11 +582,11 @@ string Database::clearTable(char *path) {
 	}
 	while (ls_getNext(&list) == 0) {
 		file = atoi((const char*) list.currentEntry.FileName);
-		if (file == 0)
-			break;
-		result = deleteEntry(path, file);
-		if (result.find("false") != string::npos){
-			return result;
+		if (file != 0){
+			result = deleteEntry(path, file);
+			if (result.find("false") != string::npos){
+				return result;
+			}
 		}
 	}
 	return success();
