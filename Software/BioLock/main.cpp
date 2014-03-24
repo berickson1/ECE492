@@ -321,7 +321,7 @@ const char * handleHTTPPost(http_conn* conn, int *replyLen) {
 		} else if (postType == "update"){
 			retString = api.updateRoleSchedule(jsonData);
 		}
-	} else if (uriString.compare(0, 6, "/userRole") == 0) {
+	} else if (uriString.compare(0, 9, "/userRole") == 0) {
 		if (postType == "delete"){
 			UserRole userrole;
 			userrole.loadFromJson(jsonData);
