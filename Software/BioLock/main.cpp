@@ -321,7 +321,7 @@ const char * handleHTTPPost(http_conn* conn, int *replyLen) {
 		if (postType == "delete"){
 			RoleSchedule schedule;
 			schedule.loadFromJson(jsonData);
-			retString = api.deleteUser(schedule.id);
+			retString = api.deleteRoleSchedule(schedule.id, schedule.rid);
 		} else if (postType == "insert"){
 			retString = api.insertRoleSchedule(jsonData);
 		} else if (postType == "update"){
@@ -331,7 +331,7 @@ const char * handleHTTPPost(http_conn* conn, int *replyLen) {
 		if (postType == "delete"){
 			UserRole userrole;
 			userrole.loadFromJson(jsonData);
-			retString = api.deleteUserRole(userrole.id);
+			retString = api.deleteUserRole(userrole.id, userrole.uid, userrole.rid);
 		} else if (postType == "insert"){
 			retString = api.insertUserRole(jsonData);
 		} else if (postType == "update"){
@@ -343,7 +343,7 @@ const char * handleHTTPPost(http_conn* conn, int *replyLen) {
 		if (postType == "delete"){
 			UserPrint print;
 			print.loadFromJson(jsonData);
-			retString = api.deletePrint(print.id);
+			retString = api.deletePrint(print.id, print.uid);
 		} else if (postType == "insert"){
 			retString = api.insertPrint(jsonData);
 		} else if (postType == "update"){

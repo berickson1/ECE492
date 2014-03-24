@@ -208,24 +208,24 @@ string RestAPI::deleteRole(int id){
 	return result.str();
 }
 
-string RestAPI::deleteUserRole(int id){
+string RestAPI::deleteUserRole(int id, int uid, int rid){
 	Database db(m_databaseSem);
 	stringstream result;
-	result << db.deleteUserRole(id);
+	result << db.deleteUserRole(id, uid, rid);
 	return result.str();
 }
 
-string RestAPI::deleteRoleSchedule(int id){
+string RestAPI::deleteRoleSchedule(int id, int rid){
 	Database db(m_databaseSem);
 	stringstream result;
-	result << db.deleteRoleSchedule(id);
+	result << db.deleteRoleSchedule(id, rid);
 	return result.str();
 }
 
-string RestAPI::deletePrint(int id){
+string RestAPI::deletePrint(int id, int uid){
 	Database db(m_databaseSem);
 	stringstream result;
-	result << db.deleteUserPrint(id);
+	result << db.deleteUserPrint(id, uid);
 	return result.str();
 }
 

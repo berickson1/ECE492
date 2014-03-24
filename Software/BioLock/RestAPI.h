@@ -40,9 +40,9 @@ public:
 	string updatePrint(string data);
 	string deleteUser(int id);
 	string deleteRole(int id);
-	string deleteUserRole(int id);
-	string deleteRoleSchedule(int id);
-	string deletePrint(int id);
+	string deleteUserRole(int id, int uid, int rid);
+	string deleteRoleSchedule(int id, int rid);
+	string deletePrint(int id, int uid);
 	string unlockLock();
 	string enroll1();
 	string enroll2();

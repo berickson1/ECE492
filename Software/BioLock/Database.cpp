@@ -14,6 +14,11 @@
  *  Issues/todos: add method to delete directories if needed
  *	
  *	EFSL Manual: https://www.ualberta.ca/~delliott/local/ece492/appnotes/2013w/SD_card_interfacing/efsl/EFSL_manual.pdf
+ *
+ *	RoleSchedule - id-rid
+ *	UserRole - id-uid-rid
+ *	UserPrints - id-uid
+ *	History - id-uid
  */
 
 #include "Database.h"
@@ -181,7 +186,7 @@ string Database::insertRoleSched(RoleSchedule value) {
 		value.id = findNextID(ROLE_SCHEDULE);
 	}
 
-	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLE_SCHEDULE, value.id);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d-%d.txt", ROLE_SCHEDULE, value.id, value.rid);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	if (ret == -2) {
 		printf("Role schedule already exists\n");
@@ -217,7 +222,7 @@ string Database::insertUserRole(UserRole value) {
 		value.id = findNextID(USER_ROLES);
 	}
 
-	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_ROLES, value.id);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d-%d-%d.txt", USER_ROLES, value.id, value.uid, value.rid);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	if (ret == -2) {
 		printf("User role already exists\n");
@@ -252,7 +257,7 @@ string Database::insertUserPrint(UserPrint value) {
 		value.id = findNextID(USER_PRINTS);
 	}
 
-	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_PRINTS, value.id);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d-%d.txt", USER_PRINTS, value.id, value.uid);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	if (ret == -2) {
 		printf("User prints already exists\n");
@@ -287,7 +292,7 @@ string Database::insertHistory(History value) {
 		value.id = findNextID(HISTORY);
 	}
 
-	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", HISTORY, value.id);
+	snprintf(filename, MAXBUF_LENGTH, "%s%d-%d.txt", HISTORY, value.id, value.uid);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	if (ret == -2) {
 		printf("History already exists\n");
@@ -341,6 +346,82 @@ string Database::findEntry(const char *path, int id) {
 	return attr;
 }
 
+// Returns results if rid matches entry
+string Database::findEntryByRID(char *path, int rid){
+	DirList list;
+	string results = "";
+	int ret, file;
+
+	// Searches through folder
+	ret = ls_openDir(&list, &db.myFs, (eint8 *) path);
+	if (ret == -1) {
+		printf("Could not open directory\n");
+		return noRecord();
+	}
+	results.append("[");
+	if (ls_getNext(&list) == 0) {
+		string filename((const char*)list.currentEntry.FileName);
+		if (atoi((const char*) list.currentEntry.FileName) != 0){
+			file = findRID(filename);
+			if (file == rid){
+				results.append(findEntry(path, file));
+			}
+		}
+	}
+	while (ls_getNext(&list) == 0) {
+		string filename((const char*)list.currentEntry.FileName);
+		if (atoi((const char*) list.currentEntry.FileName) != 0){
+			file = findRID(filename);
+			if (file == rid){
+				results.append(",");
+				results.append(findEntry(path, file));
+			}
+		}
+	}
+	results.append("]");
+	return results;
+}
+
+// Returns results if uid matches entry
+string Database::findEntryByUID(char *path, int uid){
+	DirList list;
+	string results = "";
+	int ret, file;
+
+	// Searches through folder
+	ret = ls_openDir(&list, &db.myFs, (eint8 *) path);
+	if (ret == -1) {
+		printf("Could not open directory\n");
+		return noRecord();
+	}
+	results.append("[");
+	if (ls_getNext(&list) == 0) {
+		stringstream idStream;
+		idStream << list.currentEntry.FileName;
+		string name = idStream.str();
+		if (atoi((const char*) list.currentEntry.FileName) != 0){
+			file = findUID(name);
+			if (file == uid){
+				results.append(findEntry(path, file));
+			}
+		}
+	}
+	while (ls_getNext(&list) == 0) {
+		stringstream idStream;
+		idStream << list.currentEntry.FileName;
+		string name = idStream.str();
+		if (atoi((const char*) list.currentEntry.FileName) != 0){
+			file = findUID(name);
+			if (file == uid){
+				results.append(",");
+				results.append(findEntry(path, file));
+			}
+		}
+	}
+	results.append("]");
+	return results;
+}
+
 // Searches for a role by rid
 string Database::findRole(int rid) {
 	return findEntry(ROLES, rid);
@@ -352,43 +433,23 @@ string Database::findUser(int uid) {
 }
 
 // Searches for a role schedule by id
-string Database::findRoleSchedule(int id) {
-	return findEntry(ROLE_SCHEDULE, id);
+string Database::findRoleSchedule(int rid) {
+	return findEntryByRID(ROLE_SCHEDULE, rid);
 }
 
 // Searches for a role schedule by id
-string Database::findUserRole(int id) {
-	return findEntry(USER_ROLES, id);
+string Database::findUserRole(int uid) {
+	return findEntryByUID(USER_ROLES, uid);
 }
 
 // Searches for users with specific role
 string Database::findRoleUser(int rid) {
-	DirList list;
-	int ret, file;
-	string results = "";
-
-	// Searches through user roles
-	ret = ls_openDir(&list, &db.myFs, (eint8 *) USER_ROLES);
-	if (ret == -1) {
-		printf("Could not open directory\n");
-		return noRecord();
-	}
-	while (ls_getNext(&list) == 0) {
-		file = atoi((const char*) list.currentEntry.FileName);
-		if (file != 0){
-			UserRole userRole ;
-			userRole.loadFromJson(findEntry(USER_ROLES, file));
-			// User role with matching rid found
-			if (userRole.rid == rid)
-				results.append(userRole.toJSONString());
-		}
-	}
-	return results;
+	return findEntryByRID(USER_ROLES, rid);
 }
 
 // Searches for a role schedule by id
-string Database::findUserPrint(int id) {
-	return findEntry(USER_PRINTS, id);
+string Database::findUserPrint(int uid) {
+	return findEntryByUID(USER_PRINTS, uid);
 }
 
 // Finds next lowest id number for filename
@@ -401,13 +462,19 @@ int Database::findNextID(char *path) {
 	if (ret == -1)
 		printf("Could not open directory. Please check definition of path\n");
 	if (ls_getNext(&list) == 0) {
-		file = atoi((const char*) list.currentEntry.FileName);
+		stringstream idStream;
+		idStream << list.currentEntry.FileName;
+		string name = idStream.str();
+		file = findID(name);
 		if(file >= id){
 			id = file + 1;
 		}
 	}
 	while (ls_getNext(&list) == 0) {
-		file = atoi((const char*) list.currentEntry.FileName);
+		stringstream idStream;
+		idStream << list.currentEntry.FileName;
+		string name = idStream.str();
+		file = findID(name);
 		if(file >= id){
 			id = file + 1;
 		}
@@ -416,37 +483,52 @@ int Database::findNextID(char *path) {
 }
 
 // Searches for a history by id
-string Database::findHistory(int id) {
-	return findEntry(HISTORY, id);
+string Database::findHistory(int uid) {
+	return findEntryByUID(HISTORY, uid);
 }
 
 // Updates role by deleting entry and creating new entry
 string Database::editRole(Role value) {
-	deleteEntry(ROLES, value.id);
+	stringstream idStream;
+	idStream << ROLES << value.id;
+	string name = idStream.str();
+	deleteEntry(name);
 	return insertRole(value);
 }
 
 // Updates user by deleting entry and creating new entry
 string Database::editUser(User value) {
-	deleteEntry(USERS, value.id);
+	stringstream idStream;
+	idStream << USERS << value.id;
+	string name = idStream.str();
+	deleteEntry(name);
 	return insertUser(value);
 }
 
 // Updates role sched by deleting entry and creating new entry
 string Database::editRoleSched(RoleSchedule value) {
-	deleteEntry(ROLE_SCHEDULE, value.id);
+	stringstream idStream;
+	idStream << ROLE_SCHEDULE << value.id << "-" << value.rid;
+	string name = idStream.str();
+	deleteEntry(name);
 	return insertRoleSched(value);
 }
 
 // Updates user role by deleting entry and creating new entry
 string Database::editUserRole(UserRole value) {
-	deleteEntry(USER_ROLES, value.id);
+	stringstream idStream;
+	idStream << USER_ROLES << value.id << "-" << value.uid << "-" << value.rid;
+	string name = idStream.str();
+	deleteEntry(name);
 	return insertUserRole(value);
 }
 
 // Updates user print by deleting entry and creating new entry
 string Database::editUserPrint(UserPrint value) {
-	deleteEntry(USER_PRINTS, value.id);
+	stringstream idStream;
+	idStream << USER_PRINTS << value.id << "-" << value.uid;
+	string name = idStream.str();
+	deleteEntry(name);
 	return insertUserPrint(value);
 }
 
@@ -457,7 +539,10 @@ string Database::deleteRole(int rid) {
 	string result;
 
 	// Delete role
-	result = deleteEntry(ROLES, rid);
+	stringstream idStream;
+	idStream << ROLES << rid;
+	string name = idStream.str();
+	result = deleteEntry(name);
 	if (result.find("false") != string::npos){
 		return result;
 	}
@@ -474,7 +559,10 @@ string Database::deleteRole(int rid) {
 			RoleSchedule roleSchedule;
 			roleSchedule.loadFromJson(findEntry(ROLE_SCHEDULE, file));
 			if (roleSchedule.rid == rid) {
-				result = deleteEntry(ROLE_SCHEDULE, rid);
+				stringstream idStream;
+				idStream << ROLE_SCHEDULE << list.currentEntry.FileName;
+				string name = idStream.str();
+				result = deleteEntry(name);
 				if (result.find("false") != string::npos){
 					return result;
 				}
@@ -494,7 +582,10 @@ string Database::deleteRole(int rid) {
 			UserRole userRole;
 			userRole.loadFromJson(findEntry(USER_ROLES, file));
 			if (userRole.rid == rid) {
-				result = deleteEntry(USER_ROLES, rid);
+				stringstream idStream;
+				idStream << USER_ROLES << list.currentEntry.FileName;
+				string name = idStream.str();
+				result = deleteEntry(name);
 				if (result.find("false") != string::npos){
 					return result;
 				}
@@ -507,12 +598,14 @@ string Database::deleteRole(int rid) {
 // Enables/disables user entry with corresponding uid
 string Database::enableUser(int uid, bool enable) {
 	User updatedUser;
-	int ret = -1;
 	string result;
+	stringstream idStream;
 
 	User user;
 	user.loadFromJson(findUser(uid));
-	result = deleteEntry(USERS, uid);
+	idStream << USERS << user.id;
+	string name = idStream.str();
+	result = deleteEntry(name);
 	if (result.find("false") != string::npos){
 		printf("User enable status could not be changed, please try again later\n");
 		return result;
@@ -524,18 +617,30 @@ string Database::enableUser(int uid, bool enable) {
 }
 
 // Deletes role schedule entry with corresponding id
-string Database::deleteRoleSchedule(int id) {
-	return deleteEntry(ROLE_SCHEDULE, id);
+string Database::deleteRoleSchedule(int id, int rid) {
+	stringstream idStream;
+	idStream << ROLE_SCHEDULE << id << "-" << rid;
+	string name = idStream.str();
+
+	return deleteEntry(name);
 }
 
 // Deletes user role entry with corresponding id
-string Database::deleteUserRole(int id) {
-	return deleteEntry(USER_ROLES, id);
+string Database::deleteUserRole(int id, int uid, int rid) {
+	stringstream idStream;
+	idStream << USER_ROLES << id << "-" << uid << "-" << rid;
+	string name = idStream.str();
+
+	return deleteEntry(name);
 }
 
 // Deletes user print entry with corresponding id
-string Database::deleteUserPrint(int id) {
-	return deleteEntry(USER_PRINTS, id);
+string Database::deleteUserPrint(int id, int uid) {
+	stringstream idStream;
+	idStream << USER_PRINTS << id << "-" << uid;
+	string name = idStream.str();
+
+	return deleteEntry(name);
 }
 
 //Clears the database
@@ -583,7 +688,10 @@ string Database::clearTable(char *path) {
 	while (ls_getNext(&list) == 0) {
 		file = atoi((const char*) list.currentEntry.FileName);
 		if (file != 0){
-			result = deleteEntry(path, file);
+			stringstream idStream;
+			idStream << path << list.currentEntry.FileName;
+			string name = idStream.str();
+			result = deleteEntry(name);
 			if (result.find("false") != string::npos){
 				return result;
 			}
@@ -593,17 +701,50 @@ string Database::clearTable(char *path) {
 }
 
 // Deletes the specified file
-string Database::deleteEntry(char *path, int id) {
+string Database::deleteEntry(string file) {
 	int ret;
-	char filename[MAXBUF_LENGTH];
+	file.append(".txt");
+	const char *filename = file.c_str();
 
-	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", path, id);
 	ret = rmfile(&db.myFs, (euint8*) filename);
 	if (ret != 0) {
 		printf("Entry could not be deleted, please try again later\n");
 		return fail();
 	}
 	return success();
+}
+
+int Database::findID(string filename){
+	int pos = filename.find_first_of('-');
+	string idString;
+	idString = filename.substr(0, pos - 1);
+	const char * idToConvert = idString.c_str();
+	int id = strtol(idToConvert, NULL, 10);
+	return id;
+}
+
+int Database::findRID(string filename){
+	int pos = filename.find_last_of('-');
+	string ridString;
+	ridString = filename.substr(pos + 1, -1);
+	const char * ridToConvert = ridString.c_str();
+	int rid = strtol(ridToConvert, NULL, 10);
+	return rid;
+}
+
+int Database::findUID(string filename){
+	string uidString;
+	int pos = filename.find_last_of('-');
+	int pos2 = filename.find_first_of('-');
+	if (pos == pos2){
+		//name only contains uid
+		return findRID(filename);
+	} else {
+		uidString = filename.substr(pos2 + 1, pos - pos2 - 1);
+	}
+	const char * uidToConvert = uidString.c_str();
+	int uid = strtol(uidToConvert, NULL, 10);
+	return uid;
 }
 
 void Database::testPopulate() {

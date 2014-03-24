@@ -41,7 +41,6 @@ public:
 	string insertUserPrint(UserPrint value);
 	string insertHistory(History value);
 
-	string findEntry(const char *path, int id);
 	string findRole(int rid);
 	string findUser(int uid);
 	string findRoleSchedule(int id);
@@ -58,9 +57,9 @@ public:
 	string editUserPrint(UserPrint value);
 
 	string deleteRole(int rid);
-	string deleteRoleSchedule(int id);
-	string deleteUserRole(int id);
-	string deleteUserPrint(int id);
+	string deleteRoleSchedule(int id, int rid);
+	string deleteUserRole(int id, int uid, int rid);
+	string deleteUserPrint(int id, int uid);
 	string enableUser(int uid, bool enable);
 
 	void testPopulate();
@@ -73,8 +72,14 @@ public:
 private:
 	OS_EVENT *m_databaseSemaphore;
 	EmbeddedFileSystem db;
-	string deleteEntry(char *path, int id);
+	string findEntry(const char *path, int id);
+	string deleteEntry(string file);
 	string clearTable(char *path);
+	int findID(string filename);
+	int findRID(string filename);
+	int findUID(string filename);
+	string findEntryByRID(char *path, int rid);
+	string findEntryByUID(char *path, int uid);
 };
 
 #endif
