@@ -7,9 +7,10 @@
 
 #include "RestAPI.h"
 using namespace std;
-RestAPI::RestAPI(int (*getFingerprintIdFunction)(bool enrollNow), OS_EVENT * databaseSem):
+RestAPI::RestAPI(int (*getFingerprintIdFunction)(bool enrollNow), OS_EVENT * databaseSem, OS_EVENT * solenoidSem):
 	getFingerprintId(getFingerprintIdFunction),
 	m_databaseSem(databaseSem),
+	m_solenoidSem(solenoidSem),
 	m_successString("{\"success\":true}")
 {
 }
@@ -229,7 +230,7 @@ string RestAPI::deletePrint(int id){
 }
 
 string RestAPI::unlockLock(){
-	Solenoid::unlock();
+	Solenoid::unlock(m_solenoidSem);
 	return m_successString;
 }
 

@@ -8,7 +8,9 @@
 #ifndef SOLENOID_H_
 #define SOLENOID_H_
 
+#include <stdio.h>
 #include "includes.h"
+
 extern "C"{
 #include "altera_avalon_pio_regs.h"
 }
@@ -19,7 +21,7 @@ extern "C"{
 class Solenoid {
 public:
 	static const int TIME_UNLOCKED = 10;
-	static void unlock();
+	static void unlock(OS_EVENT * solenoidSem);
 	static void lock();
 };
 

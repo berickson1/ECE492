@@ -7,9 +7,12 @@
 
 #include "Solenoid.h"
 
-void Solenoid::unlock() {
+void Solenoid::unlock(OS_EVENT * solenoidSem) {
 	IOWR_ALTERA_AVALON_PIO_DATA(SOLENOID_CONTROLLER_BASE, UNLOCKED);
-
+	INT8U err = OSSemPost(solenoidSem);
+	if(err != OS_NO_ERR){
+		printf("Error posting to solenoid semaphore\n");
+	}
 }
 
 void Solenoid::lock() {

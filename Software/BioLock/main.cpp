@@ -143,11 +143,7 @@ void task1(void* pdata) {
 					*ledBase = 0;
 					printf("Open up!!!\n\n");
 					printf("Unlocking\n");
-					Solenoid::unlock();
-					err = OSSemPost(solenoidSem);
-					if(err != OS_NO_ERR){
-						printf("Error posting to solenoid semaphore\n");
-					}
+					Solenoid::unlock(solenoidSem);
 					continue;
 				}
 			}
@@ -184,18 +180,17 @@ void task2(void* pdata) {
 }
 void task3(void* pdata) {
 	INT8U err = OS_NO_ERR;
-	int count = 0;
 	while (1){
 		OSSemPend(solenoidSem, 0, &err);
-		while(*((char*) SOLENOID_CONTROLLER_BASE) != LOCKED){
-			if(count == Solenoid::TIME_UNLOCKED){
+		if(err != OS_NO_ERR){
+			printf("Error pending on solenoid semaphore\n");
+		}
+		else
+			if(*((char*) SOLENOID_CONTROLLER_BASE) != LOCKED){
+				OSTimeDlyHMSM(0,0,10,0);
 				printf("Locking\n");
 				Solenoid::lock();
-				count = 0;
 			}
-			else count++;
-			OSTimeDlyHMSM(0,0,1,0);
-		}
 		OSTimeDlyHMSM(0,0,1,0);
 	}
 }
@@ -293,7 +288,7 @@ const char * handleHTTPPost(http_conn* conn, int *replyLen) {
 	retString = "{\"success\":false}";
 	jsonData = getPOSTPayload(incomingData, "json");
 	postType = getPOSTPayload(incomingData, "type");
-	RestAPI api(&getCurrentFingerprintId, databaseSemaphore);
+	RestAPI api(&getCurrentFingerprintId, databaseSemaphore, solenoidSem);
 	if (uriString.compare(0, 6, "/users") == 0) {
 		if (postType == "delete"){
 			User user;
@@ -362,7 +357,7 @@ const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 
 	*isImage = false;
 	string uriString(URI), retString;
-	RestAPI api(&getCurrentFingerprintId, databaseSemaphore);
+	RestAPI api(&getCurrentFingerprintId, databaseSemaphore, solenoidSem);
 	if (uriString.compare(0, 6, "/alive") == 0) {
 		retString = aliveJSON;
 	} else if (uriString.compare(0, 6, "/users") == 0) {
