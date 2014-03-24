@@ -55,6 +55,8 @@ public class NewUser extends Activity {
 	private JSONPost changeName;
 	private JSONPost changeStatus;
 	private ArrayList<UserRole> userRolesArray;
+	private JSONArray userPrints;
+	private JSONArray userRoles;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		mContext = this;
@@ -70,8 +72,6 @@ public class NewUser extends Activity {
 	}
 	
 	public void onResume(){
-		JSONArray userPrints = null;
-		JSONArray userRoles = null;
 		// Get contents on screen
 		nameField = (EditText) findViewById(R.id.userNameFill);
 		enabledStatus = (CheckBox) findViewById(R.id.enabledUserStatusBox);
@@ -217,6 +217,18 @@ public class NewUser extends Activity {
 								noConn.setCancelable(false);
 								noConn.setCanceledOnTouchOutside(false);
 								noConn.show();
+							} else {
+								// Remove 'no record' entry if exists
+								UserRole noRecord = new UserRole(userRoles.getJSONObject(0));
+								if (noRecord.getID() == -1){
+									userRoles.remove(0);
+								}
+								wait.dismiss();
+								finish();
+								Intent restart = getIntent();
+								restart.putExtra("User Prints", userPrints.toString());
+								restart.putExtra("User Roles", userRoles.toString());
+								startActivity(getIntent());
 							}
 						} catch (JSONException e){
 							e.printStackTrace();
@@ -237,11 +249,12 @@ public class NewUser extends Activity {
     		});
     		UserRole addUserRole = new UserRole();
     		Role role = roleAdapter.getItem(which);
-    		addUserRole.setID(-1);
+    		addUserRole.setID(0);
     		addUserRole.setUID(selectedUser.getID());
     		addUserRole.setRID(role.getID());
     		addUserRole.setStartDate(role.getStartDate());
     		addUserRole.setEndDate(role.getEndDate());
+    		userRoles.put(addUserRole.toJson());
     		postRole.execute(ip.concat("/userRole"), "insert", addUserRole.toJson().toString());
     	// Add role to new user
 		} else {
