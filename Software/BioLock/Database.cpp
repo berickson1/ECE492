@@ -106,6 +106,9 @@ string Database::insertRole(Role value) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
+	if (value.id == -1){
+		value.id = findNextID(ROLES);
+	}
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLES, value.id);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	// File already exists
@@ -137,6 +140,10 @@ string Database::insertUser(User value) {
 	File tuple;
 	int ret;
 	char filename[MAXBUF_LENGTH];
+
+	if (value.id == -1){
+		value.id = findNextID(USERS);
+	}
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USERS, value.id);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
@@ -170,6 +177,10 @@ string Database::insertRoleSched(RoleSchedule value) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
+	if (value.id == -1){
+		value.id = findNextID(ROLE_SCHEDULE);
+	}
+
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", ROLE_SCHEDULE, value.id);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	if (ret == -2) {
@@ -202,6 +213,10 @@ string Database::insertUserRole(UserRole value) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
+	if (value.id == -1){
+		value.id = findNextID(USER_ROLES);
+	}
+
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_ROLES, value.id);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	if (ret == -2) {
@@ -232,6 +247,10 @@ string Database::insertUserPrint(UserPrint value) {
 	File tuple;
 	int ret;
 	char filename[MAXBUF_LENGTH];
+
+	if (value.id == -1){
+		value.id = findNextID(USER_PRINTS);
+	}
 
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", USER_PRINTS, value.id);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
@@ -264,6 +283,10 @@ string Database::insertHistory(History value) {
 	int ret;
 	char filename[MAXBUF_LENGTH];
 
+	if (value.id == -1){
+		value.id = findNextID(HISTORY);
+	}
+
 	snprintf(filename, MAXBUF_LENGTH, "%s%d.txt", HISTORY, value.id);
 	ret = file_fopen(&tuple, &db.myFs, filename, 'w');
 	if (ret == -2) {
@@ -290,11 +313,10 @@ string Database::insertHistory(History value) {
 }
 
 // Finds next lowest id number for filename
-string Database::findNextID(char *path){
+int Database::findNextID(char *path){
 	DirList list;
 	int ret, file;
 	int id = 1;
-	Json::Value nextID;
 
 	ret = ls_openDir(&list, &db.myFs, path);
 	if (ret == -1){
@@ -306,9 +328,7 @@ string Database::findNextID(char *path){
 			id = file + 1;
 		} else {
 			//ID 1 open, or no entries
-			nextID["id"] = id;
-			string idString = nextID.toStyledString();
-			return idString;
+			return id;
 		}
 	}
 	while (ls_getNext(&list) == 0) {
@@ -317,14 +337,10 @@ string Database::findNextID(char *path){
 			id = file + 1;
 		} else {
 			//ID 1 open, or no entries left
-			nextID["id"] = id;
-			string idString = nextID.toStyledString();
-			return idString;
+			return id;
 		}
 	}
-	nextID["id"] = id;
-	string idString = nextID.toStyledString();
-	return idString;
+	return id;
 }
 
 // Searches for specific file at the declared folder
