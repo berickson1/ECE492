@@ -54,6 +54,7 @@ public class NewUser extends Activity {
 	private ProgressDialog wait;
 	private JSONPost changeName;
 	private JSONPost changeStatus;
+	private ArrayList<UserRole> userRolesArray;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		mContext = this;
@@ -104,12 +105,12 @@ public class NewUser extends Activity {
 			userPrintAdapter.addAll(printsArray);
 			printsList.setAdapter(userPrintAdapter);
 			// Displays user roles
-			ArrayList<UserRole> rolesArray = new ArrayList<UserRole>();
-			userRoleAdapter = new UserRoleAdapter(mContext, rolesArray);
+			userRolesArray = new ArrayList<UserRole>();
+			userRoleAdapter = new UserRoleAdapter(mContext, userRolesArray);
 			userRoleAdapter.clear();
 			UserRole userRole = new UserRole();
-			rolesArray = userRole.fromJson(userRoles);
-			userRoleAdapter.addAll(rolesArray);
+			userRolesArray = userRole.fromJson(userRoles);
+			userRoleAdapter.addAll(userRolesArray);
 			rolesList.setAdapter(userRoleAdapter);
 			// User is disabled
 			if (!selectedUser.getEnabled()){
@@ -173,6 +174,21 @@ public class NewUser extends Activity {
 		roles.setAdapter(roleAdapter, new DialogInterface.OnClickListener() {
 		    @Override
 		    public void onClick(DialogInterface dialog, int which) {
+		    	for (int i = 0; i < userRolesArray.size(); i++){
+		    		// Checks if user already has the role
+		    		if (userRolesArray.get(i).getRID() == roleAdapter.getItem(which).getID()){
+		    			AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
+						noConn.setMessage("User already has this role");
+						noConn.setTitle("Roles");
+						noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {}
+					    });
+						noConn.setCancelable(false);
+						noConn.setCanceledOnTouchOutside(false);
+						noConn.show();
+						return;
+		    		}
+		    	}
 		    	addUserRole(which);
 		    }
 		});
