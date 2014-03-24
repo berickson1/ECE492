@@ -10,6 +10,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class UserRole{
+	String name;
 	int id, uid, rid;
 	Long startDate, endDate;
 	
@@ -20,6 +21,7 @@ public class UserRole{
 	public UserRole(JSONObject jsonObjects){
 		try {
 			id = jsonObjects.getInt("id");
+			name = jsonObjects.getString("name");
 			uid = jsonObjects.getInt("uid");
 			rid = jsonObjects.getInt("rid");
 			startDate = jsonObjects.getLong("startDate");
@@ -63,6 +65,14 @@ public class UserRole{
 		this.id = id;
 	}
 	
+	public String getName(){
+		return name;
+	}
+	
+	public void setName(String name){
+		this.name = name;
+	}
+	
 	public int getUID(){
 		return uid;
 	}
@@ -102,6 +112,7 @@ public class UserRole{
 	// Read in order
 	public UserRole(Parcel in){
 		this.id = in.readInt();
+		this.name = in.readString();
 		this.uid = in.readInt();
 		this.rid = in.readInt();
 		this.startDate = in.readLong();
@@ -111,6 +122,7 @@ public class UserRole{
 	// Write in order
 	public void writeToParcel(Parcel pc, int flags) {
 		pc.writeInt(id);
+		pc.writeString(name);
 		pc.writeInt(uid);
 		pc.writeInt(rid);
 		pc.writeLong(startDate);
