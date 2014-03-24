@@ -10,17 +10,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
-    <TextView
-        android:id="@+id/newRoleTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="30sp"
-        android:layout_marginTop="50sp"
-        android:gravity="center"
-        android:text="@string/display_roleInfo"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="35sp" />
-
     <EditText
         android:id="@+id/roleNameFill"
         android:layout_width="wrap_content"
@@ -79,21 +68,35 @@
         android:id="@+id/deleteRole"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tempAccess"
+        android:layout_below="@+id/accessList"
         android:layout_marginTop="25dp"
-        android:layout_toRightOf="@+id/tempAccess"
+        android:layout_toRightOf="@+id/accessList"
         android:clickable="true"
         android:onClick="confirmDelete"
         android:text="@string/delete"
         android:textSize="25sp" />
 
-    <TextView
-        android:id="@+id/tempFingerprint"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ListView
+        android:id="@+id/usersList"
+        android:layout_width="match_parent"
+        android:layout_height="55sp"
+        android:layout_alignRight="@+id/enabledRoleStatusBox"
         android:layout_below="@+id/user"
+        android:layout_toRightOf="@+id/roleName" >
+
+    </ListView>
+
+    <TextView
+        android:id="@+id/newRoleTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:text="Temp user name" />
+        android:layout_marginTop="44dp"
+        android:gravity="center"
+        android:text="@string/display_roleInfo"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="35sp" />
 
     <TextView
         android:id="@+id/updateRole"
@@ -101,7 +104,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/deleteRole"
         android:layout_alignBottom="@+id/deleteRole"
-        android:layout_toLeftOf="@+id/tempAccess"
+        android:layout_toRightOf="@+id/roleName"
         android:clickable="true"
         android:onClick="updateRole"
         android:text="@string/update"
@@ -112,18 +115,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/user"
-        android:layout_below="@+id/tempFingerprint"
-        android:layout_marginTop="33dp"
+        android:layout_below="@+id/usersList"
+        android:layout_marginTop="22dp"
         android:text="@string/access_hours"
         android:textSize="20sp" />
 
-    <TextView
-        android:id="@+id/tempAccess"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/access"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="17dp"
-        android:text="temp access" />
+    <ListView
+        android:id="@+id/accessList"
+        android:layout_width="match_parent"
+        android:layout_height="55sp"
+        android:layout_alignLeft="@+id/updateRole"
+        android:layout_alignRight="@+id/usersList"
+        android:layout_below="@+id/access" >
+
+    </ListView>
 
 </RelativeLayout>
