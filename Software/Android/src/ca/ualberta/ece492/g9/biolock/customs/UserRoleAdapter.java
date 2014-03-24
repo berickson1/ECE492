@@ -39,6 +39,7 @@ public class UserRoleAdapter extends ArrayAdapter<UserRole> {
        // Checks if user is disabled, set text to gray
        if (!enabled){
     	   role.setTextColor(Color.GRAY);
+    	   role.setFocusable(true);
        }
        
        // Populate the data into the template view using the data object

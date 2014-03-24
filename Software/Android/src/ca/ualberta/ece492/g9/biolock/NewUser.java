@@ -29,10 +29,12 @@ import android.text.Html;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
 
 //From AdminLogin - addition of new user
 //From Users - displaying of user info
@@ -106,12 +108,19 @@ public class NewUser extends Activity {
 			
 			// Displays user roles
 			userRolesArray = new ArrayList<UserRole>();
-			UserRoleAdapter userRoleAdapter = new UserRoleAdapter(mContext, userRolesArray);
+			UserRoleAdapter userRoleAdapter = new UserRoleAdapter(mContext, selectedUser.getEnabled(), userRolesArray);
 			userRoleAdapter.clear();
 			UserRole userRole = new UserRole();
 			userRolesArray = userRole.fromJson(userRoles);
 			userRoleAdapter.addAll(userRolesArray);
 			rolesList.setAdapter(userRoleAdapter);
+			// User role is clicked on
+			rolesList.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					confirmDeleteUserRole(position);
+				}
+			});
 			
 			// User is disabled
 			if (!selectedUser.getEnabled()){
@@ -134,6 +143,74 @@ public class NewUser extends Activity {
 			addPrint.putExtra("Caller", "UpdateUser");
 		}
 		startActivity(addPrint);
+	}
+	
+	// Check if user wants to delete user role
+	public void confirmDeleteUserRole(final int position){
+		final AlertDialog confirm  = new AlertDialog.Builder(mContext).create();
+		confirm.setMessage("Do you want to remove this role");
+		confirm.setTitle("Role");
+		confirm.setButton(AlertDialog.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				deleteUserRole(position);
+				confirm.cancel();
+			}
+	    });
+		confirm.setButton(AlertDialog.BUTTON_NEGATIVE, "No", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {}
+	    });
+		confirm.setCancelable(false);
+		confirm.setCanceledOnTouchOutside(false);
+		confirm.show();
+	}
+	
+	// Deletes user role
+	public void deleteUserRole(int position){
+		final ProgressDialog wait = ProgressDialog.show(NewUser.this,"User Role", "Deleting user role", true, false, null);
+		JSONPost deleteRole = new JSONPost(new JSONCallbackFunction() {
+			@Override
+			public void execute(JSONArray json) {
+				if (json != null){
+					try {
+						JSONObject response = (JSONObject) json.get(0);
+						if (response.getString("success").equalsIgnoreCase("true")){
+							wait.dismiss();
+							// Restarts this screen
+							Intent restart = getIntent();
+							restart.putExtra("User Prints", userPrints.toString());
+							restart.putExtra("User Roles", userRoles.toString());
+							finish();
+							startActivity(restart);
+						} else {
+							updateFail();
+						}
+					} catch (JSONException e){
+						e.printStackTrace();
+					}
+				} else {
+					updateFail();
+				}
+			}
+		});
+		UserRole roleToDelete = (UserRole) rolesList.getItemAtPosition(position);
+		try {
+			// Remove user role from listview
+			for (int i = 0; i < userRoles.length(); i++){
+				UserRole removeRole = new UserRole(userRoles.getJSONObject(i));
+				if (removeRole.getName().equals(roleToDelete.getName())){
+					userRoles.remove(i);
+				}
+			}
+			// Display no roles found
+			if (userRoles.length() == 0){
+				UserRole noUserRole = new UserRole();
+				noUserRole.setID(-1);
+				userRoles.put(0, noUserRole.toJson());
+			}
+		} catch (JSONException e){
+			e.printStackTrace();
+		}
+		deleteRole.execute(ip.concat("/userRole"), "delete", roleToDelete.toJson().toString());
 	}
 	
 	// Popup to select from roles

@@ -40,7 +40,7 @@ public class UserPrintAdapter extends ArrayAdapter<UserPrint> {
        if (!enabled){
     	   print.setTextColor(Color.GRAY);
        }
-       
+       print.setFocusable(true);
        // Populate the data into the template view using the data object
        if (userPrint.getID() == -1){
     	   print.setText("No fingerprint found");
