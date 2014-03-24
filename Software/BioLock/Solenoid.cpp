@@ -7,16 +7,34 @@
 
 #include "Solenoid.h"
 
-void Solenoid::unlock(OS_EVENT * solenoidSem) {
+void Solenoid::unlock(OS_EVENT * solenoidSem, OS_EVENT * solenoidMutex) {
+	INT8U err = OS_NO_ERR;
+	OSMutexPend(solenoidMutex, 0, &err);
+	if(err != OS_NO_ERR){
+		printf("Error pending on solenoid mutex in unlock\n");
+	}
 	IOWR_ALTERA_AVALON_PIO_DATA(SOLENOID_CONTROLLER_BASE, UNLOCKED);
-	INT8U err = OSSemPost(solenoidSem);
+	err = OSMutexPost(solenoidMutex);
+	if(err != OS_NO_ERR){
+		printf("Error posting to solenoid mutex in unlock\n");
+	}
+	err = OSSemPost(solenoidSem);
 	if(err != OS_NO_ERR){
 		printf("Error posting to solenoid semaphore\n");
 	}
 }
 
-void Solenoid::lock() {
+void Solenoid::lock(OS_EVENT * solenoidMutex) {
+	INT8U err = OS_NO_ERR;
+	OSMutexPend(solenoidMutex, 0, &err);
+	if(err != OS_NO_ERR){
+		printf("Error pending on solenoid mutex\n");
+	}
 	IOWR_ALTERA_AVALON_PIO_DATA(SOLENOID_CONTROLLER_BASE, LOCKED);
+	err = OSMutexPost(solenoidMutex);
+	if(err != OS_NO_ERR){
+		printf("Error posting to solenoid mutex\n");
+		}
 }
 
 

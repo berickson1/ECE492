@@ -53,12 +53,15 @@ OS_EVENT *fingerprintMailbox;
 OS_EVENT *fingerprintSem;
 OS_EVENT *databaseSemaphore;
 OS_EVENT *solenoidSem;
+OS_EVENT *solenoidMutex;
 
 /* Definition of Task Priorities */
 
 #define TASK1_PRIORITY      6
 #define TASK2_PRIORITY      7
 #define TASK3_PRIORITY		11
+
+#define MUTEX_PRIORITY 		10
 
 const char * aliveJSON = "[{\"alive\":true}]";
 bool m_enrollNow;
@@ -143,7 +146,7 @@ void task1(void* pdata) {
 					*ledBase = 0;
 					printf("Open up!!!\n\n");
 					printf("Unlocking\n");
-					Solenoid::unlock(solenoidSem);
+					Solenoid::unlock(solenoidSem, solenoidMutex);
 					continue;
 				}
 			}
@@ -185,12 +188,13 @@ void task3(void* pdata) {
 		if(err != OS_NO_ERR){
 			printf("Error pending on solenoid semaphore\n");
 		}
-		else
-			if(*((char*) SOLENOID_CONTROLLER_BASE) != LOCKED){
-				OSTimeDlyHMSM(0,0,10,0);
-				printf("Locking\n");
-				Solenoid::lock();
-			}
+		OSSemPend(solenoidSem, 10, &err);
+		if(err != OS_NO_ERR){
+			printf("Error pending on solenoid semaphore\n");
+		}
+		printf("Locking\n");
+		Solenoid::lock(solenoidMutex);
+
 		OSTimeDlyHMSM(0,0,1,0);
 	}
 }
@@ -290,7 +294,7 @@ const char * handleHTTPPost(http_conn* conn, int *replyLen) {
 	retString = "{\"success\":false}";
 	jsonData = getPOSTPayload(incomingData, "json");
 	postType = getPOSTPayload(incomingData, "type");
-	RestAPI api(&getCurrentFingerprintId, databaseSemaphore, solenoidSem);
+	RestAPI api(&getCurrentFingerprintId, databaseSemaphore, solenoidSem, solenoidMutex);
 	if (uriString.compare(0, 6, "/users") == 0) {
 		if (postType == "delete"){
 			User user;
@@ -359,7 +363,7 @@ const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 
 	*isImage = false;
 	string uriString(URI), retString;
-	RestAPI api(&getCurrentFingerprintId, databaseSemaphore, solenoidSem);
+	RestAPI api(&getCurrentFingerprintId, databaseSemaphore, solenoidSem, solenoidMutex);
 	if (uriString.compare(0, 6, "/alive") == 0) {
 		retString = aliveJSON;
 	} else if (uriString.compare(0, 6, "/users") == 0) {
@@ -434,6 +438,12 @@ int main(void) {
 	solenoidSem = OSSemCreate(0);
 	if (solenoidSem == NULL){
 		printf("Error initializing solenoid semaphore");
+		return -1;
+	}
+
+	solenoidMutex = OSMutexCreate(MUTEX_PRIORITY, &err);
+	if(err != OS_NO_ERR){
+		printf("Error initializing solenoid mutex\n");
 		return -1;
 	}
 

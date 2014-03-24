@@ -15,14 +15,14 @@ extern "C"{
 #include "altera_avalon_pio_regs.h"
 }
 
+
 #define UNLOCKED 1
 #define LOCKED 0
 
 class Solenoid {
 public:
-	static const int TIME_UNLOCKED = 10;
-	static void unlock(OS_EVENT * solenoidSem);
-	static void lock();
+	static void unlock(OS_EVENT * solenoidSem, OS_EVENT * solenoidMutex);
+	static void lock(OS_EVENT * solenoidMutex);
 };
 
 #endif /* SOLENOID_H_ */
