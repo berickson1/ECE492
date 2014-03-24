@@ -83,7 +83,7 @@ public class NewUser extends Activity {
 		// Retrieves information of the selected user if exists
 		Intent intent = getIntent();
 		selectedUser = (User) intent.getParcelableExtra("User");
-		if (intent.getExtras() != null) {
+		if (intent.getExtras().size() != 1) {
 			try {
 				userPrints = new JSONArray(intent.getStringExtra("User Prints"));
 				userRoles = new JSONArray(intent.getStringExtra("User Roles"));
@@ -96,32 +96,33 @@ public class NewUser extends Activity {
 		if (selectedUser != null){
 			nameField.setText(selectedUser.getName());
 			enabledStatus.setChecked(selectedUser.getEnabled());
-			
-			// Displays user prints
-			ArrayList<UserPrint> printsArray = new ArrayList<UserPrint>();
-			UserPrintAdapter userPrintAdapter = new UserPrintAdapter(mContext, selectedUser.getEnabled(), printsArray);
-			userPrintAdapter.clear();
-			UserPrint userPrint = new UserPrint();
-			printsArray = userPrint.fromJson(userPrints);
-			userPrintAdapter.addAll(printsArray);
-			printsList.setAdapter(userPrintAdapter);
-			
-			// Displays user roles
-			userRolesArray = new ArrayList<UserRole>();
-			UserRoleAdapter userRoleAdapter = new UserRoleAdapter(mContext, selectedUser.getEnabled(), userRolesArray);
-			userRoleAdapter.clear();
-			UserRole userRole = new UserRole();
-			userRolesArray = userRole.fromJson(userRoles);
-			userRoleAdapter.addAll(userRolesArray);
-			rolesList.setAdapter(userRoleAdapter);
-			// User role is clicked on
-			rolesList.setOnItemClickListener(new OnItemClickListener() {
-				@Override
-				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					confirmDeleteUserRole(position);
-				}
-			});
-			
+			if (userPrints != null){
+				// Displays user prints
+				ArrayList<UserPrint> printsArray = new ArrayList<UserPrint>();
+				UserPrintAdapter userPrintAdapter = new UserPrintAdapter(mContext, selectedUser.getEnabled(), printsArray);
+				userPrintAdapter.clear();
+				UserPrint userPrint = new UserPrint();
+				printsArray = userPrint.fromJson(userPrints);
+				userPrintAdapter.addAll(printsArray);
+				printsList.setAdapter(userPrintAdapter);
+			}
+			if (userRoles != null){
+				// Displays user roles
+				userRolesArray = new ArrayList<UserRole>();
+				UserRoleAdapter userRoleAdapter = new UserRoleAdapter(mContext, selectedUser.getEnabled(), userRolesArray);
+				userRoleAdapter.clear();
+				UserRole userRole = new UserRole();
+				userRolesArray = userRole.fromJson(userRoles);
+				userRoleAdapter.addAll(userRolesArray);
+				rolesList.setAdapter(userRoleAdapter);
+				// User role is clicked on
+				rolesList.setOnItemClickListener(new OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+						confirmDeleteUserRole(position);
+					}
+				});
+			}
 			// User is disabled
 			if (!selectedUser.getEnabled()){
 				disableScreen();
@@ -182,16 +183,19 @@ public class NewUser extends Activity {
 							finish();
 							startActivity(restart);
 						} else {
+							wait.dismiss();
 							updateFail();
 						}
 					} catch (JSONException e){
 						e.printStackTrace();
 					}
 				} else {
+					wait.dismiss();
 					updateFail();
 				}
 			}
 		});
+// Look into deleting once confirmed
 		UserRole roleToDelete = (UserRole) rolesList.getItemAtPosition(position);
 		try {
 			// Remove user role from listview
@@ -252,6 +256,11 @@ public class NewUser extends Activity {
 		roles.setAdapter(roleAdapter, new DialogInterface.OnClickListener() {
 		    @Override
 		    public void onClick(DialogInterface dialog, int which) {
+		    	// New user
+		    	if (selectedUser == null){
+		    		addUserRole(which);
+		    		return;
+		    	}
 		    	// Checks if user already has the role
 		    	for (int i = 0; i < userRolesArray.size(); i++){
 		    		if (userRolesArray.get(i).getRID() == roleAdapter.getItem(which).getID()){
@@ -298,12 +307,14 @@ public class NewUser extends Activity {
 								finish();
 								startActivity(restart);
 							} else {
+								wait.dismiss();
 								updateFail();
 							}
 						} catch (JSONException e){
 							e.printStackTrace();
 						}
 					} else {
+						wait.dismiss();
 						updateFail();
 					}
 				}
@@ -327,7 +338,6 @@ public class NewUser extends Activity {
 	
 	// Displays popup when failure to add user role
 	public void updateFail(){
-		wait.dismiss();
 		AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
 		noConn.setMessage("Failed to update user");
 		noConn.setTitle("Update");
@@ -346,7 +356,11 @@ public class NewUser extends Activity {
 			public void execute(JSONArray json) {
 			}
 		});
+		// Defines user
 		User newUser = new User();
+		newUser.setID(0);
+		newUser.setName(nameField.getText().toString());
+		newUser.setEnabled(enabledStatus.isChecked());
 		
 		//addUser.execute(ip.concat("/users"), "insert", )
 	}
@@ -375,12 +389,14 @@ public class NewUser extends Activity {
 								}
 							}
 						} else {
+							wait.dismiss();
 							updateFail();
 						}
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
 				} else {
+					wait.dismiss();
 					updateFail();
 				}
 			}
@@ -413,12 +429,14 @@ public class NewUser extends Activity {
 								}
 							}
 						} else {
+							wait.dismiss();
 							updateFail();
 						}
 					} catch (JSONException e){
 						e.printStackTrace();
 					}
 				} else {
+					wait.dismiss();
 					updateFail();
 				}
 			}      	

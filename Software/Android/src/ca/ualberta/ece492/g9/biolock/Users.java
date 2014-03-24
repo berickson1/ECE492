@@ -101,7 +101,10 @@ public class Users extends Activity {
 					noConn.setMessage("Could not get user prints");
 					noConn.setTitle("User Prints");
 					noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-		                public void onClick(DialogInterface dialog, int which) {}
+		                public void onClick(DialogInterface dialog, int which) {
+		                	wait.dismiss();
+		                	startActivity(updateUser);
+		                }
 		            });
 					noConn.setCancelable(false);
 					noConn.setCanceledOnTouchOutside(false);
@@ -128,7 +131,10 @@ public class Users extends Activity {
 					noConn.setMessage("Could not get user roles");
 					noConn.setTitle("User Roles");
 					noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-		                public void onClick(DialogInterface dialog, int which) {}
+		                public void onClick(DialogInterface dialog, int which) {
+		                	wait.dismiss();
+		                	startActivity(updateUser);
+		                }
 		            });
 					noConn.setCancelable(false);
 					noConn.setCanceledOnTouchOutside(false);
