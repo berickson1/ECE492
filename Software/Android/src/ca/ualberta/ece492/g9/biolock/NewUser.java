@@ -303,6 +303,9 @@ public class NewUser extends Activity {
 								if (noRecord.getID() == -1){
 									userRoles.remove(0);
 								}
+								JSONObject idVal = (JSONObject) json.get(1);
+								addUserRole.setID(idVal.getInt("id"));
+								userRoles.put(addUserRole.toJson());
 								wait.dismiss();
 								// Restarts this screen
 								Intent restart = getIntent();
@@ -324,7 +327,7 @@ public class NewUser extends Activity {
 				}
     		});
     		// Create the user role
-    		UserRole addUserRole = new UserRole();
+    		addUserRole = new UserRole();
     		Role role = roleAdapter.getItem(which);
     		addUserRole.setName(role.getName());
     		addUserRole.setID(0);
@@ -332,7 +335,6 @@ public class NewUser extends Activity {
     		addUserRole.setRID(role.getID());
     		addUserRole.setStartDate(role.getStartDate());
     		addUserRole.setEndDate(role.getEndDate());
-    		userRoles.put(addUserRole.toJson());
     		postRole.execute(ip.concat("/userRole"), "insert", addUserRole.toJson().toString());
     	// Add role to new user
 		} else {
