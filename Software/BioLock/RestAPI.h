@@ -21,6 +21,7 @@ public:
 	string getRole(int rid);
 	string getUserRoles(string URI);
 	string getUserRoles(int uid);
+	string getRoleUsers(string URI);
 	string getRoleUsers(int rid);
 	string getRoleSchedule(string URI);
 	string getRoleSchedule(int rid);

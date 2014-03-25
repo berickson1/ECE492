@@ -361,6 +361,8 @@ const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 		retString = api.getRoleSchedule(uriString);
 	} else if (uriString.compare(0, 9, "/userRole") == 0) {
 		retString = api.getUserRoles(uriString);
+	} else if (uriString.compare(0, 9, "/roleUser") == 0){
+		retString = api.getRoleUsers(uriString);
 	} else if (uriString.compare(0, 8, "/history") == 0) {
 		retString = api.getHistory(uriString);
 	} else if (uriString.compare(0, 7, "/prints") == 0) {

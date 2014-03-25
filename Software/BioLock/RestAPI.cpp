@@ -60,8 +60,17 @@ string RestAPI::getUserRoles(int uid){
 	return db.findUserRole(uid);
 
 }
+string RestAPI::getRoleUsers(string URI){
+	int id = extractID(URI);
+	if (id != -1){
+		return getRoleUsers(id);
+	}
+	Database db(m_databaseSem);
+	return db.listAll(USER_ROLES);
+}
 string RestAPI::getRoleUsers(int rid){
-//TODO: Is there a database call for this?
+	Database db(m_databaseSem);
+	return db.findRoleUser(rid);
 }
 string RestAPI::getRoleSchedule(string URI){
 	int id = extractID(URI);
