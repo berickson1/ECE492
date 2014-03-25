@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -84,8 +85,33 @@ public class Roles extends Activity {
 	
 	// User selected to add new role
 	public void addNewRole(View v) {
-		Intent newRole = new Intent(Roles.this, NewRole.class);
-		startActivity(newRole);
+		AlertDialog requestName = new AlertDialog.Builder(mContext).create();
+		requestName.setMessage("Please enter role name");
+		requestName.setTitle("Role Name");
+		final EditText inputName = new EditText(this);
+		requestName.setView(inputName);
+		requestName.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+		requestName.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+            	// User did not set a name
+            	if (inputName.getText().toString().matches("")){
+            		AlertDialog noName = new AlertDialog.Builder(mContext).create();
+            		noName.setMessage("No name was set");
+            		noName.setTitle("Role Name");
+            		noName.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {};
+            		});
+            		noName.show();
+            	} else {
+	            	Intent newRole = new Intent(Roles.this, NewRole.class);
+	            	newRole.putExtra("Name", inputName.getText().toString());
+	        		startActivity(newRole);
+            	}
+            }
+        });
+		requestName.show();
 	}
 	
 	// Gets users who have this role
