@@ -138,7 +138,7 @@ public class Roles extends Activity {
 				}
 			}
 		});
-		//parseUsers.execute(ip.concat(""))
+		parseUsers.execute(ip.concat("roleUser").concat(String.valueOf(selectedRole.getID())));
 	}
 	
 	// Gets role schedules 
