@@ -61,8 +61,6 @@ OS_EVENT *solenoidMutex;
 #define TASK2_PRIORITY      7
 #define TASK3_PRIORITY		11
 
-#define MUTEX_PRIORITY 		12
-
 const char * aliveJSON = "[{\"alive\":true}]";
 bool m_enrollNow;
 
@@ -441,7 +439,7 @@ int main(void) {
 		return -1;
 	}
 
-	solenoidMutex = OSMutexCreate(MUTEX_PRIORITY, &err);
+	solenoidMutex = OSMutexCreate(0, &err);
 	if(err != OS_NO_ERR){
 		printf("Error initializing solenoid mutex\n");
 		return -1;
