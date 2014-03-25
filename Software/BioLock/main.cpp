@@ -61,7 +61,7 @@ OS_EVENT *solenoidMutex;
 #define TASK2_PRIORITY      7
 #define TASK3_PRIORITY		11
 
-#define MUTEX_PRIORITY 		10
+#define MUTEX_PRIORITY 		12
 
 const char * aliveJSON = "[{\"alive\":true}]";
 bool m_enrollNow;
