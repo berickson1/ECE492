@@ -67,6 +67,17 @@ string Database::fail(){
 	return result;
 }
 
+string Database::addID(int id){
+	string result = "[";
+	result.append(success());
+	result.append(",");
+	Json::Value idVal;
+	idVal["id"] = id;
+	result.append(idVal.toStyledString());
+	result.append("]");
+	return result;
+}
+
 // Lists all tables (folders) or tuplets (files) in directory specified
 string Database::listAll(char *path) {
 	DirList list;
@@ -136,7 +147,7 @@ string Database::insertRole(Role value) {
 		return fail();
 	}
 
-	return success();
+	return addID(value.id);
 }
 
 // Adds a tuple to the user table
@@ -172,7 +183,7 @@ string Database::insertUser(User value) {
 		return fail();
 	}
 
-	return success();
+	return addID(value.id);
 }
 
 // Adds a tuple to the role schedule table
@@ -208,7 +219,7 @@ string Database::insertRoleSched(RoleSchedule value) {
 		return fail();
 	}
 
-	return success();
+	return addID(value.id);
 }
 
 // Adds a tuple to the user roles table
@@ -244,7 +255,7 @@ string Database::insertUserRole(UserRole value) {
 		return fail();
 	}
 
-	return success();
+	return addID(value.id);
 }
 
 // Adds a tuple to the user prints table
@@ -279,7 +290,7 @@ string Database::insertUserPrint(UserPrint value) {
 		return fail();
 	}
 
-	return success();
+	return addID(value.id);
 }
 
 // Adds a tuple to the history table
@@ -314,7 +325,7 @@ string Database::insertHistory(History value) {
 		return fail();
 	}
 
-	return success();
+	return addID(value.id);
 }
 
 // Searches for specific file at the declared folder

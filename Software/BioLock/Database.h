@@ -76,6 +76,7 @@ private:
 	string findEntry(const char *path, int id);
 	string deleteEntry(string file);
 	string clearTable(char *path);
+	string addID(int id);
 	int findID(string filename);
 	int findRID(string filename);
 	int findUID(string filename);
