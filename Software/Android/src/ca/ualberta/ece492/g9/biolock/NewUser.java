@@ -525,6 +525,8 @@ public class NewUser extends Activity {
 				}
 			}
 		}
+		wait.dismiss();
+		finish();
 	}
 	
 	public void disableScreen(){
