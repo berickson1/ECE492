@@ -78,6 +78,7 @@ private:
 	int findID(string filename);
 	int findRID(string filename);
 	int findUID(string filename);
+	string getFileName(char *path, euint8 *filename);
 	string findEntryByRID(char *path, int rid);
 	string findEntryByUID(char *path, int uid);
 };

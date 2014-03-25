@@ -360,7 +360,7 @@ string Database::findEntryByRID(char *path, int rid){
 	}
 	results.append("[");
 	if (ls_getNext(&list) == 0) {
-		string filename((const char*)list.currentEntry.FileName);
+		string filename = getFileName(path, list.currentEntry.FileName);
 		if (atoi((const char*) list.currentEntry.FileName) != 0){
 			file = findRID(filename);
 			if (file == rid){
@@ -369,7 +369,7 @@ string Database::findEntryByRID(char *path, int rid){
 		}
 	}
 	while (ls_getNext(&list) == 0) {
-		string filename((const char*)list.currentEntry.FileName);
+		string filename = getFileName(path, list.currentEntry.FileName);
 		if (atoi((const char*) list.currentEntry.FileName) != 0){
 			file = findRID(filename);
 			if (file == rid){
@@ -396,9 +396,7 @@ string Database::findEntryByUID(char *path, int uid){
 	}
 	results.append("[");
 	if (ls_getNext(&list) == 0) {
-		stringstream idStream;
-		idStream << list.currentEntry.FileName;
-		string name = idStream.str();
+		string name = getFileName(path, list.currentEntry.FileName);
 		if (atoi((const char*) list.currentEntry.FileName) != 0){
 			file = findUID(name);
 			if (file == uid){
@@ -407,9 +405,7 @@ string Database::findEntryByUID(char *path, int uid){
 		}
 	}
 	while (ls_getNext(&list) == 0) {
-		stringstream idStream;
-		idStream << list.currentEntry.FileName;
-		string name = idStream.str();
+		string name = getFileName(path, list.currentEntry.FileName);
 		if (atoi((const char*) list.currentEntry.FileName) != 0){
 			file = findUID(name);
 			if (file == uid){
@@ -462,18 +458,14 @@ int Database::findNextID(char *path) {
 	if (ret == -1)
 		printf("Could not open directory. Please check definition of path\n");
 	if (ls_getNext(&list) == 0) {
-		stringstream idStream;
-		idStream << list.currentEntry.FileName;
-		string name = idStream.str();
+		string name = getFileName(path, list.currentEntry.FileName);
 		file = findID(name);
 		if(file >= id){
 			id = file + 1;
 		}
 	}
 	while (ls_getNext(&list) == 0) {
-		stringstream idStream;
-		idStream << list.currentEntry.FileName;
-		string name = idStream.str();
+		string name = getFileName(path, list.currentEntry.FileName);
 		file = findID(name);
 		if(file >= id){
 			id = file + 1;
@@ -559,9 +551,7 @@ string Database::deleteRole(int rid) {
 			RoleSchedule roleSchedule;
 			roleSchedule.loadFromJson(findEntry(ROLE_SCHEDULE, file));
 			if (roleSchedule.rid == rid) {
-				stringstream idStream;
-				idStream << ROLE_SCHEDULE << list.currentEntry.FileName;
-				string name = idStream.str();
+				string name = getFileName(ROLE_SCHEDULE, list.currentEntry.FileName);
 				result = deleteEntry(name);
 				if (result.find("false") != string::npos){
 					return result;
@@ -582,9 +572,7 @@ string Database::deleteRole(int rid) {
 			UserRole userRole;
 			userRole.loadFromJson(findEntry(USER_ROLES, file));
 			if (userRole.rid == rid) {
-				stringstream idStream;
-				idStream << USER_ROLES << list.currentEntry.FileName;
-				string name = idStream.str();
+				string name = getFileName(USER_ROLES, list.currentEntry.FileName);
 				result = deleteEntry(name);
 				if (result.find("false") != string::npos){
 					return result;
@@ -688,9 +676,7 @@ string Database::clearTable(char *path) {
 	while (ls_getNext(&list) == 0) {
 		file = atoi((const char*) list.currentEntry.FileName);
 		if (file != 0){
-			stringstream idStream;
-			idStream << path << list.currentEntry.FileName;
-			string name = idStream.str();
+			string name = getFileName(path, list.currentEntry.FileName);
 			result = deleteEntry(name);
 			if (result.find("false") != string::npos){
 				return result;
@@ -745,6 +731,14 @@ int Database::findUID(string filename){
 	const char * uidToConvert = uidString.c_str();
 	int uid = strtol(uidToConvert, NULL, 10);
 	return uid;
+}
+
+string Database::getFileName(char *path, euint8 *filename){
+	stringstream idStream;
+	idStream << path << filename;
+	string name = idStream.str();
+	int pos = name.find_first_of(" ");
+	return name.substr(0, pos);
 }
 
 void Database::testPopulate() {
