@@ -176,7 +176,6 @@ public class NewUser extends Activity {
 	
 	// Gets fingerprint id & adds to db
 	public void onActivityResult(int requestCode, Intent fingerprint){
-		final ProgressDialog wait = ProgressDialog.show(NewUser.this,"User Print", "Adding user print", true, false, null);
 		// Returned from AdminLogin
 		if (requestCode == 0){
 			int id = fingerprint.getIntExtra("id", -1);
@@ -188,6 +187,7 @@ public class NewUser extends Activity {
 	
 	// Adds user print to database
 	public void addUserPrint(int id){
+		final ProgressDialog wait = ProgressDialog.show(NewUser.this,"User Print", "Adding user print", true, false, null);
 		//Add userprint to db
 		JSONPost addUserPrint = new JSONPost (new JSONCallbackFunction(){
 			@Override
