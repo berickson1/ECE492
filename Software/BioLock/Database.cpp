@@ -399,7 +399,7 @@ string Database::findEntryByRID(char *path, int rid){
 	}
 	results.append("[");
 	if (ls_getNext(&list) == 0) {
-		string filename = getFileName(list.currentEntry.FileName);
+		string filename = getFileName(path, list.currentEntry.FileName);
 		if (atoi((const char*) list.currentEntry.FileName) != 0){
 			file = findRID(filename);
 			if (file == rid){
@@ -408,7 +408,7 @@ string Database::findEntryByRID(char *path, int rid){
 		}
 	}
 	while (ls_getNext(&list) == 0) {
-		string filename = getFileName(list.currentEntry.FileName);
+		string filename = getFileName(path, list.currentEntry.FileName);
 		if (atoi((const char*) list.currentEntry.FileName) != 0){
 			file = findRID(filename);
 			if (file == rid){
@@ -440,7 +440,7 @@ string Database::findEntryByUID(char *path, int uid){
 	}
 	results.append("[");
 	if (ls_getNext(&list) == 0) {
-		string name = getFileName(list.currentEntry.FileName);
+		string name = getFileName(path, list.currentEntry.FileName);
 		if (atoi((const char*) list.currentEntry.FileName) != 0){
 			file = findUID(name);
 			if (file == uid){
@@ -449,7 +449,7 @@ string Database::findEntryByUID(char *path, int uid){
 		}
 	}
 	while (ls_getNext(&list) == 0) {
-		string name = getFileName(list.currentEntry.FileName);
+		string name = getFileName(path, list.currentEntry.FileName);
 		if (atoi((const char*) list.currentEntry.FileName) != 0){
 			file = findUID(name);
 			if (file == uid){
@@ -508,14 +508,14 @@ int Database::findNextID(char *path) {
 	if (ret == -1)
 		printf("Could not open directory. Please check definition of path\n");
 	if (ls_getNext(&list) == 0) {
-		string name = getFileName(list.currentEntry.FileName);
+		string name = getFileName(path, list.currentEntry.FileName);
 		file = findID(name);
 		if(file >= id){
 			id = file + 1;
 		}
 	}
 	while (ls_getNext(&list) == 0) {
-		string name = getFileName(list.currentEntry.FileName);
+		string name = getFileName(path, list.currentEntry.FileName);
 		file = findID(name);
 		if(file >= id){
 			id = file + 1;
@@ -751,9 +751,10 @@ string Database::deleteEntry(string file) {
 }
 
 int Database::findID(string filename){
+	int folder = filename.find_first_of('/');
 	int pos = filename.find_first_of('-');
 	string idString;
-	idString = filename.substr(0, pos);
+	idString = filename.substr(folder + 1, pos);
 	const char * idToConvert = idString.c_str();
 	int id = strtol(idToConvert, NULL, 10);
 	return id;
@@ -786,14 +787,6 @@ int Database::findUID(string filename){
 string Database::getFileName(char *path, euint8 *filename){
 	stringstream idStream;
 	idStream << path << filename;
-	string name = idStream.str();
-	int pos = name.find_first_of(" ");
-	return name.substr(0, pos);
-}
-
-string Database::getFileName(euint8 *filename){
-	stringstream idStream;
-	idStream << filename;
 	string name = idStream.str();
 	int pos = name.find_first_of(" ");
 	return name.substr(0, pos);
