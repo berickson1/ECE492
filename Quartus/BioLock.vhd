@@ -6,6 +6,9 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use ieee.vital_primitives.all;
+use ieee.std_logic_unsigned.all;
+use ieee.std_logic_arith.all;
+use ieee.numeric_std.all;
 use work.DE2_CONSTANTS.all;
 
 entity BioLock is
@@ -185,10 +188,11 @@ architecture structure of BioLock is
 	-- signals to match provided IP core to specific SDRAM chip of our system
 	signal BA	: std_logic_vector (1 downto 0);
 	signal DQM	: std_logic_vector (1 downto 0);
+	signal CLOCK_25	: std_logic_vector (1 downto 0);
 begin
 
 	GPIO_1(17) <= '1'; --reset
-	GPIO_1(16) <= CLOCK_50;
+	ENET_CLK <= CLOCK_25(0);
 	
 	DRAM_BA_1 <= BA(1);
 	DRAM_BA_0 <= BA(0);
@@ -196,6 +200,13 @@ begin
 	DRAM_UDQM <= DQM(1);
 	DRAM_LDQM <= DQM(0);
 	FL_RST_N <= "1";
+	
+	process (CLOCK_50)
+	begin
+		if (rising_edge(CLOCK_50)) then
+			CLOCK_25 <= CLOCK_25 + "1";
+		end if;
+	end process;
 	
     u0 : component nios_system
         port map (
@@ -213,7 +224,7 @@ begin
             character_lcd_0_external_interface_RW   => LCD_RW, 						     --                                   .RW
 
             altpll_0_c0_clk                         => DRAM_CLK, 		                             --                        altpll_0_c0.clk
-				altpll_0_c2_clk                         => ENET_CLK, 		                             --                        altpll_0_c2.clk
+				altpll_0_c2_clk                         => GPIO_1(16), 		                             --                        altpll_0_c2.clk
 				altpll_1_c0_clk                         => AUD_XCK,                                                                   --                             altpll_1_c0.clk
 
             serial_external_connection_rxd          => GPIO_1(26),				             --     GREEN    serial_external_connection.rxd
