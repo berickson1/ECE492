@@ -12,6 +12,7 @@ void Solenoid::unlock(OS_EVENT * solenoidSem, OS_EVENT * solenoidMutex) {
 	OSMutexPend(solenoidMutex, 0, &err);
 	if(err != OS_NO_ERR){
 		printf("Error pending on solenoid mutex in unlock\n");
+		return;
 	}
 	IOWR_ALTERA_AVALON_PIO_DATA(SOLENOID_CONTROLLER_BASE, UNLOCKED);
 	err = OSMutexPost(solenoidMutex);
@@ -29,6 +30,7 @@ void Solenoid::lock(OS_EVENT * solenoidMutex) {
 	OSMutexPend(solenoidMutex, 0, &err);
 	if(err != OS_NO_ERR){
 		printf("Error pending on solenoid mutex\n");
+		return;
 	}
 	IOWR_ALTERA_AVALON_PIO_DATA(SOLENOID_CONTROLLER_BASE, LOCKED);
 	err = OSMutexPost(solenoidMutex);
