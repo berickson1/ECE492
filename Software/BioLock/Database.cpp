@@ -346,6 +346,33 @@ string Database::findEntry(const char *path, int id) {
 	return attr;
 }
 
+string Database::findEntryByName(string name){
+	File tuple;
+	unsigned int sizeRead;
+	int ret;
+	const char *filename = name.c_str();
+
+	ret = file_fopen(&tuple, &db.myFs, (eint8*)filename, 'r');
+	if (ret == -1) {
+		printf("Entry could not be found\n");
+		return noRecord();
+	}
+
+	euint8 *fileBuffer = (euint8 *) malloc(tuple.FileSize * sizeof(euint8));
+	sizeRead = file_read(&tuple, tuple.FileSize, fileBuffer);
+	if (sizeRead == 0) {
+		printf("Attributes could not read\n");
+		return noRecord();
+	}
+
+	string attr = "";
+	attr.append((char*) fileBuffer, sizeRead);
+	free(fileBuffer);
+	file_fclose(&tuple);
+
+	return attr;
+}
+
 // Returns results if rid matches entry
 string Database::findEntryByRID(char *path, int rid){
 	DirList list;
@@ -378,6 +405,9 @@ string Database::findEntryByRID(char *path, int rid){
 			}
 		}
 	}
+	if (results.find("[") == results.length() - 1){
+		results.append(noRecord());
+	}
 	results.append("]");
 	return results;
 }
@@ -400,7 +430,7 @@ string Database::findEntryByUID(char *path, int uid){
 		if (atoi((const char*) list.currentEntry.FileName) != 0){
 			file = findUID(name);
 			if (file == uid){
-				results.append(findEntry(path, file));
+				results.append(findEntryByName(name));
 			}
 		}
 	}
@@ -410,9 +440,12 @@ string Database::findEntryByUID(char *path, int uid){
 			file = findUID(name);
 			if (file == uid){
 				results.append(",");
-				results.append(findEntry(path, file));
+				results.append(findEntryByName(name));
 			}
 		}
+	}
+	if (results.find("[") == results.length() - 1){
+		results.append(noRecord());
 	}
 	results.append("]");
 	return results;

@@ -72,6 +72,7 @@ public:
 private:
 	OS_EVENT *m_databaseSemaphore;
 	EmbeddedFileSystem db;
+	string findEntryByName(string name);
 	string findEntry(const char *path, int id);
 	string deleteEntry(string file);
 	string clearTable(char *path);
