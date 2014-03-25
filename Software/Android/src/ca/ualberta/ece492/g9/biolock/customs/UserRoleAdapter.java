@@ -52,4 +52,8 @@ public class UserRoleAdapter extends ArrayAdapter<UserRole> {
        // Return the completed view to render on screen
        return convertView;
    }
+	
+	public void remove(UserRole userRole){
+		super.remove(userRole);
+	}
 }

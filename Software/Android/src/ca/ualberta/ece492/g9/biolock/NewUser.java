@@ -25,7 +25,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -50,7 +49,6 @@ public class NewUser extends Activity {
 	private ListView rolesList;
 	private TextView addPrint;
 	private TextView addRole;
-	private TextView update;
 	private ProgressDialog wait;
 	private JSONPost changeName;
 	private JSONPost changeStatus;
@@ -59,6 +57,8 @@ public class NewUser extends Activity {
 	private JSONArray userRoles;
 	private UserRole roleToDelete;
 	private UserRole addUserRole;
+	private User newUser;
+	private UserRoleAdapter userRoleAdapter;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		mContext = this;
@@ -78,43 +78,54 @@ public class NewUser extends Activity {
 		rolesList = (ListView) findViewById(R.id.userRoles);
 		addPrint = (TextView) findViewById(R.id.enrollPrint);
 		addRole = (TextView) findViewById(R.id.enrollRole);
-		update = (TextView) findViewById(R.id.updateUser);
 	}
 	
 	public void onResume(){
-		// Retrieves information of the selected user if exists
+		ArrayList<UserPrint> printsArray = new ArrayList<UserPrint>();
+		UserPrintAdapter userPrintAdapter = null;
+		UserPrint userPrint = new UserPrint();
+		userRolesArray = new ArrayList<UserRole>();
+		UserRole userRole = new UserRole();
+		
+		// Retrieves information of the selected user or new user name
 		Intent intent = getIntent();
 		selectedUser = (User) intent.getParcelableExtra("User");
 		String userName = intent.getStringExtra("Name");
 		if (intent.getExtras().size() > 2) {
 			try {
-				userPrints = new JSONArray(intent.getStringExtra("User Prints"));
-				userRoles = new JSONArray(intent.getStringExtra("User Roles"));
+				// Retrieves user prints and user roles
+				userPrintAdapter = new UserPrintAdapter(mContext, selectedUser.getEnabled(), printsArray);
+				if (intent.getStringExtra("User Prints") != null){
+					userPrints = new JSONArray(intent.getStringExtra("User Prints"));
+				}
+				userRoleAdapter = new UserRoleAdapter(mContext, selectedUser.getEnabled(), userRolesArray);
+				if (intent.getStringExtra("User Roles") != null){
+					userRoles = new JSONArray(intent.getStringExtra("User Roles"));
+				}
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
+		} else {
+			userPrintAdapter = new UserPrintAdapter(mContext, true, printsArray);
+			userPrints = new JSONArray();
+			userRoleAdapter = new UserRoleAdapter(mContext, true, userRolesArray);
+			userRoles = new JSONArray();
 		}
+		userPrintAdapter.clear();
+		userRoleAdapter.clear();
 		
-		// Displays retrieved information on screen
+		// Update User - Displays retrieved user information on screen
 		if (selectedUser != null){
 			nameField.setText(selectedUser.getName());
 			enabledStatus.setChecked(selectedUser.getEnabled());
 			if (userPrints != null){
 				// Displays user prints
-				ArrayList<UserPrint> printsArray = new ArrayList<UserPrint>();
-				UserPrintAdapter userPrintAdapter = new UserPrintAdapter(mContext, selectedUser.getEnabled(), printsArray);
-				userPrintAdapter.clear();
-				UserPrint userPrint = new UserPrint();
 				printsArray = userPrint.fromJson(userPrints);
 				userPrintAdapter.addAll(printsArray);
 				printsList.setAdapter(userPrintAdapter);
 			}
 			if (userRoles != null){
 				// Displays user roles
-				userRolesArray = new ArrayList<UserRole>();
-				UserRoleAdapter userRoleAdapter = new UserRoleAdapter(mContext, selectedUser.getEnabled(), userRolesArray);
-				userRoleAdapter.clear();
-				UserRole userRole = new UserRole();
 				userRolesArray = userRole.fromJson(userRoles);
 				userRoleAdapter.addAll(userRolesArray);
 				rolesList.setAdapter(userRoleAdapter);
@@ -130,11 +141,21 @@ public class NewUser extends Activity {
 			if (!selectedUser.getEnabled()){
 				disableScreen();
 			}
+		// New User - Adds new user immediately after user inputs name in pop up screen
 		} else if (userName != null){
 			nameField.setText(userName);
-		} else {
-			// Change update button text to add
-			update.setText(Html.fromHtml("<u>Add</u>"));
+			enabledStatus.setChecked(true);
+			// Set no fingerprint
+			userPrint.setID(-1);
+			printsArray.add(0, userPrint);
+			userPrintAdapter.addAll(printsArray);
+			printsList.setAdapter(userPrintAdapter);
+			addUser();
+			// Set no user role
+			userRole.setID(-1);
+			userRolesArray.add(0, userRole);
+			userRoleAdapter.addAll(userRolesArray);
+			rolesList.setAdapter(userRoleAdapter);
 		}			
 		super.onResume();
 	}
@@ -202,8 +223,11 @@ public class NewUser extends Activity {
 							wait.dismiss();
 							// Restarts this screen
 							Intent restart = getIntent();
-							restart.putExtra("User Prints", userPrints.toString());
+							if (userPrints.length() != 0){
+								restart.putExtra("User Prints", userPrints.toString());
+							}
 							restart.putExtra("User Roles", userRoles.toString());
+							restart.putExtra("User", selectedUser);
 							finish();
 							startActivity(restart);
 						} else {
@@ -301,8 +325,8 @@ public class NewUser extends Activity {
 							JSONObject response = (JSONObject) json.get(0);
 							if (response.getString("success").equalsIgnoreCase("true")){
 								// Remove 'no record' entry if exists
-								UserRole noRecord = new UserRole(userRoles.getJSONObject(0));
-								if (noRecord.getID() == -1){
+								UserRole noRecord = new UserRole(userRoleAdapter.getItem(0).toJson());
+								if ((noRecord.getID() == -1) && (userRoles.length() == 1)){
 									userRoles.remove(0);
 								}
 								JSONObject idVal = (JSONObject) json.get(1);
@@ -311,8 +335,11 @@ public class NewUser extends Activity {
 								wait.dismiss();
 								// Restarts this screen
 								Intent restart = getIntent();
-								restart.putExtra("User Prints", userPrints.toString());
+								if (userPrints.length() != 0){
+									restart.putExtra("User Prints", userPrints.toString());
+								}
 								restart.putExtra("User Roles", userRoles.toString());
+								restart.putExtra("User", selectedUser);
 								finish();
 								startActivity(restart);
 							} else {
@@ -359,18 +386,39 @@ public class NewUser extends Activity {
 	
 	// Add user 
 	public void addUser(){
+		final ProgressDialog wait = ProgressDialog.show(NewUser.this,"User", "Adding user", true, false, null);
 		JSONPost addUser = new JSONPost(new JSONCallbackFunction(){
 			@Override
 			public void execute(JSONArray json) {
+				if (json != null) {
+					try {
+						JSONObject response = (JSONObject) json.get(0);
+						if (response.getString("success").equalsIgnoreCase("true")){
+							JSONObject idVal = (JSONObject) json.get(1);
+							newUser.setID(idVal.getInt("id"));
+							selectedUser = newUser;
+							wait.dismiss();
+						} else {
+							wait.dismiss();
+							updateFail();
+						}
+					} catch (JSONException e){
+						e.printStackTrace();
+					}
+				} else {
+					wait.dismiss();
+					updateFail();
+				}
 			}
 		});
 		// Defines user
-		User newUser = new User();
+		newUser = new User();
 		newUser.setID(0);
 		newUser.setName(nameField.getText().toString());
 		newUser.setEnabled(enabledStatus.isChecked());
-		
-		//addUser.execute(ip.concat("/users"), "insert", )
+		newUser.setStartDate(0L);
+		newUser.setEndDate(99L);
+		addUser.execute(ip.concat("/users"), "insert", newUser.toJson().toString());
 	}
 	
 	// Enables or disables user
@@ -475,22 +523,6 @@ public class NewUser extends Activity {
 				} else {
 					changeUserStatus("delete");
 				}
-			}
-		// Add user
-		} else {
-			if (nameField.getText().toString().matches("")){
-				wait.dismiss();
-				AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
-				noConn.setMessage("User name cannot be empty");
-				noConn.setTitle("User Name");
-				noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {}
-			    });
-				noConn.setCancelable(false);
-				noConn.setCanceledOnTouchOutside(false);
-				noConn.show();
-			} else {
-				addUser();
 			}
 		}
 	}
