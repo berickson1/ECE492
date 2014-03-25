@@ -361,6 +361,7 @@ string Database::findEntryByName(string name){
 	File tuple;
 	unsigned int sizeRead;
 	int ret;
+	name.append(".txt");
 	const char *filename = name.c_str();
 
 	ret = file_fopen(&tuple, &db.myFs, (eint8*)filename, 'r');
@@ -752,7 +753,7 @@ string Database::deleteEntry(string file) {
 int Database::findID(string filename){
 	int pos = filename.find_first_of('-');
 	string idString;
-	idString = filename.substr(0, pos - 1);
+	idString = filename.substr(0, pos);
 	const char * idToConvert = idString.c_str();
 	int id = strtol(idToConvert, NULL, 10);
 	return id;
