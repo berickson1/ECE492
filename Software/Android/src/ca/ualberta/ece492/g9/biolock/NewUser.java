@@ -83,7 +83,8 @@ public class NewUser extends Activity {
 		// Retrieves information of the selected user if exists
 		Intent intent = getIntent();
 		selectedUser = (User) intent.getParcelableExtra("User");
-		if (intent.getExtras().size() != 1) {
+		String userName = intent.getStringExtra("Name");
+		if (intent.getExtras().size() > 2) {
 			try {
 				userPrints = new JSONArray(intent.getStringExtra("User Prints"));
 				userRoles = new JSONArray(intent.getStringExtra("User Roles"));
@@ -127,6 +128,8 @@ public class NewUser extends Activity {
 			if (!selectedUser.getEnabled()){
 				disableScreen();
 			}
+		} else if (userName != null){
+			nameField.setText(userName);
 		} else {
 			// Change update button text to add
 			update.setText(Html.fromHtml("<u>Add</u>"));

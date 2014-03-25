@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -83,8 +84,33 @@ public class Users extends Activity {
 
 	// User selected to add new user
 	public void addNewUser(View v) {
-		Intent newUser = new Intent(Users.this, NewUser.class);
-		startActivity(newUser);
+		AlertDialog requestName = new AlertDialog.Builder(mContext).create();
+		requestName.setMessage("Please enter user's name");
+		requestName.setTitle("User Name");
+		final EditText inputName = new EditText(this);
+		requestName.setView(inputName);
+		requestName.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+		requestName.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+            	// User did not set a name
+            	if (inputName.getText().toString().matches("")){
+            		AlertDialog noName = new AlertDialog.Builder(mContext).create();
+            		noName.setMessage("No name was set");
+            		noName.setTitle("User Name");
+            		noName.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {};
+            		});
+            		noName.show();
+            	} else {
+	            	Intent newUser = new Intent(Users.this, NewUser.class);
+	            	newUser.putExtra("Name", inputName.getText().toString());
+	        		startActivity(newUser);
+            	}
+            }
+        });
+		requestName.show();
 	}
 	
 	// Get user prints
