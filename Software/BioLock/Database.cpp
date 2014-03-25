@@ -902,12 +902,25 @@ bool Database::checkAccess(int fid){
 	UserRole userRole;
 	RoleSchedule roleSchedule;
 
+	time_t rawtime;
+	struct tm * timeInfo;
+
+	time(&rawtime);
+	timeInfo = localtime(&rawtime);
+
 	string userPrintJSON = findUserPrint(fid);
 	userPrint.loadFromJson(userPrintJSON);
+	History h;
+	h.id = fid;
+	h.uid = -1;
+	h.success = false;
+	h.time = mktime(timeInfo);
 
+	return true;
 	if (userPrint.uid != -1){
 		int uid = userPrint.uid;
 		printf("User found. ID:%d", uid);
+		h.uid = uid;
 		string userJSON = findUser(uid);
 		user.loadFromJson(userJSON);
 		if (!user.name.empty()){
@@ -915,7 +928,7 @@ bool Database::checkAccess(int fid){
 			//Check if user is enabled
 			if(user.enabled){
 				//Check if current date falls within allowed dates
-				double currentDate = 1;//TODO
+				double currentDate = mktime(timeInfo);
 				double startDate = user.startDate;
 				double endDate = user.endDate;
 				if ((currentDate > startDate) && (currentDate < endDate)){
@@ -930,13 +943,16 @@ bool Database::checkAccess(int fid){
 						int days = roleSchedule.days;
 						if (days != -1){
 							//Check days
-							int currentDay = 1;//TODO
+							int currentDay = timeInfo->tm_wday;
+							//TODO: check current day with allowed days
 							if (currentDay < days){
 								//Check if current time falls within allowed times
-								int currentTime = 1;//TODO
+								int currentTime = timeInfo->tm_hour;
 								int startTime = roleSchedule.startTime;
 								int endTime = roleSchedule.endTime;
-								if ((currentTime > startTime) && (currentTime < endTime)){
+								if ((currentTime >= startTime) && (currentTime < endTime)){
+									h.success = true;
+									insertHistory(h);
 									return true;
 								}
 							}
@@ -946,6 +962,8 @@ bool Database::checkAccess(int fid){
 			}
 		}
 	}
+
+	insertHistory(h);
 	return false;
 }
 // Unmount the file system
