@@ -411,7 +411,9 @@ string Database::findEntryByRID(char *path, int rid){
 		if (atoi((const char*) list.currentEntry.FileName) != 0){
 			file = findRID(filename);
 			if (file == rid){
-				results.append(",");
+				if (results.find("[") != results.length() - 1){
+					results.append(",");
+				}
 				results.append(findEntry(path, file));
 			}
 		}
@@ -450,7 +452,10 @@ string Database::findEntryByUID(char *path, int uid){
 		if (atoi((const char*) list.currentEntry.FileName) != 0){
 			file = findUID(name);
 			if (file == uid){
-				results.append(",");
+				// Not the first result
+				if (results.find("[") != results.length() - 1){
+					results.append(",");
+				}
 				results.append(findEntryByName(name));
 			}
 		}
