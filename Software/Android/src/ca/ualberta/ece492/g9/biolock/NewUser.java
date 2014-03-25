@@ -158,8 +158,10 @@ public class NewUser extends Activity {
 		confirm.setTitle("Role");
 		confirm.setButton(AlertDialog.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
-				deleteUserRole(position);
-				confirm.cancel();
+				if (userRolesArray.get(position).getID() != -1){
+					deleteUserRole(position);
+					confirm.cancel();
+				}
 			}
 	    });
 		confirm.setButton(AlertDialog.BUTTON_NEGATIVE, "No", new DialogInterface.OnClickListener() {
