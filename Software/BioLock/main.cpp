@@ -186,10 +186,13 @@ void task3(void* pdata) {
 		if(err != OS_NO_ERR){
 			printf("Error pending on solenoid semaphore\n");
 		}
-		OSSemPend(solenoidSem, 10, &err);
-		if(err != OS_NO_ERR){
-			printf("Error pending on solenoid semaphore\n");
-		}
+		do{
+			//If the Semaphore is posted to again, sleep for 10 seconds
+			OSSemPend(solenoidSem, 10, &err);
+			if(err == OS_NO_ERR){
+				printf("Door unlocked again, sleep some more\n");
+			}
+		} while (err == OS_NO_ERR);
 		printf("Locking\n");
 		Solenoid::lock(solenoidMutex);
 
