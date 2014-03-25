@@ -181,49 +181,54 @@ public class NewUser extends Activity {
 		if (requestCode == 0){
 			int id = fingerprint.getIntExtra("id", -1);
 			if (id != -1){
-				//Add userprint to db
-				JSONPost addUserPrint = new JSONPost (new JSONCallbackFunction(){
-					@Override
-					public void execute(JSONArray json) {
-						if (json!= null) {
-							try {
-								JSONObject response = (JSONObject) json.get(0);
-								if (response.getString("success").equalsIgnoreCase("true")){
-									// Remove 'no record' entry if exists
-									UserPrint noRecord = new UserPrint(userPrintAdapter.getItem(0).toJson());
-									if ((noRecord.getID() == -1) && (userPrints.length() == 1)){
-										userPrints.remove(0);
-									}
-									userPrints.put(newPrint.toJson());
-									wait.dismiss();
-									// Restarts this screen
-									Intent restart = getIntent();
-									restart.putExtra("User Prints", userPrints.toString());
-									if (userRoles.length() != 0){
-										restart.putExtra("User Roles", userRoles.toString());
-									}
-									restart.putExtra("User", selectedUser);
-									finish();
-									startActivity(restart);
-								} else {
-									wait.dismiss();
-									updateFail();
-								}
-							} catch (JSONException e){
-								e.printStackTrace();
+				addUserPrint(id);
+			}
+		}
+	}
+	
+	// Adds user print to database
+	public void addUserPrint(int id){
+		//Add userprint to db
+		JSONPost addUserPrint = new JSONPost (new JSONCallbackFunction(){
+			@Override
+			public void execute(JSONArray json) {
+				if (json!= null) {
+					try {
+						JSONObject response = (JSONObject) json.get(0);
+						if (response.getString("success").equalsIgnoreCase("true")){
+							// Remove 'no record' entry if exists
+							UserPrint noRecord = new UserPrint(userPrintAdapter.getItem(0).toJson());
+							if ((noRecord.getID() == -1) && (userPrints.length() == 1)){
+								userPrints.remove(0);
 							}
+							userPrints.put(newPrint.toJson());
+							wait.dismiss();
+							// Restarts this screen
+							Intent restart = getIntent();
+							restart.putExtra("User Prints", userPrints.toString());
+							if (userRoles.length() != 0){
+								restart.putExtra("User Roles", userRoles.toString());
+							}
+							restart.putExtra("User", selectedUser);
+							finish();
+							startActivity(restart);
 						} else {
 							wait.dismiss();
 							updateFail();
 						}
+					} catch (JSONException e){
+						e.printStackTrace();
 					}
-				});
-				newPrint =  new UserPrint();
-				newPrint.setID(id);
-				newPrint.setUID(selectedUser.getID());
-				addUserPrint.execute(ip.concat("/prints"), "insert", newPrint.toJson().toString());
+				} else {
+					wait.dismiss();
+					updateFail();
+				}
 			}
-		}
+		});
+		newPrint =  new UserPrint();
+		newPrint.setID(id);
+		newPrint.setUID(selectedUser.getID());
+		addUserPrint.execute(ip.concat("/prints"), "insert", newPrint.toJson().toString());	
 	}
 	
 	// Check if user wants to delete user role

@@ -97,6 +97,7 @@ public class AdminLogin extends Activity {
 		//checkUser.execute(ip.concat("/checkAdmin"));
 	}
 	
+	// Scan fingerprint for the first time
 	public void addPrint(){
 		printStatus.setText("Scan fingerprint");
 		printStatus.setVisibility(View.VISIBLE);
@@ -107,7 +108,7 @@ public class AdminLogin extends Activity {
 					try{
 						JSONObject response = (JSONObject) json.get(0);
 						if (response.getString("success").equalsIgnoreCase("true")){
-							addPrintAgain();
+							requestPrintAgain();
 						} else {
 							displayFail();
 						}
@@ -123,54 +124,59 @@ public class AdminLogin extends Activity {
 	}
 	
 	// Requests user to scan print again for adding
-	public void addPrintAgain(){
+	public void requestPrintAgain(){
 		AlertDialog scanAgain  = new AlertDialog.Builder(mContext).create();
 		scanAgain.setMessage("Scan fingerprint again");
 		scanAgain.setTitle("Fingerprint");
 		scanAgain.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
-				JSONParser enrollUser2 = new JSONParser(new JSONCallbackFunction() {
-					@Override
-					public void execute(JSONArray json) {
-						if (json != null) {
-							try{
-								JSONObject response = (JSONObject) json.get(0);
-								if (response.getString("success").equalsIgnoreCase("true")){
-									final JSONObject id = (JSONObject) json.get(1);
-									AlertDialog added  = new AlertDialog.Builder(mContext).create();
-									added.setMessage("Fingerprint Added");
-									added.setTitle("Fingerprint");
-									added.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-										public void onClick(DialogInterface dialog, int which) {
-											try {
-												Intent addedPrint = new Intent();
-												addedPrint.putExtra("id", id.getInt("id"));
-											} catch (JSONException e) {
-												e.printStackTrace();
-											}
-											finish();
-										}
-								    });
-									added.setCancelable(false);
-									added.setCanceledOnTouchOutside(false);
-									added.show();
-								} else {
-									displayFail();
-								}
-							} catch (JSONException e){
-								e.printStackTrace();
-							}
-						} else {
-							displayFail();
-						}
-					}
-				});
-				enrollUser2.execute(ip.concat("/enroll2"));
+				addPrintAgain();
 			}
 	    });
 		scanAgain.setCancelable(false);
 		scanAgain.setCanceledOnTouchOutside(false);
 		scanAgain.show();
+	}
+	
+	// Scan fingerprint for the second time
+	public void addPrintAgain(){
+		JSONParser enrollUser2 = new JSONParser(new JSONCallbackFunction() {
+			@Override
+			public void execute(JSONArray json) {
+				if (json != null) {
+					try{
+						JSONObject response = (JSONObject) json.get(0);
+						if (response.getString("success").equalsIgnoreCase("true")){
+							final JSONObject id = (JSONObject) json.get(1);
+							AlertDialog added  = new AlertDialog.Builder(mContext).create();
+							added.setMessage("Fingerprint Added");
+							added.setTitle("Fingerprint");
+							added.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog, int which) {
+									try {
+										Intent addedPrint = new Intent();
+										addedPrint.putExtra("id", id.getInt("id"));
+									} catch (JSONException e) {
+										e.printStackTrace();
+									}
+									finish();
+								}
+						    });
+							added.setCancelable(false);
+							added.setCanceledOnTouchOutside(false);
+							added.show();
+						} else {
+							displayFail();
+						}
+					} catch (JSONException e){
+						e.printStackTrace();
+					}
+				} else {
+					displayFail();
+				}
+			}
+		});
+		enrollUser2.execute(ip.concat("/enroll2"));	
 	}
 	
 	// Displays message for failure
