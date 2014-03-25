@@ -751,10 +751,15 @@ string Database::deleteEntry(string file) {
 }
 
 int Database::findID(string filename){
-	int folder = filename.find_first_of('/');
+	int folder = filename.find_last_of('/');
 	int pos = filename.find_first_of('-');
 	string idString;
-	idString = filename.substr(folder + 1, pos);
+	if (pos != -1 ){
+		// Filename contains more than just id
+		idString = filename.substr(folder + 1, pos);
+	} else {
+		idString = filename.substr(folder + 1, -1);
+	}
 	const char * idToConvert = idString.c_str();
 	int id = strtol(idToConvert, NULL, 10);
 	return id;
