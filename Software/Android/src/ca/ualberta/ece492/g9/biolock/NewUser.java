@@ -52,13 +52,16 @@ public class NewUser extends Activity {
 	private ProgressDialog wait;
 	private JSONPost changeName;
 	private JSONPost changeStatus;
+	private ArrayList<UserPrint> printsArray;
 	private ArrayList<UserRole> userRolesArray;
 	private JSONArray userPrints;
 	private JSONArray userRoles;
 	private UserRole roleToDelete;
 	private UserRole addUserRole;
 	private User newUser;
+	private UserPrint newPrint;
 	private UserRoleAdapter userRoleAdapter;
+	private UserPrintAdapter userPrintAdapter;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		mContext = this;
@@ -81,8 +84,7 @@ public class NewUser extends Activity {
 	}
 	
 	public void onResume(){
-		ArrayList<UserPrint> printsArray = new ArrayList<UserPrint>();
-		UserPrintAdapter userPrintAdapter = null;
+		printsArray = new ArrayList<UserPrint>();
 		UserPrint userPrint = new UserPrint();
 		userRolesArray = new ArrayList<UserRole>();
 		UserRole userRole = new UserRole();
@@ -169,7 +171,59 @@ public class NewUser extends Activity {
 		} else {
 			addPrint.putExtra("Caller", "UpdateUser");
 		}
-		startActivity(addPrint);
+		startActivityForResult(addPrint, 0);
+	}
+	
+	// Gets fingerprint id & adds to db
+	public void onActivityResult(int requestCode, Intent fingerprint){
+		final ProgressDialog wait = ProgressDialog.show(NewUser.this,"User Print", "Adding user print", true, false, null);
+		// Returned from AdminLogin
+		if (requestCode == 0){
+			int id = fingerprint.getIntExtra("id", -1);
+			if (id != -1){
+				//Add userprint to db
+				JSONPost addUserPrint = new JSONPost (new JSONCallbackFunction(){
+					@Override
+					public void execute(JSONArray json) {
+						if (json!= null) {
+							try {
+								JSONObject response = (JSONObject) json.get(0);
+								if (response.getString("success").equalsIgnoreCase("true")){
+									// Remove 'no record' entry if exists
+									UserPrint noRecord = new UserPrint(userPrintAdapter.getItem(0).toJson());
+									if ((noRecord.getID() == -1) && (userPrints.length() == 1)){
+										userPrints.remove(0);
+									}
+									userPrints.put(newPrint.toJson());
+									wait.dismiss();
+									// Restarts this screen
+									Intent restart = getIntent();
+									restart.putExtra("User Prints", userPrints.toString());
+									if (userRoles.length() != 0){
+										restart.putExtra("User Roles", userRoles.toString());
+									}
+									restart.putExtra("User", selectedUser);
+									finish();
+									startActivity(restart);
+								} else {
+									wait.dismiss();
+									updateFail();
+								}
+							} catch (JSONException e){
+								e.printStackTrace();
+							}
+						} else {
+							wait.dismiss();
+							updateFail();
+						}
+					}
+				});
+				newPrint =  new UserPrint();
+				newPrint.setID(id);
+				newPrint.setUID(selectedUser.getID());
+				addUserPrint.execute(ip.concat("/prints"), "insert", newPrint.toJson().toString());
+			}
+		}
 	}
 	
 	// Check if user wants to delete user role
