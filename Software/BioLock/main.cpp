@@ -180,23 +180,9 @@ void task2(void* pdata) {
 	}
 }
 void task3(void* pdata) {
-	INT8U err = OS_NO_ERR;
 	while (1){
-		OSSemPend(solenoidSem, 0, &err);
-		if(err != OS_NO_ERR){
-			printf("Error pending on solenoid semaphore\n");
-		}
-		do{
-			//If the Semaphore is posted to again, sleep for 10 seconds
-			OSSemPend(solenoidSem, 10, &err);
-			if(err == OS_NO_ERR){
-				printf("Door unlocked again, sleep some more\n");
-			}
-		} while (err == OS_NO_ERR);
-		printf("Locking\n");
-		Solenoid::lock(solenoidMutex);
-
-		OSTimeDlyHMSM(0,0,1,0);
+		//Ensures that the lock re-locks
+		Solenoid::timedLock(solenoidSem, solenoidMutex, 10);
 	}
 }
 

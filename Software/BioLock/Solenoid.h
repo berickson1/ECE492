@@ -22,6 +22,7 @@ extern "C"{
 class Solenoid {
 public:
 	static void unlock(OS_EVENT * solenoidSem, OS_EVENT * solenoidMutex);
+	static void timedLock(OS_EVENT * solenoidSem, OS_EVENT * solenoidMutex, int unlockedTime);
 	static void lock(OS_EVENT * solenoidMutex);
 };
 
