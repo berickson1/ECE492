@@ -395,6 +395,8 @@ const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 
 extern "C" {
 void startTasks() {
+	Camera::init();
+
 	OSTaskCreateExt(task1, NULL, &task1_stk[TASK_STACKSIZE - 1], TASK1_PRIORITY,
 			TASK1_PRIORITY, task1_stk, TASK_STACKSIZE, NULL, 0);
 	OSTaskCreateExt(task2, NULL, &task2_stk[TASK_STACKSIZE - 1], TASK2_PRIORITY,
@@ -435,9 +437,6 @@ int main(void) {
 		printf("Error initializing solenoid mutex\n");
 		return -1;
 	}
-
-	Camera::enableSnapshotMode();
-	Camera::mirrorHorizontal();
 
 #ifndef NOWEBSERVER
 	startWebServer(&startTasks, &createHttpResponse, &handleHTTPPost);

@@ -188,7 +188,7 @@ architecture structure of BioLock is
 begin
 
 	GPIO_1(17) <= '1'; --reset
-	GPIO_1(16) <= CLOCK_50;
+	GPIO_1(16) <= CLOCK_27;
 	
 	DRAM_BA_1 <= BA(1);
 	DRAM_BA_0 <= BA(0);
