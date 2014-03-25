@@ -57,6 +57,8 @@ public class NewUser extends Activity {
 	private ArrayList<UserRole> userRolesArray;
 	private JSONArray userPrints;
 	private JSONArray userRoles;
+	private UserRole roleToDelete;
+	private UserRole addUserRole;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		mContext = this;
@@ -178,6 +180,23 @@ public class NewUser extends Activity {
 					try {
 						JSONObject response = (JSONObject) json.get(0);
 						if (response.getString("success").equalsIgnoreCase("true")){
+							try {
+								// Remove user role from listview
+								for (int i = 0; i < userRoles.length(); i++){
+									UserRole removeRole = new UserRole(userRoles.getJSONObject(i));
+									if (removeRole.getName().equals(roleToDelete.getName())){
+										userRoles.remove(i);
+									}
+								}
+								// Display no roles found
+								if (userRoles.length() == 0){
+									UserRole noUserRole = new UserRole();
+									noUserRole.setID(-1);
+									userRoles.put(0, noUserRole.toJson());
+								}
+							} catch (JSONException e){
+								e.printStackTrace();
+							}
 							wait.dismiss();
 							// Restarts this screen
 							Intent restart = getIntent();
@@ -198,25 +217,7 @@ public class NewUser extends Activity {
 				}
 			}
 		});
-// Look into deleting once confirmed
-		UserRole roleToDelete = (UserRole) rolesList.getItemAtPosition(position);
-		try {
-			// Remove user role from listview
-			for (int i = 0; i < userRoles.length(); i++){
-				UserRole removeRole = new UserRole(userRoles.getJSONObject(i));
-				if (removeRole.getName().equals(roleToDelete.getName())){
-					userRoles.remove(i);
-				}
-			}
-			// Display no roles found
-			if (userRoles.length() == 0){
-				UserRole noUserRole = new UserRole();
-				noUserRole.setID(-1);
-				userRoles.put(0, noUserRole.toJson());
-			}
-		} catch (JSONException e){
-			e.printStackTrace();
-		}
+		roleToDelete = (UserRole) rolesList.getItemAtPosition(position);
 		deleteRole.execute(ip.concat("/userRole"), "delete", roleToDelete.toJson().toString());
 	}
 	
