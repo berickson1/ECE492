@@ -54,7 +54,7 @@ public class Roles extends Activity {
 				if (json != null) {
 					final ListView roleList = (ListView) findViewById(R.id.listRoles);
 					ArrayList<Role> rolesArray = new ArrayList<Role>();
-					RoleAdapter adapter = new RoleAdapter(mContext, rolesArray);
+					RoleAdapter adapter = new RoleAdapter(mContext, "check", true, rolesArray);
 					adapter.clear();
 					Role role = new Role();
 					rolesArray = role.fromJson(json);

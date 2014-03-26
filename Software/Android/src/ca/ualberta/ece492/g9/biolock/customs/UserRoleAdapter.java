@@ -44,7 +44,7 @@ public class UserRoleAdapter extends ArrayAdapter<UserRole> {
        
        // Populate the data into the template view using the data object
        if (userRole.getID() == -1){
-    	   role.setText("No role found");
+    	   role.setText("No user roles found");
        } else {
     	   role.setText(String.valueOf(userRole.getName()));
        }

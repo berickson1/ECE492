@@ -326,7 +326,7 @@ public class NewUser extends Activity {
 	//Displays role in popup
 	public void displayRoles(JSONArray json){
 		ArrayList<Role> rolesArray = new ArrayList<Role>();
-		roleAdapter = new RoleAdapter(mContext, rolesArray);
+		roleAdapter = new RoleAdapter(mContext, "noCheck", true, rolesArray);
 		roleAdapter.clear();
 		Role role = new Role();
 		rolesArray = role.fromJson(json);

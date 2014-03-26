@@ -9,6 +9,7 @@ import ca.ualberta.ece492.g9.biolock.R;
 import ca.ualberta.ece492.g9.biolock.types.History;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +17,9 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 public class HistoryAdapter extends ArrayAdapter<History> {
+	boolean enabled;
 	
-	public HistoryAdapter(Context context, ArrayList<History> history) {
+	public HistoryAdapter(Context context, boolean enabled, ArrayList<History> history) {
 		super(context, R.layout.list_view_row_two_columns, history);
 	}
 	
@@ -36,8 +38,20 @@ public class HistoryAdapter extends ArrayAdapter<History> {
        TextView time = (TextView) convertView.findViewById(R.id.listTime);
        
        // Populate the data into the template view using the data object
-       date.setText(String.valueOf(history.getTime()));
-       time.setText(String.valueOf(history.getTime()));
+       if (history.getID() == -1){
+    	   date.setText(String.valueOf(history.getTime()));
+    	   time.setText(String.valueOf(history.getTime()));
+       } else {
+    	   date.setText("No access history found");
+    	   time.setText("");
+       }
+       
+       if (!enabled){
+    	   date.setTextColor(Color.GRAY);
+    	   date.setFocusable(true);
+    	   time.setTextColor(Color.GRAY);
+    	   time.setFocusable(true);
+       }
        
        // Return the completed view to render on screen
        return convertView;
