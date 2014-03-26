@@ -53,5 +53,6 @@
     <string name="sampleTime">00:00</string>
     <string name="endTime">End Time</string>
     <string name="sampleDate">YYYY-MM-DD</string>
+    <string name="picture">Picture</string>
 
 </resources>

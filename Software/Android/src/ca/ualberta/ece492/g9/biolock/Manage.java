@@ -49,6 +49,12 @@ public class Manage extends Activity {
 		startActivity(showRoles);
 	}
 	
+	// Load and displays picture
+	public void displayPicture(View v) {
+		Intent showPicture = new Intent(Manage.this, Picture.class);
+		startActivity(showPicture);
+	}
+	
 	// Jumps to Log screen
 	public void displayLog(View v) {
 		Intent showLog = new Intent(Manage.this, Log.class);

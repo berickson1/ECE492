@@ -59,9 +59,13 @@
             android:name="ca.ualberta.ece492.g9.biolock.Log"
             android:label="@+id/manageLog" >
         </activity>
-         <activity
+        <activity
             android:name="ca.ualberta.ece492.g9.biolock.NewSched"
             android:label="@+id/newSchedules" >
+        </activity>
+        <activity
+            android:name="ca.ualberta.ece492.g9.biolock.Picture"
+            android:label="@+id/showPicture" >
         </activity>
     </application>
 
