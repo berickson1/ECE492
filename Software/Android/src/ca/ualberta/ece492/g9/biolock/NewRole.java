@@ -48,8 +48,6 @@ public class NewRole extends Activity {
 	private CheckBox enabledAdmin;
 	private ListView usersList;
 	private ListView schedList;
-	private TextView updateRole;
-	private TextView deleteRole;
 	private TextView addSched;
 	private JSONArray userJSON;
 	private JSONArray scheduleJSON;
@@ -73,8 +71,6 @@ public class NewRole extends Activity {
 		enabledStatus = (CheckBox) findViewById(R.id.enabledRoleStatusBox);
 		usersList = (ListView) findViewById(R.id.usersList);
 		schedList = (ListView) findViewById(R.id.accessList);
-		updateRole = (TextView) findViewById(R.id.updateRole);
-		deleteRole = (TextView) findViewById(R.id.deleteRole);	
 		addSched = (TextView) findViewById(R.id.addSched);
 	}
 	
@@ -278,12 +274,27 @@ public class NewRole extends Activity {
 	
 	// Opens new screen to show schedule information
 	public void loadSchedule(int position){
-		
+		Intent updateSched = new Intent(NewRole.this, NewSched.class);
+		updateSched.putExtra("Role", selectedRole);
+		updateSched.putExtra("Schedule", roleSchedAdapter.getItemId(position));
+		startActivityForResult(updateSched, 0);	
 	}
 	
 	// Opens new blank schedule screen
 	public void addSched(View v) {
+		Intent addSched = new Intent(NewRole.this, NewSched.class);
+		addSched.putExtra("Role", selectedRole);
+		startActivityForResult(addSched, 0);
+	}
+	
+	// Gets schedule back to add to listview
+	public void onActivityResult(int requestCode, Intent schedule){
+		// Returned from NewSched
+		if (requestCode == 0){
+			RoleSchedule newSched = schedule.getParcelableExtra("New Schedule");
 			
+			//TODO: Add schedule to listview
+		}
 	}
 	
 	// Confirms deletion of role
@@ -335,7 +346,7 @@ public class NewRole extends Activity {
 	
 	// Updates the role
 	public void updateRole() {
-		final ProgressDialog updateRoleWait = ProgressDialog.show(NewRole.this,"Role", "Deleting role", true, false, null);
+		final ProgressDialog updateRoleWait = ProgressDialog.show(NewRole.this,"Role", "Updating role", true, false, null);
 		JSONPost updateRole = new JSONPost(new JSONCallbackFunction() {
 			@Override
 			public void execute(JSONArray json) {
@@ -375,9 +386,9 @@ public class NewRole extends Activity {
 		// Check enable status
 		} else if (enabledStatus.isChecked() != selectedRole.getEnabled()) {
 			updateRole();
+		} else {
+			finish();
 		}
-		
-		finish();
 	}
 	
 	// Displays popup from failure
@@ -396,6 +407,7 @@ public class NewRole extends Activity {
 	// Grays out views on screen
 	public void disableScreen(){
 		nameField.setEnabled(false);
+		enabledAdmin.setEnabled(false);
 		usersList.setEnabled(false);
 		schedList.setEnabled(false);
 		addSched.setClickable(false);
