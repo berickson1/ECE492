@@ -10,7 +10,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class UserRole{
-	String name;
+	String name, userName;
 	int id, uid, rid;
 	Long startDate, endDate;
 	
@@ -22,6 +22,7 @@ public class UserRole{
 		try {
 			id = jsonObjects.getInt("id");
 			name = jsonObjects.getString("name");
+			userName = jsonObjects.getString("userName");
 			uid = jsonObjects.getInt("uid");
 			rid = jsonObjects.getInt("rid");
 			startDate = jsonObjects.getLong("startDate");
@@ -48,6 +49,7 @@ public class UserRole{
     	try {
     		jsonObj.put("id", id);
     		jsonObj.put("name", name);
+    		jsonObj.put("userName", userName);
 			jsonObj.put("uid", uid);
 			jsonObj.put("rid", rid);
 			jsonObj.put("startDate", startDate);
@@ -72,6 +74,14 @@ public class UserRole{
 	
 	public void setName(String name){
 		this.name = name;
+	}
+	
+	public String getUserName(){
+		return userName;
+	}
+	
+	public void setUserName(String userName){
+		this.userName = userName;
 	}
 	
 	public int getUID(){
@@ -114,6 +124,7 @@ public class UserRole{
 	public UserRole(Parcel in){
 		this.id = in.readInt();
 		this.name = in.readString();
+		this.userName = in.readString();
 		this.uid = in.readInt();
 		this.rid = in.readInt();
 		this.startDate = in.readLong();
@@ -124,6 +135,7 @@ public class UserRole{
 	public void writeToParcel(Parcel pc, int flags) {
 		pc.writeInt(id);
 		pc.writeString(name);
+		pc.writeString(userName);
 		pc.writeInt(uid);
 		pc.writeInt(rid);
 		pc.writeLong(startDate);

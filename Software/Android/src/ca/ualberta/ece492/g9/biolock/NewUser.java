@@ -99,7 +99,7 @@ public class NewUser extends Activity {
 				if (intent.getStringExtra("User Prints") != null){
 					userPrintsJSON = new JSONArray(intent.getStringExtra("User Prints"));
 				}
-				userRoleAdapter = new UserRoleAdapter(mContext, selectedUser.getEnabled(), userRolesArray);
+				userRoleAdapter = new UserRoleAdapter(mContext, selectedUser.getEnabled(), "roleName", userRolesArray);
 				if (intent.getStringExtra("User Roles") != null){
 					userRolesJSON = new JSONArray(intent.getStringExtra("User Roles"));
 				}
@@ -108,7 +108,7 @@ public class NewUser extends Activity {
 			}
 		} else {
 			userPrintAdapter = new UserPrintAdapter(mContext, true, printsArray);
-			userRoleAdapter = new UserRoleAdapter(mContext, true, userRolesArray);
+			userRoleAdapter = new UserRoleAdapter(mContext, true, "roleName", userRolesArray);
 		}
 		userPrintAdapter.clear();
 		userRoleAdapter.clear();
@@ -299,7 +299,7 @@ public class NewUser extends Activity {
 	
 	// Popup to select from roles
 	public void addRole(View v) {
-		final ProgressDialog displayRolesWait = ProgressDialog.show(NewUser.this,"User Information", "Loading roles", true, false, null);
+		final ProgressDialog displayRolesWait = ProgressDialog.show(NewUser.this,"Roles", "Loading roles", true, false, null);
 		JSONParser parseRoles = new JSONParser(new JSONCallbackFunction() {
 			@Override
 			public void execute(JSONArray json) {
@@ -406,6 +406,7 @@ public class NewUser extends Activity {
     	addUserRole = new UserRole();
     	Role role = roleAdapter.getItem(which);
     	addUserRole.setName(role.getName());
+    	addUserRole.setUserName(selectedUser.getName());
     	addUserRole.setID(0);
     	addUserRole.setUID(selectedUser.getID());
     	addUserRole.setRID(role.getID());

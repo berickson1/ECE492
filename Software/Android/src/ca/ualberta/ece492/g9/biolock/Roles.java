@@ -125,7 +125,7 @@ public class Roles extends Activity {
 	
 	// Gets users who have this role
 	public void getUsers(final Role selectedRole){
-		final ProgressDialog loadUsersWait = ProgressDialog.show(Roles.this, "Users", "Loading role users", true, false, null);
+		final ProgressDialog loadUsersWait = ProgressDialog.show(Roles.this, "Role Users", "Loading role users", true, false, null);
 		JSONParser parseUsers = new JSONParser(new JSONCallbackFunction() {
 			@Override
 			public void execute(JSONArray json) {
@@ -139,7 +139,7 @@ public class Roles extends Activity {
 				}
 			}
 		});
-		parseUsers.execute(ip.concat("roleUser").concat(String.valueOf(selectedRole.getID())));
+		parseUsers.execute(ip.concat("/roleUser/").concat(String.valueOf(selectedRole.getID())));
 	}
 	
 	// Gets role schedules 
@@ -158,7 +158,7 @@ public class Roles extends Activity {
 				}
 			}
 		});
-		parseRoleSched.execute(ip.concat("/roleSchedules").concat(String.valueOf(selectedRole.getID())));
+		parseRoleSched.execute(ip.concat("/roleSchedules/").concat(String.valueOf(selectedRole.getID())));
 	}
 	
 	public void connFailed(){

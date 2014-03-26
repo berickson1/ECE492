@@ -16,10 +16,12 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 public class UserRoleAdapter extends ArrayAdapter<UserRole> {
+	String display;
 	boolean enabled;
 	
-	public UserRoleAdapter(Context context, boolean enabled, ArrayList<UserRole> userRoles) {
+	public UserRoleAdapter(Context context, boolean enabled, String display, ArrayList<UserRole> userRoles) {
 		super(context, R.layout.list_view_row_details, userRoles);
+		this.display = display;
 		this.enabled = enabled;
 	}
 	
@@ -45,7 +47,9 @@ public class UserRoleAdapter extends ArrayAdapter<UserRole> {
        // Populate the data into the template view using the data object
        if (userRole.getID() == -1){
     	   role.setText("No user roles found");
-       } else {
+       } else if (display.equals("userName")){
+    	   role.setText(String.valueOf(userRole.getUserName()));
+       } else if (display.equals("roleName")){
     	   role.setText(String.valueOf(userRole.getName()));
        }
        

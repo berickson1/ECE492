@@ -144,7 +144,7 @@ public class Users extends Activity {
 	}
 	
 	public void getRoles(User selectedUser){
-		final ProgressDialog loadRolesWait = ProgressDialog.show(Users.this,"Roles", "Loading user roles", true, false, null);
+		final ProgressDialog loadRolesWait = ProgressDialog.show(Users.this,"User Roles", "Loading user roles", true, false, null);
 		// Obtain user's roles
 		JSONParser parseRoles = new JSONParser(new JSONCallbackFunction() {
 			@Override
