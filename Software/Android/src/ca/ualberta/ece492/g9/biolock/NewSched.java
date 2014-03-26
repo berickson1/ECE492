@@ -286,17 +286,7 @@ public class NewSched extends Activity {
          TimePickerDialog selectStartHour = new TimePickerDialog(NewSched.this, new TimePickerDialog.OnTimeSetListener() {
              @Override
              public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-            	 String startTime = null; 
-            	 if (selectedHour < 10){
-            		 startTime = "0" + selectedHour + ":";
-            	 } else {
-            		 startTime = selectedHour + ":";
-            	 }
-            	 if (selectedMinute < 10){
-            		 startTime += "0" + selectedMinute;
-            	 } else {
-            		 startTime += selectedMinute;
-            	 }
+            	 String startTime = getTime(selectedHour, selectedMinute);
                  startHour.setText(startTime);
              }
          }, hour, minute, true);
@@ -313,17 +303,7 @@ public class NewSched extends Activity {
         TimePickerDialog selectEndHour = new TimePickerDialog(NewSched.this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-            	String endTime = null; 
-	           	if (selectedHour < 10){
-	           		endTime = "0" + selectedHour + ":";
-	           	} else {
-	           		endTime = selectedHour + ":";
-	           	}
-	           	if (selectedMinute < 10) {
-	           		endTime += "0" + selectedMinute;
-	           	} else {
-	           		endTime += selectedMinute;
-	           	}
+            	String endTime = getTime(selectedHour, selectedMinute);
 	           	endHour.setText(endTime);
             }
         }, hour, minute, true);
@@ -342,17 +322,7 @@ public class NewSched extends Activity {
 			@Override
 			public void onDateSet(DatePicker view, int selectedYear, int selectedMonth,
 					int selectedDay) {
-				String startDay = selectedYear + "-";
-				if (selectedMonth < 10) {
-					startDay += "0" + selectedMonth + "-";
-				} else {
-					startDay += selectedMonth + "-";
-				}
-				if (selectedDay < 10){
-					startDay += "0" + selectedDay;
-				} else {
-					startDay += selectedDay;
-				}
+				String startDay = getDate(selectedYear, selectedMonth, selectedDay);
 				startDate.setText(startDay);
 			}
         }, year, month, day);
@@ -370,22 +340,46 @@ public class NewSched extends Activity {
 			@Override
 			public void onDateSet(DatePicker view, int selectedYear, int selectedMonth,
 					int selectedDay) {
-				String endDay = selectedYear + "-";
-				if (selectedMonth < 10) {
-					endDay += "0" + selectedMonth + "-";
-				} else {
-					endDay += selectedMonth + "-";
-				}
-				if (selectedDay < 10){
-					endDay += "0" + selectedDay;
-				} else {
-					endDay += selectedDay;
-				}
+				String endDay = getDate(selectedYear, selectedMonth, selectedDay);
 				endDate.setText(endDay);
 			}
         }, year, month, day);
         selectEndDate.setTitle("Select End Date");
         selectEndDate.show();
+	}
+	
+	// Gets the date
+	public String getDate(int year, int month, int day){
+		String date = year + "-";
+		// Month offset
+		month += 1;
+		if (month < 10) {
+			date += "0" + month + "-";
+		} else {
+			date += month + "-";
+		}
+		if (day < 10){
+			date += "0" + day;
+		} else {
+			date += day;
+		}
+		return date;
+	}
+	
+	// Gets the time
+	public String getTime(int hour, int minute){
+		String time = null; 
+       	if (hour < 10){
+       		time = "0" + hour + ":";
+       	} else {
+       		time = hour + ":";
+       	}
+       	if (minute < 10) {
+       		time += "0" + minute;
+       	} else {
+       		time += minute;
+       	}
+       	return time;
 	}
 	
 	// Displays popup from failure
