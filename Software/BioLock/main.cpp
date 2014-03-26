@@ -180,6 +180,7 @@ void task2(void* pdata) {
 	}
 }
 void task3(void* pdata) {
+	Camera::init();
 	while (1){
 		//Ensures that the lock re-locks
 		Solenoid::timedLock(solenoidSem, solenoidMutex, 10);
@@ -395,8 +396,6 @@ const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 
 extern "C" {
 void startTasks() {
-	Camera::init();
-
 	OSTaskCreateExt(task1, NULL, &task1_stk[TASK_STACKSIZE - 1], TASK1_PRIORITY,
 			TASK1_PRIORITY, task1_stk, TASK_STACKSIZE, NULL, 0);
 	OSTaskCreateExt(task2, NULL, &task2_stk[TASK_STACKSIZE - 1], TASK2_PRIORITY,
