@@ -125,13 +125,14 @@ public class Users extends Activity {
 	
 	// Get user prints
 	public void getPrints(final User selectedUser){
-		final ProgressDialog loadPrintsWait = ProgressDialog.show(Users.this,"Users", "Loading users", true, false, null);
+		final ProgressDialog loadPrintsWait = ProgressDialog.show(Users.this,"Prints", "Loading user prints", true, false, null);
 		// Obtain user's enrolled fingerprints
 		JSONParser parsePrints = new JSONParser(new JSONCallbackFunction() {
 			@Override
 			public void execute(JSONArray json) {
 				if (json != null){
 					updateUser.putExtra("User Prints", json.toString());
+					loadPrintsWait.dismiss();
 					getRoles(selectedUser);
 				} else {
 					loadPrintsWait.dismiss();
@@ -143,7 +144,7 @@ public class Users extends Activity {
 	}
 	
 	public void getRoles(User selectedUser){
-		final ProgressDialog loadRolesWait = ProgressDialog.show(Users.this,"Users", "Loading users", true, false, null);
+		final ProgressDialog loadRolesWait = ProgressDialog.show(Users.this,"Roles", "Loading user roles", true, false, null);
 		// Obtain user's roles
 		JSONParser parseRoles = new JSONParser(new JSONCallbackFunction() {
 			@Override
@@ -173,6 +174,5 @@ public class Users extends Activity {
 		noConn.setCancelable(false);
 		noConn.setCanceledOnTouchOutside(false);
 		noConn.show();
-	}
-	
+	}	
 }
