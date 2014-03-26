@@ -37,5 +37,21 @@
     <string name="add_role"><u>Add Role</u></string>
     <string name="enabledAdmin">Admin</string>
     <string name="add_sched">Add Schedule</string>
+    <string name="display_schedInfo">Schedule</string>
+    <string name="days">Days</string>
+    <string name="hours">Hours</string>
+    <string name="startDate">Start Date</string>
+    <string name="endDate">End Date</string>
+    <string name="monday">M</string>
+    <string name="tuesday">T</string>
+    <string name="wednesday">W</string>
+    <string name="thursday">R</string>
+    <string name="friday">F</string>
+    <string name="saturday">S</string>
+    <string name="sunday">S</string>
+    <string name="startTime">Start Time</string>
+    <string name="sampleTime">00:00</string>
+    <string name="endTime">End Time</string>
+    <string name="sampleDate">YYYY_MM_DD</string>
 
 </resources>

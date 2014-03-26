@@ -1,0 +1,274 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity" >
+
+    <TextView
+        android:id="@+id/newScheduleTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
+        android:gravity="center"
+        android:text="@string/display_schedInfo"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="35sp" />
+
+    <TextView
+        android:id="@+id/days"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/newScheduleTitle"
+        android:layout_below="@+id/newScheduleTitle"
+        android:layout_marginLeft="22dp"
+        android:layout_marginTop="26dp"
+        android:text="@string/days"
+        android:textSize="20sp" />
+
+    <LinearLayout
+        android:id="@+id/daySelect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/days"
+        android:layout_marginLeft="40sp"
+        android:layout_toRightOf="@+id/days"
+        android:gravity="left"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10sp"
+            android:orientation="horizontal"
+            android:weightSum="6.5" >
+
+            <TextView
+                android:id="@+id/sunday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:text="@string/sunday"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/monday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:text="@string/monday"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/tuesday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:text="@string/tuesday"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/wednesday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:text="@string/wednesday"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/thursday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:text="@string/thursday"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/friday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:text="@string/friday"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/saturday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:text="@string/saturday"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <CheckBox
+                android:id="@+id/sundayBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <CheckBox
+                android:id="@+id/mondayBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <CheckBox
+                android:id="@+id/tuesdayBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <CheckBox
+                android:id="@+id/wednesdayBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <CheckBox
+                android:id="@+id/thursdayBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <CheckBox
+                android:id="@+id/fridayBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <CheckBox
+                android:id="@+id/saturdayBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/hours"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/days"
+        android:layout_below="@+id/daySelect"
+        android:layout_marginTop="16dp"
+        android:text="@string/hours"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/startDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/hours"
+        android:layout_below="@+id/endHour"
+        android:layout_marginTop="25dp"
+        android:text="@string/startDate"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/endDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/startDate"
+        android:layout_below="@+id/startDate"
+        android:layout_marginTop="26dp"
+        android:text="@string/endDate"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/updateSched"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/deleteSched"
+        android:layout_alignBottom="@+id/deleteSched"
+        android:layout_toRightOf="@+id/days"
+        android:clickable="true"
+        android:onClick="updateRole"
+        android:text="@string/update"
+        android:textSize="25sp" />
+
+    <TextView
+        android:id="@+id/deleteSched"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/endDateValue"
+        android:layout_below="@+id/endDate"
+        android:layout_marginTop="29dp"
+        android:clickable="true"
+        android:onClick="confirmDelete"
+        android:text="@string/delete"
+        android:textSize="25sp" />
+
+    <LinearLayout
+        android:id="@+id/startHour"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/daySelect"
+        android:layout_alignTop="@+id/hours"
+        android:layout_marginRight="53dp"
+        android:layout_marginTop="12dp"
+        android:gravity="right"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/startHourText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/startTime"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/startHourValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sampleTime"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/startDateValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/endDate"
+        android:layout_alignLeft="@+id/startHour"
+        android:text="@string/sampleDate"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/endDateValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/endDate"
+        android:layout_alignBottom="@+id/endDate"
+        android:layout_alignLeft="@+id/startDateValue"
+        android:text="@string/sampleDate"
+        android:textSize="20sp" />
+
+    <LinearLayout
+        android:id="@+id/endHour"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/startHour"
+        android:layout_below="@+id/startHour"
+        android:layout_marginTop="31dp"
+        android:gravity="right"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/endHourText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/endTime"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/endHourValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sampleTime"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+</RelativeLayout>
