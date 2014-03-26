@@ -150,11 +150,11 @@ public class NewRole extends Activity {
 			user.setID(-1);
 			userAdapter.add(user);
 			usersList.setAdapter(userAdapter);
-			addRole();
 			// Set no schedule
 			roleSched.setID(-1);
 			roleSchedAdapter.addAll(roleSched);
 			schedList.setAdapter(roleSchedAdapter);
+			addRole();
 		}		
 		super.onRestart();
 	}
@@ -405,7 +405,7 @@ public class NewRole extends Activity {
 	}
 	
 	// Checks if role needs to be updated
-	public void updateRole(View v) {
+	public void checkRole(View v) {
 		// Check role name
 		if (!nameField.getText().toString().equals(selectedRole.getName())){
 			updateRole();

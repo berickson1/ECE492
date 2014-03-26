@@ -224,6 +224,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sampleTime"
+            android:onClick="setStartHour"
+            android:clickable="true"
             android:textSize="20sp" />
     </LinearLayout>
 
@@ -233,7 +235,9 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/endDate"
         android:layout_alignLeft="@+id/startHour"
+        android:onClick="setStartDate"
         android:text="@string/sampleDate"
+        android:clickable="true"
         android:textSize="20sp" />
 
     <TextView
@@ -243,7 +247,9 @@
         android:layout_alignBaseline="@+id/endDate"
         android:layout_alignBottom="@+id/endDate"
         android:layout_alignLeft="@+id/startDateValue"
+        android:onClick="setEndDate"
         android:text="@string/sampleDate"
+        android:clickable="true"
         android:textSize="20sp" />
 
     <LinearLayout
@@ -268,6 +274,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sampleTime"
+            android:onClick="setEndHour"
+            android:clickable="true"
             android:textSize="20sp" />
     </LinearLayout>
 

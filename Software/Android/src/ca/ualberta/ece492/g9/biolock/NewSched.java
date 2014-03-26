@@ -1,6 +1,8 @@
 
 package ca.ualberta.ece492.g9.biolock;
 
+import java.util.Calendar;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,7 +13,9 @@ import ca.ualberta.ece492.g9.biolock.types.Role;
 import ca.ualberta.ece492.g9.biolock.types.RoleSchedule;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,7 +25,9 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 //From NewRole - adding of new sched or updating a sched
 public class NewSched extends Activity {
@@ -42,6 +48,7 @@ public class NewSched extends Activity {
 	private TextView endHour;
 	private TextView startDate;
 	private TextView endDate;
+	private TextView deleteSched;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		mContext = this;
@@ -66,6 +73,7 @@ public class NewSched extends Activity {
 		endHour = (TextView) findViewById(R.id.endHourValue);
 		startDate = (TextView) findViewById(R.id.startDateValue);
 		endDate = (TextView) findViewById(R.id.endDateValue);
+		deleteSched = (TextView) findViewById(R.id.deleteSched);
 	}
 	
 	public void onResume(){
@@ -80,6 +88,9 @@ public class NewSched extends Activity {
 		// Updating schedule
 		if (selectedSchedule != null) {
 			displaySchedule();
+		} else {
+			// Cannot click delete
+			deleteSched.setEnabled(false);
 		}
 		super.onResume();
 	}
@@ -87,8 +98,8 @@ public class NewSched extends Activity {
 	// Shows the schedule selected
 	public void displaySchedule(){
 		checkDays(selectedSchedule.getDays());
-		startHour.setText(selectedSchedule.getStartTime());
-		endHour.setText(selectedSchedule.getEndTime());
+		startHour.setText(String.valueOf(selectedSchedule.getStartTime()));
+		endHour.setText(String.valueOf(selectedSchedule.getEndTime()));
 		startDate.setText(String.valueOf(selectedSchedule.getStartDate()));
 		endDate.setText(String.valueOf(selectedSchedule.getEndDate()));
 	}
@@ -203,7 +214,8 @@ public class NewSched extends Activity {
 				}
 			}
 		});
-		changeSchedule.setDays(getDays());
+		int days = getDays();
+		changeSchedule.setDays(days);
 		changeSchedule.setStartTime(Integer.valueOf(startHour.getText().toString()));
 		changeSchedule.setEndTime(Integer.valueOf(endHour.getText().toString()));
 		changeSchedule.setStartDate(Long.valueOf(startDate.getText().toString()));
@@ -263,7 +275,117 @@ public class NewSched extends Activity {
 		int thursday = thursdayBox.isChecked() ? 100:0;
 		int friday = fridayBox.isChecked() ? 10:0;
 		int saturday = saturdayBox.isChecked() ? 1:0;
-		return sunday & monday & tuesday & wednesday & thursday & friday & saturday;
+		return sunday + monday + tuesday + wednesday + thursday + friday + saturday;
+	}
+	
+	// Set start time of role
+	public void setStartHour(View v){
+		 Calendar calendar = Calendar.getInstance();
+         int hour = calendar.get(Calendar.HOUR_OF_DAY);
+         int minute = calendar.get(Calendar.MINUTE);
+         TimePickerDialog selectStartHour = new TimePickerDialog(NewSched.this, new TimePickerDialog.OnTimeSetListener() {
+             @Override
+             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+            	 String startTime = null; 
+            	 if (selectedHour < 10){
+            		 startTime = "0" + selectedHour + ":";
+            	 } else {
+            		 startTime = selectedHour + ":";
+            	 }
+            	 if (selectedMinute < 10){
+            		 startTime += "0" + selectedMinute;
+            	 } else {
+            		 startTime += selectedMinute;
+            	 }
+                 startHour.setText(startTime);
+             }
+         }, hour, minute, true);
+         selectStartHour.setTitle("Select Start Time");
+         selectStartHour.setCancelable(false);
+         selectStartHour.show();
+	}
+	
+	// Set end time of role
+	public void setEndHour(View v){
+		Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+        TimePickerDialog selectEndHour = new TimePickerDialog(NewSched.this, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+            	String endTime = null; 
+	           	if (selectedHour < 10){
+	           		endTime = "0" + selectedHour + ":";
+	           	} else {
+	           		endTime = selectedHour + ":";
+	           	}
+	           	if (selectedMinute < 10) {
+	           		endTime += "0" + selectedMinute;
+	           	} else {
+	           		endTime += selectedMinute;
+	           	}
+	           	endHour.setText(endTime);
+            }
+        }, hour, minute, true);
+        selectEndHour.setTitle("Select End Time");
+        selectEndHour.setCancelable(false);
+        selectEndHour.show();
+	}
+	
+	// Set start date of role
+	public void setStartDate(View v){
+		Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        DatePickerDialog selectStartDate = new DatePickerDialog(NewSched.this, R.style.AppBaseTheme, new DatePickerDialog.OnDateSetListener() {
+			@Override
+			public void onDateSet(DatePicker view, int selectedYear, int selectedMonth,
+					int selectedDay) {
+				String startDay = selectedYear + "-";
+				if (selectedMonth < 10) {
+					startDay += "0" + selectedMonth + "-";
+				} else {
+					startDay += selectedMonth + "-";
+				}
+				if (selectedDay < 10){
+					startDay += "0" + selectedDay;
+				} else {
+					startDay += selectedDay;
+				}
+				startDate.setText(startDay);
+			}
+        }, year, month, day);
+        selectStartDate.setTitle("Select Start Date");
+        selectStartDate.show();
+	}
+	
+	// Set end date of role
+	public void setEndDate(View v){
+		Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        DatePickerDialog selectEndDate = new DatePickerDialog(NewSched.this, R.style.AppBaseTheme, new DatePickerDialog.OnDateSetListener() {
+			@Override
+			public void onDateSet(DatePicker view, int selectedYear, int selectedMonth,
+					int selectedDay) {
+				String endDay = selectedYear + "-";
+				if (selectedMonth < 10) {
+					endDay += "0" + selectedMonth + "-";
+				} else {
+					endDay += selectedMonth + "-";
+				}
+				if (selectedDay < 10){
+					endDay += "0" + selectedDay;
+				} else {
+					endDay += selectedDay;
+				}
+				endDate.setText(endDay);
+			}
+        }, year, month, day);
+        selectEndDate.setTitle("Select End Date");
+        selectEndDate.show();
 	}
 	
 	// Displays popup from failure
