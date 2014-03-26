@@ -393,4 +393,11 @@ public class NewSched extends Activity {
 		noConn.setCanceledOnTouchOutside(false);
 		noConn.show();
 	}
+	
+	// Backpress
+	public void onBackPressed() {
+		Intent goBack = getIntent();
+		setResult(1, goBack); 
+	    finish();
+	}
 }

@@ -325,6 +325,9 @@ public class NewRole extends Activity {
 					e.printStackTrace();
 				}
 			}
+			if (resultCode == 1){
+				return;
+			}
 			// Restarts this screen
 			Intent restart = getIntent();
 			restart.putExtra("Role Sched", scheduleJSON.toString());
