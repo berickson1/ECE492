@@ -552,7 +552,7 @@ public class NewUser extends Activity {
         changeName.execute(ip.concat("/users"), "update", updateUser.toJson().toString());
 	}
 	
-	// Adds or updates the user
+	// Updates the user
 	public void updateUser(View v) {
 		// Check user name
 		if (!nameField.getText().toString().equals(selectedUser.getName())){

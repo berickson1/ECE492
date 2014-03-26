@@ -332,15 +332,51 @@ public class NewRole extends Activity {
 		roleToDelete = selectedRole;
 		deleteRole.execute(ip.concat("/roles"), "delete", roleToDelete.toJson().toString());
 	}
-
-	// TODO: Check updated values before updating users
-	// Jumps to Users
+	
+	// Updates the role
+	public void updateRole() {
+		final ProgressDialog updateRoleWait = ProgressDialog.show(NewRole.this,"Role", "Deleting role", true, false, null);
+		JSONPost updateRole = new JSONPost(new JSONCallbackFunction() {
+			@Override
+			public void execute(JSONArray json) {
+				if (json != null){
+					try {
+						JSONObject response = (JSONObject) json.get(0);
+						if (response.getString("success").equalsIgnoreCase("true")){
+							updateRoleWait.dismiss();
+							finish();
+						} else {
+							updateRoleWait.dismiss();
+							updateFail();
+						}
+					} catch (JSONException e){
+						e.printStackTrace();
+					}
+				} else {
+					updateRoleWait.dismiss();
+					updateFail();
+				}
+			}
+		});
+		selectedRole.setName(nameField.getText().toString());
+		selectedRole.setAdmin(enabledAdmin.isChecked());
+		selectedRole.setEnabled(enabledStatus.isChecked());
+		updateRole.execute(ip.concat("/roles"), "update", selectedRole.toJson().toString());
+	}
+	
+	// Checks if role needs to be updated
 	public void updateRole(View v) {
-		// Runs Users
-		Intent i = new Intent(NewRole.this, Roles.class);
-		startActivity(i);
-
-		// Close this activity
+		// Check role name
+		if (!nameField.getText().toString().equals(selectedRole.getName())){
+			updateRole();
+		// Check admin status
+		} else if (enabledAdmin.isChecked() != selectedRole.getAdmin()) {
+			updateRole();
+		// Check enable status
+		} else if (enabledStatus.isChecked() != selectedRole.getEnabled()) {
+			updateRole();
+		}
+		
 		finish();
 	}
 	
@@ -364,9 +400,5 @@ public class NewRole extends Activity {
 		schedList.setEnabled(false);
 		addSched.setClickable(false);
 		addSched.setTextColor(Color.GRAY);
-		updateRole.setClickable(false);
-		updateRole.setTextColor(Color.GRAY);
-		deleteRole.setClickable(false);
-		deleteRole.setTextColor(Color.GRAY);
 	}
 }
