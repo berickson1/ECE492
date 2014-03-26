@@ -22,7 +22,7 @@ extern "C" {
 #include "Database/EFSL/ls.h"
 }
 
-#define SOUNDFILE "beepbeep.wav"
+#define SOUNDFILE "tone.wav"
 
 using namespace std;
 class Audio {

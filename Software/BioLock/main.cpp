@@ -160,7 +160,9 @@ void task1(void* pdata) {
 	}
 }
 void task2(void* pdata) {
+	Audio sound(databaseSemaphore);
 	while (1) {
+		sound.play();
 		if (*((char*) SWITCHES_BASE) & 1 << 1) {
 			// Clearing database
 			{

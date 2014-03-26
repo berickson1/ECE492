@@ -59,19 +59,32 @@ Audio::Audio(OS_EVENT *databaseSemaphore) :
 		printf("Error: could not open audio config device \n");
 	else
 		printf("Opened audio config device \n");
+    /* Configure WM8731
+    alt_up_audio_reset_audio_core(m_audio_dev);
+    alt_up_av_config_reset(m_audio_config);
+
+    /* Write to configuration registers in the audio codec; see datasheet for what these values mean
+    alt_up_av_config_write_audio_cfg_register(m_audio_config, 0x0, 0x17);
+    alt_up_av_config_write_audio_cfg_register(m_audio_config, 0x1, 0x17);
+    alt_up_av_config_write_audio_cfg_register(m_audio_config, 0x2, 0x79);
+    alt_up_av_config_write_audio_cfg_register(m_audio_config, 0x3, 0x79);
+    alt_up_av_config_write_audio_cfg_register(m_audio_config, 0x4, 0x15);
+    alt_up_av_config_write_audio_cfg_register(m_audio_config, 0x5, 0x06);
+    alt_up_av_config_write_audio_cfg_register(m_audio_config, 0x6, 0x00);*/
 }
 
 void Audio::play() {
 	int curr = 0;
-
 	while (curr < m_fileSize) {
+		int writeSize = 128;
 		//write data to the L and R buffers; R buffer will receive a copy of L buffer data
-        int rightWrite = alt_up_audio_write_fifo(m_audio_dev, m_soundBuf+curr, min(128, m_fileSize - curr), ALT_UP_AUDIO_RIGHT);
-        int leftWrite = alt_up_audio_write_fifo(m_audio_dev, m_soundBuf+curr, rightWrite, ALT_UP_AUDIO_LEFT);
-        curr += min(rightWrite, leftWrite);
+        int rightWrite = alt_up_audio_write_fifo(m_audio_dev, m_soundBuf+curr, writeSize, ALT_UP_AUDIO_RIGHT);
+        int leftWrite = alt_up_audio_write_fifo(m_audio_dev, m_soundBuf+curr, writeSize, ALT_UP_AUDIO_LEFT);
+        curr += writeSize;
 	}
 }
 
 Audio::~Audio() {
+	alt_up_audio_disable_write_interrupt(m_audio_dev);
 	free(m_soundBuf);
 }
