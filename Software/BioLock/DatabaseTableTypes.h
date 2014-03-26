@@ -121,6 +121,7 @@ typedef struct UserRole {
 	string toJSONString() {
 		Json::Value nodeToInsert;
 		nodeToInsert["name"] = name;
+		nodeToInsert["userName"] = userName;
 		nodeToInsert["id"] = id;
 		nodeToInsert["uid"] = uid;
 		nodeToInsert["rid"] = rid;
@@ -141,7 +142,7 @@ typedef struct UserRole {
 		startDate = node["startDate"].asDouble();
 		endDate = node["endDate"].asDouble();
 	}
-	string name;
+	string name, userName;
 	int id, uid, rid;
 	double startDate, endDate;
 } UserRole;

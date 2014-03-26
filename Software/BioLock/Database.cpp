@@ -403,7 +403,7 @@ string Database::findEntryByRID(char *path, int rid){
 		if (atoi((const char*) list.currentEntry.FileName) != 0){
 			file = findRID(filename);
 			if (file == rid){
-				results.append(findEntry(path, file));
+				results.append(findEntryByName(filename));
 			}
 		}
 	}
@@ -412,10 +412,11 @@ string Database::findEntryByRID(char *path, int rid){
 		if (atoi((const char*) list.currentEntry.FileName) != 0){
 			file = findRID(filename);
 			if (file == rid){
+				// Not the first result
 				if (results.find("[") != results.length() - 1){
 					results.append(",");
 				}
-				results.append(findEntry(path, file));
+				results.append(findEntryByName(filename));
 			}
 		}
 	}
@@ -440,24 +441,24 @@ string Database::findEntryByUID(char *path, int uid){
 	}
 	results.append("[");
 	if (ls_getNext(&list) == 0) {
-		string name = getFileName(path, list.currentEntry.FileName);
+		string filename = getFileName(path, list.currentEntry.FileName);
 		if (atoi((const char*) list.currentEntry.FileName) != 0){
-			file = findUID(name);
+			file = findUID(filename);
 			if (file == uid){
-				results.append(findEntryByName(name));
+				results.append(findEntryByName(filename));
 			}
 		}
 	}
 	while (ls_getNext(&list) == 0) {
-		string name = getFileName(path, list.currentEntry.FileName);
+		string filename = getFileName(path, list.currentEntry.FileName);
 		if (atoi((const char*) list.currentEntry.FileName) != 0){
-			file = findUID(name);
+			file = findUID(filename);
 			if (file == uid){
 				// Not the first result
 				if (results.find("[") != results.length() - 1){
 					results.append(",");
 				}
-				results.append(findEntryByName(name));
+				results.append(findEntryByName(filename));
 			}
 		}
 	}
@@ -872,6 +873,7 @@ void Database::testPopulate() {
 
 	UserRole ur1;
 	ur1.name = "Owner";
+	ur1.userName = "Mavis Chan";
 	ur1.id = 1;
 	ur1.uid = 1;
 	ur1.rid = 1;
@@ -881,6 +883,7 @@ void Database::testPopulate() {
 
 	UserRole ur2;
 	ur2.name = "Owner";
+	ur2.userName = "Brent Erickson";
 	ur2.id = 2;
 	ur2.uid = 2;
 	ur2.rid = 1;
@@ -890,6 +893,7 @@ void Database::testPopulate() {
 
 	UserRole ur3;
 	ur3.name = "Guest";
+	ur3.userName = "Sydney Bitner";
 	ur3.id = 3;
 	ur3.uid = 3;
 	ur3.rid = 2;
