@@ -107,31 +107,31 @@ public class NewSched extends Activity {
 	// Checks the day authorized
 	public void checkDays(int days) {
 		// Sunday
-		if (days >= 1000000){
+		if ((days/1000000) == 1){
 			sundayBox.setChecked(true);
 		}
 		// Monday
-		if (days >= 100000){
+		if (((days/100000)%10) == 1){
 			mondayBox.setChecked(true);
 		}
 		// Tuesday
-		if (days >= 10000){
+		if (((days/10000)%10) == 1){
 			tuesdayBox.setChecked(true);	
 		}
 		// Wednesday
-		if (days >= 1000){
+		if (((days/1000)%10) == 1){
 			wednesdayBox.setChecked(true);
 		}
 		// Thursday
-		if (days >= 100){
+		if (((days/100)%10) == 1){
 			thursdayBox.setChecked(true);
 		}
 		// Friday
-		if (days >= 10){
+		if (((days/10)%10) == 1){
 			fridayBox.setChecked(true);
 		}
 		// Saturday
-		if (days >= 1){
+		if ((days%10) == 1){
 			saturdayBox.setChecked(true);
 		}
 	}
@@ -214,8 +214,8 @@ public class NewSched extends Activity {
 				}
 			}
 		});
-		int days = getDays();
-		changeSchedule.setDays(days);
+		changeSchedule = new RoleSchedule();
+		changeSchedule.setDays(getAllDays());
 		changeSchedule.setStartTime(Integer.valueOf(startHour.getText().toString()));
 		changeSchedule.setEndTime(Integer.valueOf(endHour.getText().toString()));
 		changeSchedule.setStartDate(Long.valueOf(startDate.getText().toString()));
@@ -240,8 +240,7 @@ public class NewSched extends Activity {
 		// Check for changes
 		if (selectedSchedule != null) {
 			// Check days
-			int days = getDays();
-			if (days != selectedSchedule.getDays()){
+			if (getAllDays() != selectedSchedule.getDays()){
 				updateSchedule();
 			// Check start time
 			} else if (Integer.valueOf(startHour.getText().toString()) != selectedSchedule.getStartTime()) {
@@ -267,7 +266,7 @@ public class NewSched extends Activity {
 	}
 	
 	// Get the days from the checkboxes
-	public int getDays(){
+	public int getAllDays(){
 		int sunday = sundayBox.isChecked() ? 1000000:0;
 		int monday = mondayBox.isChecked() ? 100000:0;
 		int tuesday = tuesdayBox.isChecked() ? 10000:0;

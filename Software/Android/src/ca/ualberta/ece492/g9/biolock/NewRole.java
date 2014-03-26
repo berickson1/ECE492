@@ -292,18 +292,20 @@ public class NewRole extends Activity {
 	// Gets schedule back to add to listview
 	public void onActivityResult(int requestCode, int resultCode, Intent schedule){
 		// Returned from NewSched
-		if (resultCode == 0){
+		if (requestCode == 0){
 			if (resultCode == RESULT_OK){     
-				RoleSchedule newSched = schedule.getParcelableExtra("New Schedule");
-				// Add schedule to listview
-				if (newSched != selectedSchedule) {
-					// Remove 'no record' entry if exists
-					RoleSchedule noRecord = new RoleSchedule(roleSchedAdapter.getItem(0).toJson());
-					if ((noRecord.getID() == -1) && (scheduleJSON.length() == 1)){
-						scheduleJSON.remove(0);
-					}
-					scheduleJSON.put(newSched.toJson());
+				RoleSchedule newSched = schedule.getParcelableExtra("Schedule");
+				// Remove 'no record' entry if exists
+				RoleSchedule noRecord = new RoleSchedule(roleSchedAdapter.getItem(0).toJson());
+				if ((noRecord.getID() == -1) && (scheduleJSON.length() == 1)){
+					scheduleJSON.remove(0);
 				}
+				// Remove modified schedule
+				if (newSched.getID() == selectedSchedule.getID()){
+					int position = roleSchedAdapter.getPosition(selectedSchedule);
+					scheduleJSON.remove(position);
+				}
+				scheduleJSON.put(newSched.toJson());
 			} else if (resultCode == RESULT_CANCELED){
 				try {
 					// Remove schedule from listview
@@ -323,6 +325,15 @@ public class NewRole extends Activity {
 					e.printStackTrace();
 				}
 			}
+			// Restarts this screen
+			Intent restart = getIntent();
+			restart.putExtra("Role Sched", scheduleJSON.toString());
+			if (userJSON.length() != 0){
+				restart.putExtra("Users", userJSON.toString());
+			}
+			restart.putExtra("Role", selectedRole);
+			finish();
+			startActivity(restart);
 		}
 	}
 	
