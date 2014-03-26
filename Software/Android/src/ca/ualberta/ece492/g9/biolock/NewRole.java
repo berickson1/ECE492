@@ -9,10 +9,10 @@ import org.json.JSONObject;
 import ca.ualberta.ece492.g9.biolock.customs.JSONCallbackFunction;
 import ca.ualberta.ece492.g9.biolock.customs.JSONPost;
 import ca.ualberta.ece492.g9.biolock.customs.RoleSchedAdapter;
-import ca.ualberta.ece492.g9.biolock.customs.UserAdapter;
+import ca.ualberta.ece492.g9.biolock.customs.UserRoleAdapter;
 import ca.ualberta.ece492.g9.biolock.types.Role;
 import ca.ualberta.ece492.g9.biolock.types.RoleSchedule;
-import ca.ualberta.ece492.g9.biolock.types.User;
+import ca.ualberta.ece492.g9.biolock.types.UserRole;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -39,6 +39,7 @@ public class NewRole extends Activity {
 	private static Context mContext;
 	private Role selectedRole;
 	private Role newRole;
+	private UserRole userToDelete;
 	private EditText nameField;
 	private CheckBox enabledStatus;
 	private CheckBox enabledAdmin;
@@ -49,7 +50,7 @@ public class NewRole extends Activity {
 	private TextView addSched;
 	private JSONArray userJSON;
 	private JSONArray scheduleJSON;
-	private UserAdapter userAdapter;
+	private UserRoleAdapter userAdapter;
 	private RoleSchedAdapter roleSchedAdapter;
 	
 	protected void onCreate(Bundle savedInstanceState) {
@@ -75,33 +76,33 @@ public class NewRole extends Activity {
 	}
 	
 	public void onResume(){
-		ArrayList<User> userArray = new ArrayList<User>();
-		User user = new User();
+		ArrayList<UserRole> userArray = new ArrayList<UserRole>();
+		UserRole user = new UserRole();
 		userJSON = new JSONArray();
 		ArrayList<RoleSchedule> scheduleArray = new ArrayList<RoleSchedule>();
 		RoleSchedule roleSched = new RoleSchedule();
 		scheduleJSON = new JSONArray();
 		
-		// Retrieves information of the selected user or new user name
+		// Retrieves information of the selected role or new role name
 		Intent intent = getIntent();
 		selectedRole = (Role) intent.getParcelableExtra("Role");
 		String roleName = intent.getStringExtra("Name");
 		if (intent.getExtras().size() > 2) {
 			try {
 				// Retrieves user and role schedule
-				userAdapter = new UserAdapter(mContext, "noCheck", selectedRole.getEnabled(), userArray);
-				if (intent.getStringExtra("User") != null){
+				userAdapter = new UserRoleAdapter(mContext, selectedRole.getEnabled(), "userName", userArray);
+				if (intent.getStringExtra("Users") != null){
 					userJSON = new JSONArray(intent.getStringExtra("Users"));
 				}
 				roleSchedAdapter = new RoleSchedAdapter(mContext, selectedRole.getEnabled(), scheduleArray);
-				if (intent.getStringExtra("User Roles") != null){
+				if (intent.getStringExtra("Role Sched") != null){
 					scheduleJSON = new JSONArray(intent.getStringExtra("Role Sched"));
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		} else {
-			userAdapter = new UserAdapter(mContext, "noCheck", true, userArray);
+			userAdapter = new UserRoleAdapter(mContext, true, "userName", userArray);
 			roleSchedAdapter = new RoleSchedAdapter(mContext, true, scheduleArray);
 		}
 		userAdapter.clear();
@@ -113,7 +114,7 @@ public class NewRole extends Activity {
 			enabledAdmin.setChecked(selectedRole.getAdmin());
 			enabledStatus.setChecked(selectedRole.getEnabled());
 			if (userJSON != null){
-				// Displays user prints
+				// Displays users
 				userArray = user.fromJson(userJSON);
 				userAdapter.addAll(userArray);
 				usersList.setAdapter(userAdapter);
@@ -125,7 +126,7 @@ public class NewRole extends Activity {
 				});
 			}
 			if (scheduleJSON != null){
-				// Displays user roles
+				// Displays role schedules
 				scheduleArray = roleSched.fromJson(scheduleJSON);
 				roleSchedAdapter.addAll(scheduleArray);
 				schedList.setAdapter(roleSchedAdapter);
@@ -136,7 +137,7 @@ public class NewRole extends Activity {
 					}
 				});
 			}
-			// User is disabled
+			// Role is disabled
 			if (!selectedRole.getEnabled()){
 				disableScreen();
 			}
@@ -196,25 +197,90 @@ public class NewRole extends Activity {
 		addRole.execute(ip.concat("/roles"), "insert", newRole.toJson().toString());
 	}
 	
-	// Jumps to AdminLogin to add new print
-	public void enrollPrint(View v) {
-		Intent addPrint = new Intent(NewRole.this, AdminLogin.class);
-		startActivity(addPrint);
-	}
-
-	// Add schedule to role
-	public void addSched(View v) {
-			
+	// Requests user to confirm deletion of role user
+	public void confirmDeleteUser(final int position){
+		final AlertDialog confirm  = new AlertDialog.Builder(mContext).create();
+		confirm.setMessage("Do you want to remove this user");
+		confirm.setTitle("User");
+		confirm.setButton(AlertDialog.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				// Check if selected row is 'No user'
+				if (userAdapter.getItem(position).getID() != -1){
+					deleteUser(position);
+					confirm.cancel();
+				}
+			}
+	    });
+		confirm.setButton(AlertDialog.BUTTON_NEGATIVE, "No", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {}
+	    });
+		confirm.setCancelable(false);
+		confirm.setCanceledOnTouchOutside(false);
+		confirm.show();
 	}
 	
-	// Requests user to confirm deletion of role user
-	public void confirmDeleteUser(int position){
-		
+	// Deletes role user
+	public void deleteUser(final int position){
+		final ProgressDialog deleteUserWait = ProgressDialog.show(NewRole.this,"Role User", "Deleting role user", true, false, null);
+		JSONPost deleteUser = new JSONPost(new JSONCallbackFunction() {
+			@Override
+			public void execute(JSONArray json) {
+				if (json != null){
+					try {
+						JSONObject response = (JSONObject) json.get(0);
+						if (response.getString("success").equalsIgnoreCase("true")){
+							try {
+								// Remove user from listview
+								for (int i = 0; i < userJSON.length(); i++){
+									UserRole removeRole = new UserRole(userJSON.getJSONObject(i));
+									if (removeRole.getName().equals(userToDelete.getName())){
+										userJSON.remove(i);
+									}
+								}
+								// Display no user found
+								if (userJSON.length() == 0){
+									UserRole noUserRole = new UserRole();
+									noUserRole.setID(-1);
+									userJSON.put(0, noUserRole.toJson());
+								}
+							} catch (JSONException e){
+								e.printStackTrace();
+							}
+							deleteUserWait.dismiss();
+							// Restarts this screen
+							Intent restart = getIntent();
+							restart.putExtra("Role Users", userJSON.toString());
+							if (userJSON.length() != 0){
+								restart.putExtra("Schedule", userJSON.toString());
+							}
+							restart.putExtra("Role", selectedRole);
+							finish();
+							startActivity(restart);
+						} else {
+							deleteUserWait.dismiss();
+							updateFail();
+						}
+					} catch (JSONException e){
+						e.printStackTrace();
+					}
+				} else {
+					deleteUserWait.dismiss();
+					updateFail();
+				}
+			}
+		});
+		userToDelete = userAdapter.getItem(position);
+		deleteUser.execute(ip.concat("/userRole"), "delete", userToDelete.toJson().toString());
 	}
 	
 	// Requests user to confirm deletion of schedule
 	public void confirmDeleteSchedule(int position){
 		
+	}
+	
+	// Add schedule to role
+	public void addSched(View v) {
+			
 	}
 	
 	// Confirms deletion of user
