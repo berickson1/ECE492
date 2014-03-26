@@ -1,3 +1,5 @@
+// TODO: Add user to role
+
 package ca.ualberta.ece492.g9.biolock;
 
 import java.util.ArrayList;
@@ -39,6 +41,7 @@ public class NewRole extends Activity {
 	private static Context mContext;
 	private Role selectedRole;
 	private Role newRole;
+	private Role roleToDelete;
 	private UserRole userToDelete;
 	private EditText nameField;
 	private CheckBox enabledStatus;
@@ -133,7 +136,7 @@ public class NewRole extends Activity {
 				schedList.setOnItemClickListener(new OnItemClickListener() {
 					@Override
 					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-						confirmDeleteSchedule(position);
+						loadSchedule(position);
 					}
 				});
 			}
@@ -249,9 +252,9 @@ public class NewRole extends Activity {
 							deleteUserWait.dismiss();
 							// Restarts this screen
 							Intent restart = getIntent();
-							restart.putExtra("Role Users", userJSON.toString());
+							restart.putExtra("Users", userJSON.toString());
 							if (userJSON.length() != 0){
-								restart.putExtra("Schedule", userJSON.toString());
+								restart.putExtra("Schedule", scheduleJSON.toString());
 							}
 							restart.putExtra("Role", selectedRole);
 							finish();
@@ -273,20 +276,61 @@ public class NewRole extends Activity {
 		deleteUser.execute(ip.concat("/userRole"), "delete", userToDelete.toJson().toString());
 	}
 	
-	// Requests user to confirm deletion of schedule
-	public void confirmDeleteSchedule(int position){
+	// Opens new screen to show schedule information
+	public void loadSchedule(int position){
 		
 	}
 	
-	// Add schedule to role
+	// Opens new blank schedule screen
 	public void addSched(View v) {
 			
 	}
 	
-	// Confirms deletion of user
+	// Confirms deletion of role
 	public void confirmDelete(View v) {
-		// CONFIRM DELETE!
-		System.out.println("Delete role");
+		final AlertDialog confirm  = new AlertDialog.Builder(mContext).create();
+		confirm.setMessage("Do you want to remove this role");
+		confirm.setTitle("Role");
+		confirm.setButton(AlertDialog.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				deleteRole();
+			}
+	    });
+		confirm.setButton(AlertDialog.BUTTON_NEGATIVE, "No", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {}
+	    });
+		confirm.setCancelable(false);
+		confirm.setCanceledOnTouchOutside(false);
+		confirm.show();
+	}
+	
+	// Deletes role
+	public void deleteRole(){
+		final ProgressDialog deleteRoleWait = ProgressDialog.show(NewRole.this,"Role", "Deleting role", true, false, null);
+		JSONPost deleteRole = new JSONPost(new JSONCallbackFunction() {
+			@Override
+			public void execute(JSONArray json) {
+				if (json != null){
+					try {
+						JSONObject response = (JSONObject) json.get(0);
+						if (response.getString("success").equalsIgnoreCase("true")){
+							deleteRoleWait.dismiss();
+							finish();
+						} else {
+							deleteRoleWait.dismiss();
+							updateFail();
+						}
+					} catch (JSONException e){
+						e.printStackTrace();
+					}
+				} else {
+					deleteRoleWait.dismiss();
+					updateFail();
+				}
+			}
+		});
+		roleToDelete = selectedRole;
+		deleteRole.execute(ip.concat("/roles"), "delete", roleToDelete.toJson().toString());
 	}
 
 	// TODO: Check updated values before updating users
