@@ -97,7 +97,7 @@
         android:layout_toRightOf="@+id/enabledRoleStatus"
         android:clickable="true"
         android:onClick="addSched"
-        android:text="@string/add_role"
+        android:text="@string/add_sched"
         android:textSize="15sp" />
 
     <TextView
@@ -135,9 +135,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/roleName"
-        android:layout_below="@+id/roleNameFill"
-        android:layout_marginTop="34dp"
+        android:layout_below="@+id/enabledAdminStatus"
+        android:layout_marginTop="26dp"
         android:text="@string/enabled"
+        android:textSize="20sp" />
+
+    <CheckBox
+        android:id="@+id/enabledAdminStatusBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/enabledRoleStatusBox"
+        android:layout_alignTop="@+id/enabledAdminStatus" />
+
+    <TextView
+        android:id="@+id/enabledAdminStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/enabledRoleStatus"
+        android:layout_below="@+id/roleNameFill"
+        android:layout_marginTop="26dp"
+        android:text="@string/enabledAdmin"
         android:textSize="20sp" />
 
 </RelativeLayout>

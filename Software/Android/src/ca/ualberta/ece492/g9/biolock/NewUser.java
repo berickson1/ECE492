@@ -414,7 +414,7 @@ public class NewUser extends Activity {
     	postRole.execute(ip.concat("/userRole"), "insert", addUserRole.toJson().toString());
 	}
 	
-	// Displays popup when failure to add user role
+	// Displays popup from failure
 	public void updateFail(){
 		AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
 		noConn.setMessage("Failed to update user");

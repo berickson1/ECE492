@@ -35,5 +35,7 @@
     <string name="access_hours">Access Hours</string>
     <string name="ipName">IP Name</string>
     <string name="add_role"><u>Add Role</u></string>
+    <string name="enabledAdmin">Admin</string>
+    <string name="add_sched">Add Schedule</string>
 
 </resources>
