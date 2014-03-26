@@ -42,26 +42,23 @@ public class NewUser extends Activity {
 	private static String ip;
 	private static Context mContext;
 	private static User selectedUser;
-	private static RoleAdapter roleAdapter;
+	private User newUser;
+	private UserRole roleToDelete;
+	private UserRole addUserRole;
+	private UserPrint newPrint;
 	private EditText nameField;
 	private CheckBox enabledStatus;
 	private ListView printsList;
 	private ListView rolesList;
 	private TextView addPrint;
 	private TextView addRole;
-	private ProgressDialog wait;
 	private JSONPost changeName;
 	private JSONPost changeStatus;
-	private ArrayList<UserPrint> printsArray;
-	private ArrayList<UserRole> userRolesArray;
-	private JSONArray userPrints;
-	private JSONArray userRoles;
-	private UserRole roleToDelete;
-	private UserRole addUserRole;
-	private User newUser;
-	private UserPrint newPrint;
-	private UserRoleAdapter userRoleAdapter;
+	private JSONArray userPrintsJSON;
+	private JSONArray userRolesJSON;
+	private RoleAdapter roleAdapter;
 	private UserPrintAdapter userPrintAdapter;
+	private UserRoleAdapter userRoleAdapter;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		mContext = this;
@@ -84,10 +81,12 @@ public class NewUser extends Activity {
 	}
 	
 	public void onResume(){
-		printsArray = new ArrayList<UserPrint>();
+		ArrayList<UserPrint> printsArray = new ArrayList<UserPrint>();
 		UserPrint userPrint = new UserPrint();
-		userRolesArray = new ArrayList<UserRole>();
+		userPrintsJSON = new JSONArray();
+		ArrayList<UserRole> userRolesArray = new ArrayList<UserRole>();
 		UserRole userRole = new UserRole();
+		userRolesJSON = new JSONArray();
 		
 		// Retrieves information of the selected user or new user name
 		Intent intent = getIntent();
@@ -98,20 +97,18 @@ public class NewUser extends Activity {
 				// Retrieves user prints and user roles
 				userPrintAdapter = new UserPrintAdapter(mContext, selectedUser.getEnabled(), printsArray);
 				if (intent.getStringExtra("User Prints") != null){
-					userPrints = new JSONArray(intent.getStringExtra("User Prints"));
+					userPrintsJSON = new JSONArray(intent.getStringExtra("User Prints"));
 				}
 				userRoleAdapter = new UserRoleAdapter(mContext, selectedUser.getEnabled(), userRolesArray);
 				if (intent.getStringExtra("User Roles") != null){
-					userRoles = new JSONArray(intent.getStringExtra("User Roles"));
+					userRolesJSON = new JSONArray(intent.getStringExtra("User Roles"));
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		} else {
 			userPrintAdapter = new UserPrintAdapter(mContext, true, printsArray);
-			userPrints = new JSONArray();
 			userRoleAdapter = new UserRoleAdapter(mContext, true, userRolesArray);
-			userRoles = new JSONArray();
 		}
 		userPrintAdapter.clear();
 		userRoleAdapter.clear();
@@ -120,15 +117,15 @@ public class NewUser extends Activity {
 		if (selectedUser != null){
 			nameField.setText(selectedUser.getName());
 			enabledStatus.setChecked(selectedUser.getEnabled());
-			if (userPrints != null){
+			if (userPrintsJSON != null){
 				// Displays user prints
-				printsArray = userPrint.fromJson(userPrints);
+				printsArray = userPrint.fromJson(userPrintsJSON);
 				userPrintAdapter.addAll(printsArray);
 				printsList.setAdapter(userPrintAdapter);
 			}
-			if (userRoles != null){
+			if (userRolesJSON != null){
 				// Displays user roles
-				userRolesArray = userRole.fromJson(userRoles);
+				userRolesArray = userRole.fromJson(userRolesJSON);
 				userRoleAdapter.addAll(userRolesArray);
 				rolesList.setAdapter(userRoleAdapter);
 				// User role is clicked on
@@ -187,7 +184,7 @@ public class NewUser extends Activity {
 	
 	// Adds user print to database
 	public void addUserPrint(int id){
-		final ProgressDialog wait = ProgressDialog.show(NewUser.this,"User Print", "Adding user print", true, false, null);
+		final ProgressDialog addPrintWait = ProgressDialog.show(NewUser.this,"User Print", "Adding user print", true, false, null);
 		//Add userprint to db
 		JSONPost addUserPrint = new JSONPost (new JSONCallbackFunction(){
 			@Override
@@ -198,29 +195,29 @@ public class NewUser extends Activity {
 						if (response.getString("success").equalsIgnoreCase("true")){
 							// Remove 'no record' entry if exists
 							UserPrint noRecord = new UserPrint(userPrintAdapter.getItem(0).toJson());
-							if ((noRecord.getID() == -1) && (userPrints.length() == 1)){
-								userPrints.remove(0);
+							if ((noRecord.getID() == -1) && (userPrintsJSON.length() == 1)){
+								userPrintsJSON.remove(0);
 							}
-							userPrints.put(newPrint.toJson());
-							wait.dismiss();
+							userPrintsJSON.put(newPrint.toJson());
+							addPrintWait.dismiss();
 							// Restarts this screen
 							Intent restart = getIntent();
-							restart.putExtra("User Prints", userPrints.toString());
-							if (userRoles.length() != 0){
-								restart.putExtra("User Roles", userRoles.toString());
+							restart.putExtra("User Prints", userPrintsJSON.toString());
+							if (userRolesJSON.length() != 0){
+								restart.putExtra("User Roles", userRolesJSON.toString());
 							}
 							restart.putExtra("User", selectedUser);
 							finish();
 							startActivity(restart);
 						} else {
-							wait.dismiss();
+							addPrintWait.dismiss();
 							updateFail();
 						}
 					} catch (JSONException e){
 						e.printStackTrace();
 					}
 				} else {
-					wait.dismiss();
+					addPrintWait.dismiss();
 					updateFail();
 				}
 			}
@@ -238,7 +235,8 @@ public class NewUser extends Activity {
 		confirm.setTitle("Role");
 		confirm.setButton(AlertDialog.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
-				if (userRolesArray.get(position).getID() != -1){
+				// Check if selected row is 'No role'
+				if (userRoleAdapter.getItem(position).getID() != -1){
 					deleteUserRole(position);
 					confirm.cancel();
 				}
@@ -253,8 +251,8 @@ public class NewUser extends Activity {
 	}
 	
 	// Deletes user role
-	public void deleteUserRole(int position){
-		final ProgressDialog wait = ProgressDialog.show(NewUser.this,"User Role", "Deleting user role", true, false, null);
+	public void deleteUserRole(final int position){
+		final ProgressDialog deleteRoleWait = ProgressDialog.show(NewUser.this,"User Role", "Deleting user role", true, false, null);
 		JSONPost deleteRole = new JSONPost(new JSONCallbackFunction() {
 			@Override
 			public void execute(JSONArray json) {
@@ -264,59 +262,59 @@ public class NewUser extends Activity {
 						if (response.getString("success").equalsIgnoreCase("true")){
 							try {
 								// Remove user role from listview
-								for (int i = 0; i < userRoles.length(); i++){
-									UserRole removeRole = new UserRole(userRoles.getJSONObject(i));
+								for (int i = 0; i < userRolesJSON.length(); i++){
+									UserRole removeRole = new UserRole(userRolesJSON.getJSONObject(i));
 									if (removeRole.getName().equals(roleToDelete.getName())){
-										userRoles.remove(i);
+										userRolesJSON.remove(i);
 									}
 								}
 								// Display no roles found
-								if (userRoles.length() == 0){
+								if (userRolesJSON.length() == 0){
 									UserRole noUserRole = new UserRole();
 									noUserRole.setID(-1);
-									userRoles.put(0, noUserRole.toJson());
+									userRolesJSON.put(0, noUserRole.toJson());
 								}
 							} catch (JSONException e){
 								e.printStackTrace();
 							}
-							wait.dismiss();
+							deleteRoleWait.dismiss();
 							// Restarts this screen
 							Intent restart = getIntent();
-							if (userPrints.length() != 0){
-								restart.putExtra("User Prints", userPrints.toString());
+							restart.putExtra("User Roles", userRolesJSON.toString());
+							if (userPrintsJSON.length() != 0){
+								restart.putExtra("User Prints", userPrintsJSON.toString());
 							}
-							restart.putExtra("User Roles", userRoles.toString());
 							restart.putExtra("User", selectedUser);
 							finish();
 							startActivity(restart);
 						} else {
-							wait.dismiss();
+							deleteRoleWait.dismiss();
 							updateFail();
 						}
 					} catch (JSONException e){
 						e.printStackTrace();
 					}
 				} else {
-					wait.dismiss();
+					deleteRoleWait.dismiss();
 					updateFail();
 				}
 			}
 		});
-		roleToDelete = (UserRole) rolesList.getItemAtPosition(position);
+		roleToDelete = userRoleAdapter.getItem(position);
 		deleteRole.execute(ip.concat("/userRole"), "delete", roleToDelete.toJson().toString());
 	}
 	
 	// Popup to select from roles
 	public void addRole(View v) {
-		final ProgressDialog wait = ProgressDialog.show(NewUser.this,"User Information", "Loading roles", true, false, null);
+		final ProgressDialog displayRolesWait = ProgressDialog.show(NewUser.this,"User Information", "Loading roles", true, false, null);
 		JSONParser parseRoles = new JSONParser(new JSONCallbackFunction() {
 			@Override
 			public void execute(JSONArray json) {
 				if (json != null){
-					wait.dismiss();
+					displayRolesWait.dismiss();
 					displayRoles(json);
 				} else {
-					wait.dismiss();
+					displayRolesWait.dismiss();
 					AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
 					noConn.setMessage("Could not get roles");
 					noConn.setTitle("Roles");
@@ -345,25 +343,24 @@ public class NewUser extends Activity {
 		roles.setAdapter(roleAdapter, new DialogInterface.OnClickListener() {
 		    @Override
 		    public void onClick(DialogInterface dialog, int which) {
-		    	// New user
-		    	if (selectedUser == null){
-		    		addUserRole(which);
-		    		return;
-		    	}
 		    	// Checks if user already has the role
-		    	for (int i = 0; i < userRolesArray.size(); i++){
-		    		if (userRolesArray.get(i).getRID() == roleAdapter.getItem(which).getID()){
-		    			AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
-						noConn.setMessage("User already has this role");
-						noConn.setTitle("Roles");
-						noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int which) {}
-					    });
-						noConn.setCancelable(false);
-						noConn.setCanceledOnTouchOutside(false);
-						noConn.show();
-						return;
-		    		}
+		    	for (int i = 0; i < userRolesJSON.length(); i++){
+		    		try {
+						if (userRolesJSON.getJSONObject(i).getInt("id") == roleAdapter.getItem(which).getID()){
+							AlertDialog hasRole  = new AlertDialog.Builder(mContext).create();
+							hasRole.setMessage("User already has this role");
+							hasRole.setTitle("Roles");
+							hasRole.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog, int which) {}
+						    });
+							hasRole.setCancelable(false);
+							hasRole.setCanceledOnTouchOutside(false);
+							hasRole.show();
+							return;
+						}
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
 		    	}
 		    	addUserRole(which);
 		    }
@@ -373,61 +370,55 @@ public class NewUser extends Activity {
 	
 	// Add user role for user
 	public void addUserRole(int which){
-		final ProgressDialog wait = ProgressDialog.show(NewUser.this,"User Role", "Adding user role", true, false, null);
-		// Add role to existing user
-		if (selectedUser != null) {
-    		JSONPost postRole = new JSONPost(new JSONCallbackFunction() {
-				@Override
-				public void execute(JSONArray json) {
-					if (json != null){
-						try {
-							JSONObject response = (JSONObject) json.get(0);
-							if (response.getString("success").equalsIgnoreCase("true")){
-								// Remove 'no record' entry if exists
-								UserRole noRecord = new UserRole(userRoleAdapter.getItem(0).toJson());
-								if ((noRecord.getID() == -1) && (userRoles.length() == 1)){
-									userRoles.remove(0);
-								}
-								JSONObject idVal = (JSONObject) json.get(1);
-								addUserRole.setID(idVal.getInt("id"));
-								userRoles.put(addUserRole.toJson());
-								wait.dismiss();
-								// Restarts this screen
-								Intent restart = getIntent();
-								if (userPrints.length() != 0){
-									restart.putExtra("User Prints", userPrints.toString());
-								}
-								restart.putExtra("User Roles", userRoles.toString());
-								restart.putExtra("User", selectedUser);
-								finish();
-								startActivity(restart);
-							} else {
-								wait.dismiss();
-								updateFail();
+		final ProgressDialog addRoleWait = ProgressDialog.show(NewUser.this,"User Role", "Adding user role", true, false, null);
+    	JSONPost postRole = new JSONPost(new JSONCallbackFunction() {
+			@Override
+			public void execute(JSONArray json) {
+				if (json != null){
+					try {
+						JSONObject response = (JSONObject) json.get(0);
+						if (response.getString("success").equalsIgnoreCase("true")){
+							// Remove 'no record' entry if exists
+							UserRole noRecord = new UserRole(userRoleAdapter.getItem(0).toJson());
+							if ((noRecord.getID() == -1) && (userRolesJSON.length() == 1)){
+								userRolesJSON.remove(0);
 							}
-						} catch (JSONException e){
-							e.printStackTrace();
+							JSONObject idVal = (JSONObject) json.get(1);
+							addUserRole.setID(idVal.getInt("id"));
+							userRolesJSON.put(addUserRole.toJson());
+							addRoleWait.dismiss();
+							// Restarts this screen
+							Intent restart = getIntent();
+							restart.putExtra("User Roles", userRolesJSON.toString());
+							if (userPrintsJSON.length() != 0){
+								restart.putExtra("User Prints", userPrintsJSON.toString());
+							}
+							restart.putExtra("User", selectedUser);
+							finish();
+							startActivity(restart);
+						} else {
+							addRoleWait.dismiss();
+							updateFail();
 						}
-					} else {
-						wait.dismiss();
-						updateFail();
+					} catch (JSONException e){
+						e.printStackTrace();
 					}
+				} else {
+					addRoleWait.dismiss();
+					updateFail();
 				}
-    		});
-    		// Create the user role
-    		addUserRole = new UserRole();
-    		Role role = roleAdapter.getItem(which);
-    		addUserRole.setName(role.getName());
-    		addUserRole.setID(0);
-    		addUserRole.setUID(selectedUser.getID());
-    		addUserRole.setRID(role.getID());
-    		addUserRole.setStartDate(role.getStartDate());
-    		addUserRole.setEndDate(role.getEndDate());
-    		postRole.execute(ip.concat("/userRole"), "insert", addUserRole.toJson().toString());
-    	// Add role to new user
-		} else {
-    		
-    	}
+			}
+    	});
+    	// Create the user role
+    	addUserRole = new UserRole();
+    	Role role = roleAdapter.getItem(which);
+    	addUserRole.setName(role.getName());
+    	addUserRole.setID(0);
+    	addUserRole.setUID(selectedUser.getID());
+    	addUserRole.setRID(role.getID());
+    	addUserRole.setStartDate(role.getStartDate());
+    	addUserRole.setEndDate(role.getEndDate());
+    	postRole.execute(ip.concat("/userRole"), "insert", addUserRole.toJson().toString());
 	}
 	
 	// Displays popup when failure to add user role
@@ -445,7 +436,7 @@ public class NewUser extends Activity {
 	
 	// Add user 
 	public void addUser(){
-		final ProgressDialog wait = ProgressDialog.show(NewUser.this,"User", "Adding user", true, false, null);
+		final ProgressDialog addUserWait = ProgressDialog.show(NewUser.this,"User", "Adding user", true, false, null);
 		JSONPost addUser = new JSONPost(new JSONCallbackFunction(){
 			@Override
 			public void execute(JSONArray json) {
@@ -456,16 +447,16 @@ public class NewUser extends Activity {
 							JSONObject idVal = (JSONObject) json.get(1);
 							newUser.setID(idVal.getInt("id"));
 							selectedUser = newUser;
-							wait.dismiss();
+							addUserWait.dismiss();
 						} else {
-							wait.dismiss();
+							addUserWait.dismiss();
 							updateFail();
 						}
 					} catch (JSONException e){
 						e.printStackTrace();
 					}
 				} else {
-					wait.dismiss();
+					addUserWait.dismiss();
 					updateFail();
 				}
 			}
@@ -482,6 +473,7 @@ public class NewUser extends Activity {
 	
 	// Enables or disables user
 	public void changeUserStatus(String status) {
+		final ProgressDialog changeStatusWait = ProgressDialog.show(NewUser.this,"Update User", "Updating user status", true, false, null);
 		// JSONPost to enable or disable user
         changeStatus = new JSONPost(new JSONCallbackFunction() {
         	@Override
@@ -493,35 +485,35 @@ public class NewUser extends Activity {
 						if (response.getString("success").equalsIgnoreCase("true")){
 							// Don't need to wait for other asynctask
 							if (nameField.getText().toString().equals(selectedUser.getName())){
-								wait.dismiss();
+								changeStatusWait.dismiss();
 								finish();
 							} else {
+								changeStatusWait.dismiss();
 								// Check if asynctask is done
 								if(changeName.getStatus().toString().equals("FINISHED")){
-									wait.dismiss();
 									finish();
 									return;
 								}
 							}
 						} else {
-							wait.dismiss();
+							changeStatusWait.dismiss();
 							updateFail();
 						}
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
 				} else {
-					wait.dismiss();
+					changeStatusWait.dismiss();
 					updateFail();
 				}
 			}
         });
         changeStatus.execute(ip.concat("/users"), status, selectedUser.toJson().toString());
-        //changeStatus.execute(ip.concat("/users"));
 	}
 
 	// Updates user name
 	public void changeUserName(){
+		final ProgressDialog changeNameWait = ProgressDialog.show(NewUser.this,"Update User", "Updating user name", true, false, null);
 		// JSONPost to change user name
         changeName = new JSONPost(new JSONCallbackFunction() {
 			@Override
@@ -533,25 +525,25 @@ public class NewUser extends Activity {
 						if (response.getString("success").equalsIgnoreCase("true")){
 							// Don't need to wait for other asynctask
 							if (enabledStatus.isChecked() == selectedUser.getEnabled()){
-								wait.dismiss();
+								changeNameWait.dismiss();
 								finish();
 							} else {
+								changeNameWait.dismiss();
 								// Check if asynctask is done
 								if(changeStatus.getStatus().toString().equals("FINISHED")){
-									wait.dismiss();
 									finish();
 									return;
 								}
 							}
 						} else {
-							wait.dismiss();
+							changeNameWait.dismiss();
 							updateFail();
 						}
 					} catch (JSONException e){
 						e.printStackTrace();
 					}
 				} else {
-					wait.dismiss();
+					changeNameWait.dismiss();
 					updateFail();
 				}
 			}      	
@@ -568,23 +560,18 @@ public class NewUser extends Activity {
 	
 	// Adds or updates the user
 	public void updateUser(View v) {
-		wait = ProgressDialog.show(NewUser.this,"Update User", "Updating user", true, false, null);
-		// Update user
-		if (selectedUser != null){
-			// Check user name
-			if (!nameField.getText().toString().equals(selectedUser.getName())){
-				changeUserName();
-			}
-			// Check enable status
-			if (enabledStatus.isChecked() != selectedUser.getEnabled()){
-				if (enabledStatus.isChecked()){
-					changeUserStatus("enable");
-				} else {
-					changeUserStatus("delete");
-				}
+		// Check user name
+		if (!nameField.getText().toString().equals(selectedUser.getName())){
+			changeUserName();
+		}
+		// Check enable status
+		if (enabledStatus.isChecked() != selectedUser.getEnabled()){
+			if (enabledStatus.isChecked()){
+				changeUserStatus("enable");
+			} else {
+				changeUserStatus("delete");
 			}
 		}
-		wait.dismiss();
 		finish();
 	}
 	
