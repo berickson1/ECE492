@@ -27,7 +27,6 @@ public class AdminLogin extends Activity {
 	public static final String PREFS_NAME = "CONNECTION";
 	private static Context mContext;
 	private static String ip;
-	private static String className;
 	private TextView printStatus;
 	
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +36,7 @@ public class AdminLogin extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.activity_admin_login);
 		printStatus = (TextView) findViewById(R.id.print_detected);
-		Intent caller = getIntent();
-		className = caller.getStringExtra("Caller");
+		
 		// Gets the ip address
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		ip = settings.getString("ipAddress", "noConn");
@@ -46,6 +44,9 @@ public class AdminLogin extends Activity {
 	
 	// Requests for print & waits for response from web server
 	public void onResume() {
+		Intent caller = getIntent();
+		String className = caller.getStringExtra("Caller");
+		
 		if (className.equals("MainActivity")){
 			checkPrint();
 		} else if (className.equals("NewLock")) {
@@ -186,7 +187,7 @@ public class AdminLogin extends Activity {
 		fail.setTitle("Fingerprint");
 		fail.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
-				// Go back to devices screen
+				// Go back to caller screen
 				finish();
 			}
 	    });
