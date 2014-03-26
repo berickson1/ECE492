@@ -146,16 +146,14 @@ public class NewUser extends Activity {
 			enabledStatus.setChecked(true);
 			// Set no fingerprint
 			userPrint.setID(-1);
-			printsArray.add(0, userPrint);
-			userPrintAdapter.addAll(printsArray);
+			userPrintAdapter.add(userPrint);
 			printsList.setAdapter(userPrintAdapter);
-			addUser();
 			// Set no user role
 			userRole.setID(-1);
-			userRolesArray.add(0, userRole);
-			userRoleAdapter.addAll(userRolesArray);
+			userRoleAdapter.add(userRole);
 			rolesList.setAdapter(userRoleAdapter);
-		}			
+			addUser();
+		}	
 		super.onResume();
 	}
 	
