@@ -51,8 +51,6 @@ public class AdminLogin extends Activity {
 			checkPrint();
 		} else if (className.equals("NewLock")) {
 			checkPrint();
-		} else if (className.equals("NewUser")){
-			addPrint();
 		} else if (className.equals("UpdateUser")){
 			addPrint();
 		}

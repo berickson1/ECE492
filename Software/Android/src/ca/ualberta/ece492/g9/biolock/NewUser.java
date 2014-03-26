@@ -160,12 +160,7 @@ public class NewUser extends Activity {
 	// Jumps to AdminLogin to add new print
 	public void enrollPrint(View v) {
 		Intent addPrint = new Intent(NewUser.this, AdminLogin.class);
-		// NewUser or UpdateUser
-		if (selectedUser == null){
-			addPrint.putExtra("Caller", mContext.getClass().getSimpleName());
-		} else {
-			addPrint.putExtra("Caller", "UpdateUser");
-		}
+		addPrint.putExtra("Caller", "UpdateUser");
 		startActivityForResult(addPrint, 0);
 	}
 	
