@@ -30,4 +30,8 @@ public class Picture extends Activity {
 		GetPicture loadPicture = new GetPicture(image, this);
 		loadPicture.execute(ip.concat("/pic"));
 	}
+	
+	// Disable back button press
+	@Override
+	public void onBackPressed() {}
 }

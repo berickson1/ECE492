@@ -196,6 +196,10 @@ public class AdminLogin extends Activity {
 		fail.show();
 	}
 	
+	// Disable back button press
+	@Override
+	public void onBackPressed() {}
+	
 	// Temp button to simulate fingerprint detected & accepted
 	public void tempPrintDetected(View v) {
 

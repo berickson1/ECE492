@@ -1,7 +1,6 @@
 package ca.ualberta.ece492.g9.biolock.customs;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
@@ -42,23 +41,21 @@ public class GetPicture extends AsyncTask<String, Void, byte[]> {
 	public byte[] doInBackground(String... url) {
 		HttpClient client = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet(url[0]);
-		
-		ByteArrayOutputStream oStream = new ByteArrayOutputStream();
-		byte[] imageBuff = new byte[1024];
+		ByteArrayBuffer imageBuffer = new ByteArrayBuffer(50);
+		byte[] imageArray = new byte[1024];
+		int current;
 		try {
 			HttpResponse response = client.execute(httpGet);
 			StatusLine statusLine = response.getStatusLine();
 			int statusCode = statusLine.getStatusCode();
 			if (statusCode == 200) {
 				HttpEntity entity = response.getEntity();
-				InputStream content = entity.getContent();
-				BufferedInputStream imageIn = new BufferedInputStream(content, 8190);
-				ByteArrayBuffer imageBuffer = new ByteArrayBuffer(50);
-				int current;
+				InputStream iStream = entity.getContent();
+				BufferedInputStream imageIn = new BufferedInputStream(iStream, 8190);
 				while ((current = imageIn.read()) != -1){
 					imageBuffer.append((byte)current);
 				}
-				imageBuff = imageBuffer.toByteArray();
+				imageArray = imageBuffer.toByteArray();
 			} else {
 				Log.e("==>", "Failed to download file");
 			}
@@ -69,7 +66,7 @@ public class GetPicture extends AsyncTask<String, Void, byte[]> {
 		} catch (RuntimeException e){
 			e.printStackTrace();
 		}
-		return imageBuff;
+		return imageArray;
 	}
 
 	protected void onPostExecute(byte[] image) {
