@@ -54,7 +54,7 @@ public class Users extends Activity {
 				if (json != null) {
 					final ListView userList = (ListView) findViewById(R.id.listUsers);
 					ArrayList<User> usersArray = new ArrayList<User>();
-					UserAdapter adapter = new UserAdapter(mContext, true, usersArray);
+					UserAdapter adapter = new UserAdapter(mContext, "check", true, usersArray);
 					adapter.clear();
 					User user = new User();
 					usersArray = user.fromJson(json);

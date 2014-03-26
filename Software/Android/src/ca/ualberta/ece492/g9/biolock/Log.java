@@ -44,7 +44,7 @@ public class Log extends Activity {
 				if (json != null) {
 					final ListView historyList = (ListView) findViewById(R.id.listLog);
 					ArrayList<History> historyArray = new ArrayList<History>();
-					adapter = new HistoryAdapter(mContext, historyArray);
+					adapter = new HistoryAdapter(mContext, true, historyArray);
 					History history = new History();
 					historyArray = history.fromJson(json);
 					adapter.addAll(historyArray);

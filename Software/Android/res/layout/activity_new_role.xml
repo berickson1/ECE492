@@ -10,6 +10,16 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
+    <TextView
+        android:id="@+id/newRoleTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
+        android:gravity="center"
+        android:text="@string/display_roleInfo"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="35sp" />
+
     <EditText
         android:id="@+id/roleNameFill"
         android:layout_width="wrap_content"
@@ -21,38 +31,7 @@
         android:ems="10"
         android:hint="@string/sampleRole"
         android:inputType="textPersonName" >
-
-        <requestFocus />
     </EditText>
-
-    <TextView
-        android:id="@+id/roleName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/newRoleTitle"
-        android:layout_below="@+id/newRoleTitle"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="19dp"
-        android:text="@string/roleName"
-        android:textSize="20sp" />
-
-    <CheckBox
-        android:id="@+id/enabledRoleStatusBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/roleNameFill"
-        android:layout_alignTop="@+id/enabledRoleStatus"
-        android:layout_marginLeft="84dp" />
-
-    <TextView
-        android:id="@+id/enabledRoleStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/roleName"
-        android:layout_below="@+id/roleNameFill"
-        android:layout_marginTop="35dp"
-        android:text="@string/enabled"
-        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/user"
@@ -65,38 +44,14 @@
         android:textSize="20sp" />
 
     <TextView
-        android:id="@+id/deleteRole"
+        android:id="@+id/access"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/accessList"
-        android:layout_marginTop="25dp"
-        android:layout_toRightOf="@+id/accessList"
-        android:clickable="true"
-        android:onClick="confirmDelete"
-        android:text="@string/delete"
-        android:textSize="25sp" />
-
-    <ListView
-        android:id="@+id/usersList"
-        android:layout_width="match_parent"
-        android:layout_height="55sp"
-        android:layout_alignRight="@+id/enabledRoleStatusBox"
+        android:layout_alignLeft="@+id/user"
         android:layout_below="@+id/user"
-        android:layout_toRightOf="@+id/roleName" >
-
-    </ListView>
-
-    <TextView
-        android:id="@+id/newRoleTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="44dp"
-        android:gravity="center"
-        android:text="@string/display_roleInfo"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="35sp" />
+        android:layout_marginTop="70dp"
+        android:text="@string/access_hours"
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/updateRole"
@@ -104,30 +59,85 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/deleteRole"
         android:layout_alignBottom="@+id/deleteRole"
-        android:layout_toRightOf="@+id/roleName"
+        android:layout_toRightOf="@+id/user"
         android:clickable="true"
         android:onClick="updateRole"
         android:text="@string/update"
         android:textSize="25sp" />
 
-    <TextView
-        android:id="@+id/access"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/user"
-        android:layout_below="@+id/usersList"
-        android:layout_marginTop="22dp"
-        android:text="@string/access_hours"
-        android:textSize="20sp" />
-
     <ListView
         android:id="@+id/accessList"
         android:layout_width="match_parent"
         android:layout_height="55sp"
-        android:layout_alignLeft="@+id/updateRole"
+         android:layout_marginTop="10dp"
+        android:layout_alignLeft="@+id/usersList"
         android:layout_alignRight="@+id/usersList"
         android:layout_below="@+id/access" >
+    </ListView>
+
+    <TextView
+        android:id="@+id/deleteRole"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/addSched"
+        android:layout_marginTop="30dp"
+        android:layout_toRightOf="@+id/addSched"
+        android:clickable="true"
+        android:onClick="confirmDelete"
+        android:text="@string/delete"
+        android:textSize="25sp" />
+
+    <TextView
+        android:id="@+id/addSched"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/access"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="65dp"
+        android:layout_toRightOf="@+id/enabledRoleStatus"
+        android:clickable="true"
+        android:onClick="addSched"
+        android:text="@string/add_role"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/roleName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/newRoleTitle"
+        android:layout_below="@+id/newRoleTitle"
+        android:layout_marginLeft="22dp"
+        android:layout_marginTop="26dp"
+        android:text="@string/roleName"
+        android:textSize="20sp" />
+
+    <CheckBox
+        android:id="@+id/enabledRoleStatusBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/enabledRoleStatus"
+        android:layout_alignBottom="@+id/enabledRoleStatus"
+        android:layout_alignRight="@+id/roleNameFill" />
+
+    <ListView
+        android:id="@+id/usersList"
+        android:layout_width="match_parent"
+        android:layout_height="55sp"
+         android:layout_marginTop="10dp"
+        android:layout_below="@+id/user"
+        android:layout_toLeftOf="@+id/enabledRoleStatusBox"
+        android:layout_toRightOf="@+id/user" >
 
     </ListView>
+
+    <TextView
+        android:id="@+id/enabledRoleStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/roleName"
+        android:layout_below="@+id/roleNameFill"
+        android:layout_marginTop="34dp"
+        android:text="@string/enabled"
+        android:textSize="20sp" />
 
 </RelativeLayout>
