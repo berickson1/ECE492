@@ -31,7 +31,6 @@ public class Users extends Activity {
 	private static String ip;
 	private static Context mContext;
 	private Intent updateUser;
-	private ProgressDialog wait;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		mContext = this;
@@ -47,8 +46,7 @@ public class Users extends Activity {
 	}
 	
 	public void onResume(){
-		wait = ProgressDialog.show(Users.this,"Users", "Loading users", true, false, null);
-		
+		final ProgressDialog loadUsersWait = ProgressDialog.show(Users.this,"Users", "Loading users", true, false, null);
 		// Obtains users from web server & displays user names
 		JSONParser parser = new JSONParser(new JSONCallbackFunction() {
 			@Override
@@ -56,25 +54,37 @@ public class Users extends Activity {
 				if (json != null) {
 					final ListView userList = (ListView) findViewById(R.id.listUsers);
 					ArrayList<User> usersArray = new ArrayList<User>();
-					UserAdapter adapter = new UserAdapter(mContext, usersArray);
+					UserAdapter adapter = new UserAdapter(mContext, true, usersArray);
 					adapter.clear();
 					User user = new User();
 					usersArray = user.fromJson(json);
 					adapter.addAll(usersArray);
 					userList.setAdapter(adapter);
 					adapter.notifyDataSetChanged();
-					wait.dismiss();
+					loadUsersWait.dismiss();
 					// User is clicked on
 					userList.setOnItemClickListener(new OnItemClickListener() {
 						@Override
 						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-							wait = ProgressDialog.show(Users.this,"User Information", "Loading user information", true, false, null);
 							User userSelected = (User) userList.getItemAtPosition(position);
 							updateUser = new Intent(Users.this, NewUser.class);
 							updateUser.putExtra("User", userSelected);
 							getPrints(userSelected);
 						}
 					});
+				} else {
+					loadUsersWait.dismiss();
+					AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
+					noConn.setMessage("Could not get retrieve users");
+					noConn.setTitle("Users");
+					noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+			            public void onClick(DialogInterface dialog, int which) {
+			            	finish();
+			            }
+			        });
+					noConn.setCancelable(false);
+					noConn.setCanceledOnTouchOutside(false);
+					noConn.show();
 				}
 			}
 		});
@@ -115,6 +125,7 @@ public class Users extends Activity {
 	
 	// Get user prints
 	public void getPrints(final User selectedUser){
+		final ProgressDialog loadPrintsWait = ProgressDialog.show(Users.this,"Users", "Loading users", true, false, null);
 		// Obtain user's enrolled fingerprints
 		JSONParser parsePrints = new JSONParser(new JSONCallbackFunction() {
 			@Override
@@ -123,53 +134,45 @@ public class Users extends Activity {
 					updateUser.putExtra("User Prints", json.toString());
 					getRoles(selectedUser);
 				} else {
-					AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
-					noConn.setMessage("Could not get user prints");
-					noConn.setTitle("User Prints");
-					noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-		                public void onClick(DialogInterface dialog, int which) {
-		                	wait.dismiss();
-		                	startActivity(updateUser);
-		                }
-		            });
-					noConn.setCancelable(false);
-					noConn.setCanceledOnTouchOutside(false);
-					noConn.show();
+					loadPrintsWait.dismiss();
+					connFailed();
 				}
 			}
 		});
 		parsePrints.execute(ip.concat("/prints/").concat(String.valueOf(selectedUser.getID())));
-		//parsePrints.execute(ip.concat("/prints"));
 	}
 	
 	public void getRoles(User selectedUser){
+		final ProgressDialog loadRolesWait = ProgressDialog.show(Users.this,"Users", "Loading users", true, false, null);
 		// Obtain user's roles
 		JSONParser parseRoles = new JSONParser(new JSONCallbackFunction() {
 			@Override
 			public void execute(JSONArray json) {
 				if (json != null){
 					updateUser.putExtra("User Roles", json.toString());
-					wait.dismiss();
+					loadRolesWait.dismiss();
 					startActivity(updateUser);
 				} else {
-					wait.dismiss();
-					AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
-					noConn.setMessage("Could not get user roles");
-					noConn.setTitle("User Roles");
-					noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
-		                public void onClick(DialogInterface dialog, int which) {
-		                	wait.dismiss();
-		                	startActivity(updateUser);
-		                }
-		            });
-					noConn.setCancelable(false);
-					noConn.setCanceledOnTouchOutside(false);
-					noConn.show();
+					loadRolesWait.dismiss();
+					connFailed();
 				}
 			}
 		});
 		parseRoles.execute(ip.concat("/userRole/").concat(String.valueOf(selectedUser.getID())));
-		//parseRoles.execute(ip.concat("/roles"));
+	}
+	
+	public void connFailed(){
+		AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
+		noConn.setMessage("Could not get user information");
+		noConn.setTitle("Users");
+		noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+            	startActivity(updateUser);
+            }
+        });
+		noConn.setCancelable(false);
+		noConn.setCanceledOnTouchOutside(false);
+		noConn.show();
 	}
 	
 }
