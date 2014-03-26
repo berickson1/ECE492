@@ -42,6 +42,7 @@ public class NewRole extends Activity {
 	private Role selectedRole;
 	private Role newRole;
 	private Role roleToDelete;
+	private RoleSchedule selectedSchedule;
 	private UserRole userToDelete;
 	private EditText nameField;
 	private CheckBox enabledStatus;
@@ -274,9 +275,10 @@ public class NewRole extends Activity {
 	
 	// Opens new screen to show schedule information
 	public void loadSchedule(int position){
+		selectedSchedule = roleSchedAdapter.getItem(position);
 		Intent updateSched = new Intent(NewRole.this, NewSched.class);
 		updateSched.putExtra("Role", selectedRole);
-		updateSched.putExtra("Schedule", roleSchedAdapter.getItemId(position));
+		updateSched.putExtra("Schedule", selectedSchedule);
 		startActivityForResult(updateSched, 0);	
 	}
 	
@@ -288,12 +290,39 @@ public class NewRole extends Activity {
 	}
 	
 	// Gets schedule back to add to listview
-	public void onActivityResult(int requestCode, Intent schedule){
+	public void onActivityResult(int requestCode, int resultCode, Intent schedule){
 		// Returned from NewSched
-		if (requestCode == 0){
-			RoleSchedule newSched = schedule.getParcelableExtra("New Schedule");
-			
-			//TODO: Add schedule to listview
+		if (resultCode == 0){
+			if (resultCode == RESULT_OK){     
+				RoleSchedule newSched = schedule.getParcelableExtra("New Schedule");
+				// Add schedule to listview
+				if (newSched != selectedSchedule) {
+					// Remove 'no record' entry if exists
+					RoleSchedule noRecord = new RoleSchedule(roleSchedAdapter.getItem(0).toJson());
+					if ((noRecord.getID() == -1) && (scheduleJSON.length() == 1)){
+						scheduleJSON.remove(0);
+					}
+					scheduleJSON.put(newSched.toJson());
+				}
+			} else if (resultCode == RESULT_CANCELED){
+				try {
+					// Remove schedule from listview
+					for (int i = 0; i < scheduleJSON.length(); i++){
+						RoleSchedule removeSched = new RoleSchedule(scheduleJSON.getJSONObject(i));
+						if (removeSched.getID() == selectedSchedule.getID()){
+							scheduleJSON.remove(i);
+						}
+					}
+					// Display no roles found
+					if (scheduleJSON.length() == 0){
+						RoleSchedule noSched = new RoleSchedule();
+						noSched.setID(-1);
+						scheduleJSON.put(0, noSched.toJson());
+					}
+				} catch (JSONException e){
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	

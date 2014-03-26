@@ -257,7 +257,7 @@ public class NewUser extends Activity {
 								// Remove user role from listview
 								for (int i = 0; i < userRolesJSON.length(); i++){
 									UserRole removeRole = new UserRole(userRolesJSON.getJSONObject(i));
-									if (removeRole.getName().equals(roleToDelete.getName())){
+									if (removeRole.getID() == roleToDelete.getID()){
 										userRolesJSON.remove(i);
 									}
 								}

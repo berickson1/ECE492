@@ -155,6 +155,8 @@ public class AdminLogin extends Activity {
 									try {
 										Intent addedPrint = new Intent();
 										addedPrint.putExtra("id", id.getInt("id"));
+										setResult(RESULT_OK, addedPrint);
+										finish();
 									} catch (JSONException e) {
 										e.printStackTrace();
 									}

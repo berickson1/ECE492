@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class RoleSchedule{
+public class RoleSchedule implements Parcelable{
 	int id, rid, startTime, endTime, days;
 	Long startDate, endDate;
 	

@@ -185,7 +185,7 @@
         android:layout_alignBottom="@+id/deleteSched"
         android:layout_toRightOf="@+id/days"
         android:clickable="true"
-        android:onClick="updateRole"
+        android:onClick="checkSched"
         android:text="@string/update"
         android:textSize="25sp" />
 
