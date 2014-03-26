@@ -24,7 +24,6 @@ public class Manage extends Activity {
 	public static final String PREFS_NAME = "CONNECTION";
 	private static String ip;
 	private static Context mContext;
-	TextView unlockButton;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		mContext = this;
@@ -59,21 +58,14 @@ public class Manage extends Activity {
 	// Unlocks door lock
 	public void unlockDoor(View v) {
 		// Disable repeated button click
-		unlockButton = (TextView) findViewById(R.id.unlock);
+		final TextView unlockButton = (TextView) findViewById(R.id.unlock);
 		unlockButton.setEnabled(false);
-		
-		// JSONObject to request unlock door
-		JSONObject putRequest = new JSONObject();
-		try {
-			putRequest.put("request", "unlock");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
 		
 		// Post request to unlock door
 		JSONParser unlock = new JSONParser(new JSONCallbackFunction() {
 			@Override
 			public void execute(JSONArray json) {
+				// Popup displaying if lock was unlocked or not
 				AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
 				noConn.setTitle("Unlock");
 				noConn.setCancelable(false);
@@ -102,6 +94,6 @@ public class Manage extends Activity {
 				unlockButton.setEnabled(true);
 			}
 		});
-		unlock.execute(ip.concat("/unlock"), putRequest.toString());
+		unlock.execute(ip.concat("/unlock"));
 	}
 }
