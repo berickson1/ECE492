@@ -998,7 +998,6 @@ bool Database::checkAccess(int fid){
 	h.success = false;
 	h.time = rawtime;
 
-	return true;
 	if (userPrint.uid != -1){
 		int uid = userPrint.uid;
 		printf("User found. ID:%d", uid);
