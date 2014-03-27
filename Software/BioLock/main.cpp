@@ -183,7 +183,7 @@ void task3(void* pdata) {
 	Camera::init();
 	while (1){
 		//Ensures that the lock re-locks
-		Solenoid::timedLock(solenoidSem, solenoidMutex, 10);
+		Solenoid::timedLock(solenoidSem, solenoidMutex, 10 * CLOCKS_PER_SEC);
 	}
 }
 
