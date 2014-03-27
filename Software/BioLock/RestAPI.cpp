@@ -101,7 +101,7 @@ string RestAPI::getPrints(string URI){
 }
 string RestAPI::getPrint(int uid){
 	Database db(m_databaseSem);
-	return db.findUserPrint(uid);
+	return db.findUserPrintUID(uid);
 
 }
 
@@ -246,6 +246,9 @@ string RestAPI::unlockLock(){
 
 bool RestAPI::checkAdminPrint(){
 	int fid = getFingerprintId(false);
+	if (fid == -1){
+		return false;
+	}
 	Database db(m_databaseSem);
 	UserPrint print;
 	print.loadFromJson(db.findUserPrint(fid));

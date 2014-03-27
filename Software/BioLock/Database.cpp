@@ -494,9 +494,33 @@ string Database::findRoleUser(int rid) {
 	return findEntryByRID(USER_ROLES, rid);
 }
 
-// Searches for a role schedule by id
-string Database::findUserPrint(int uid) {
+string Database::findUserPrintUID(int uid) {
 	return findEntryByUID(USER_PRINTS, uid);
+}
+
+// Searches for user print by id
+string Database::findUserPrint(int id) {
+	DirList list;
+	int ret, file;
+
+	ret = ls_openDir(&list, &db.myFs, USER_PRINTS);
+	if (ret == -1)
+		printf("Could not open directory. Please check definition of path\n");
+	if (ls_getNext(&list) == 0) {
+		string filename = getFileName(USER_PRINTS, list.currentEntry.FileName);
+		file = findID(filename);
+		if(file == id){
+			return findEntryByName(filename);
+		}
+	}
+	while (ls_getNext(&list) == 0) {
+		string filename = getFileName(USER_PRINTS, list.currentEntry.FileName);
+		file = findID(filename);
+		if(file == id){
+			return findEntryByName(filename);
+		}
+	}
+	return noRecord();
 }
 
 // Finds next lowest id number for filename
@@ -920,6 +944,10 @@ void Database::testPopulate() {
 	up4.uid = 2;
 	up4.id = 7;
 	insertUserPrint(up4);
+
+	UserPrint up5;
+	up5.uid = 1;
+	up5.id = 9;
 
 	History h1;
 	h1.id = 1;

@@ -41,12 +41,14 @@ public:
 	string insertUserPrint(UserPrint value);
 	string insertHistory(History value);
 
+	string findEntryByName(string name);
 	string findRole(int rid);
 	string findUser(int uid);
 	string findRoleSchedule(int id);
 	string findUserRole(int id);
 	string findRoleUser(int rid);
 	string findUserPrint(int id);
+	string findUserPrintUID(int uid);
 	int findNextID(char *path);
 	string findHistory(int id);
 
@@ -72,7 +74,6 @@ public:
 private:
 	OS_EVENT *m_databaseSemaphore;
 	EmbeddedFileSystem db;
-	string findEntryByName(string name);
 	string findEntry(const char *path, int id);
 	string deleteEntry(string file);
 	string clearTable(char *path);
