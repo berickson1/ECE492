@@ -1,11 +1,11 @@
+// NOTE: LOCAL TIMEZONE
 
 package ca.ualberta.ece492.g9.biolock;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
+import java.util.TimeZone;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,8 +53,8 @@ public class NewSched extends Activity {
 	private TextView startDate;
 	private TextView endDate;
 	private TextView deleteSched;
-	private int startHourFormatted;
-	private int endHourFormatted;
+	private int startHourFormatted = 0;
+	private int endHourFormatted = 0;
 	private Long startDateFormatted;
 	private Long endDateFormatted;
 	
@@ -105,13 +105,17 @@ public class NewSched extends Activity {
 	
 	// Shows the schedule selected
 	public void displaySchedule(){
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");	
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd,HH:mm");
+		dateFormat.setTimeZone(TimeZone.getDefault());
+		String startDateString = dateFormat.format(selectedSchedule.getStartDate()*1000L).toString();
+		int split = startDateString.indexOf(",");
+		startHour.setText(startDateString.substring(split + 1));
+		startDate.setText(startDateString.subSequence(0,  split));
+		String endDateString = dateFormat.format(selectedSchedule.getEndDate()*1000L).toString();
+		split = endDateString.indexOf(",");
+		endHour.setText(endDateString.substring(split + 1));
+		endDate.setText(endDateString.substring(0, split));
 		checkDays(selectedSchedule.getDays());
-		startHour.setText(timeFormat.format(selectedSchedule.getEndTime()).toString());
-		endHour.setText(timeFormat.format(selectedSchedule.getStartTime()).toString());
-		startDate.setText(dateFormat.format(selectedSchedule.getStartDate()*1000L).toString());
-		endDate.setText(dateFormat.format(selectedSchedule.getEndDate()*1000L).toString());
 	}
 	
 	// Checks the day authorized
@@ -247,16 +251,19 @@ public class NewSched extends Activity {
 	
 	// Check if schedule has changed
 	public void checkSched(View v){
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd,HH:mm");
+		String start = startDate.getText().toString() + "," + startHour.getText().toString();
+		String end = endDate.getText().toString() + "," + endHour.getText().toString();
+		try {
+			startDateFormatted = dateFormat.parse(start).getTime()/1000L;
+			endDateFormatted = dateFormat.parse(end).getTime()/1000L;
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		// Check for changes
 		if (selectedSchedule != null) {
 			// Check days
 			if (getAllDays() != selectedSchedule.getDays()){
-				updateSchedule();
-			// Check start time
-			} else if (selectedSchedule.getStartTime() != startHourFormatted) {
-				updateSchedule();
-			// Check end time
-			} else if (selectedSchedule.getEndTime() != endHourFormatted) {
 				updateSchedule();
 			// Check start date
 			} else if (selectedSchedule.getStartDate() != startDateFormatted) {
@@ -372,16 +379,6 @@ public class NewSched extends Activity {
 		} else {
 			date += day;
 		}
-		try {
-			Date dateFormatted = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(date);
-			if (type.equals("start")) {
-				startDateFormatted = dateFormatted.getTime()/1000L;
-			} else if (type.equals("end")) {
-				endDateFormatted = dateFormatted.getTime()/1000L;
-			}
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
 		return date;
 	}
 	
@@ -397,11 +394,6 @@ public class NewSched extends Activity {
        		time += "0" + minute;
        	} else {
        		time += minute;
-       	}
-       	if (type.equals("start")) {
-       		startHourFormatted = (minute*60) + (hour*3600);
-       	} else if (type.equals("end")) {
-       		endHourFormatted = (minute*60) + (hour*3600);
        	}
        	return time;
 	}
