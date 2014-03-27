@@ -107,31 +107,31 @@ public class NewSched extends Activity {
 	// Checks the day authorized
 	public void checkDays(int days) {
 		// Sunday
-		if ((days/1000000) == 1){
+		if ((days >> 6) == 1){
 			sundayBox.setChecked(true);
 		}
 		// Monday
-		if (((days/100000)%10) == 1){
+		if (((days >> 5) & 1) == 1){
 			mondayBox.setChecked(true);
 		}
 		// Tuesday
-		if (((days/10000)%10) == 1){
+		if (((days >> 4) & 1) == 1){
 			tuesdayBox.setChecked(true);	
 		}
 		// Wednesday
-		if (((days/1000)%10) == 1){
+		if (((days >> 3) & 1) == 1){
 			wednesdayBox.setChecked(true);
 		}
 		// Thursday
-		if (((days/100)%10) == 1){
+		if (((days >> 2) & 1) == 1){
 			thursdayBox.setChecked(true);
 		}
 		// Friday
-		if (((days/10)%10) == 1){
+		if (((days >> 1) & 1) == 1){
 			fridayBox.setChecked(true);
 		}
 		// Saturday
-		if ((days%10) == 1){
+		if ((days & 1) == 1){
 			saturdayBox.setChecked(true);
 		}
 	}
@@ -267,14 +267,14 @@ public class NewSched extends Activity {
 	
 	// Get the days from the checkboxes
 	public int getAllDays(){
-		int sunday = sundayBox.isChecked() ? 1000000:0;
-		int monday = mondayBox.isChecked() ? 100000:0;
-		int tuesday = tuesdayBox.isChecked() ? 10000:0;
-		int wednesday = wednesdayBox.isChecked() ? 1000:0;
-		int thursday = thursdayBox.isChecked() ? 100:0;
-		int friday = fridayBox.isChecked() ? 10:0;
+		int sunday = sundayBox.isChecked() ? 1 << 6:0;
+		int monday = mondayBox.isChecked() ? 1 << 5:0;
+		int tuesday = tuesdayBox.isChecked() ? 1 << 4:0;
+		int wednesday = wednesdayBox.isChecked() ? 1 << 3:0;
+		int thursday = thursdayBox.isChecked() ? 1 << 2:0;
+		int friday = fridayBox.isChecked() ? 1 << 1:0;
 		int saturday = saturdayBox.isChecked() ? 1:0;
-		return sunday + monday + tuesday + wednesday + thursday + friday + saturday;
+		return sunday | monday | tuesday | wednesday | thursday | friday |saturday;
 	}
 	
 	// Set start time of role

@@ -83,7 +83,18 @@ public class AdminLogin extends Activity {
 							auth.setCanceledOnTouchOutside(false);
 							auth.show();
 						} else {
-							displayFail();
+							AlertDialog noAuth  = new AlertDialog.Builder(mContext).create();
+							noAuth.setMessage("Fingerprint unauthorized");
+							noAuth.setTitle("Fingerprint");
+							noAuth.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog, int which) {
+									// Go back to caller screen
+									finish();
+								}
+						    });
+							noAuth.setCancelable(false);
+							noAuth.setCanceledOnTouchOutside(false);
+							noAuth.show();
 						}
 					} catch (JSONException e) {
 						e.printStackTrace();
@@ -119,7 +130,7 @@ public class AdminLogin extends Activity {
 				}
 			}
 		});
-		//enrollUser1.execute(ip.concat("/enroll1"));
+		enrollUser1.execute(ip.concat("/enroll1"));
 	}
 	
 	// Requests user to scan print again for adding
