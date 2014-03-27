@@ -262,7 +262,12 @@ bool RestAPI::checkAdminPrint(){
 		return false;
 	}
 	UserRole userRole;
-	userRole.loadFromJson(db.findUserRole(user.id));
+	string uRole = db.findUserRole(user.id);
+	if (uRole.find("[") == 0){
+		userRole.loadFromJson(uRole.substr(1, uRole.size() - 1));
+	} else {
+		userRole.loadFromJson(uRole);
+	}
 	if(userRole.id == -1){
 		return false;
 	}
