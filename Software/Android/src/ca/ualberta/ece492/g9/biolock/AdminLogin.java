@@ -164,14 +164,13 @@ public class AdminLogin extends Activity {
 							added.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog, int which) {
 									try {
-										Intent addedPrint = new Intent();
-										addedPrint.putExtra("id", id.getInt("id"));
+										Intent addedPrint = getIntent();
+										addedPrint.putExtra("id", id.getInt("fid"));
 										setResult(RESULT_OK, addedPrint);
 										finish();
 									} catch (JSONException e) {
 										e.printStackTrace();
 									}
-									finish();
 								}
 						    });
 							added.setCancelable(false);

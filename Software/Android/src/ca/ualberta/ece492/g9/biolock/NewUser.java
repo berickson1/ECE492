@@ -165,12 +165,14 @@ public class NewUser extends Activity {
 	}
 	
 	// Gets fingerprint id & adds to db
-	public void onActivityResult(int requestCode, Intent fingerprint){
+	public void onActivityResult(int requestCode, int resultCode, Intent fingerprint){
 		// Returned from AdminLogin
 		if (requestCode == 0){
-			int id = fingerprint.getIntExtra("id", -1);
-			if (id != -1){
-				addUserPrint(id);
+			if (resultCode == RESULT_OK) {
+				int id = fingerprint.getIntExtra("id", -1);
+				if (id != -1){
+					addUserPrint(id);
+				}
 			}
 		}
 	}
