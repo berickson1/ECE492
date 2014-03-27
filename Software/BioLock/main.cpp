@@ -132,22 +132,21 @@ void task1(void* pdata) {
 
 			//Check if fingerprint is allowed access and unlock door
 			//After this point, we fall through to the error if (uriString.compare(0, 7,
-			if (fid >= 0) {
-				Database dbAccess(databaseSemaphore);
-				if(dbAccess.checkAccess(fid)){
-					//Success, unlock door!
-					char * ledBase = (char*) GREEN_LEDS_BASE;
-					for (int i = 0; i < GREEN_LEDS_DATA_WIDTH; i++){
-						*ledBase = 1 << i;
-						OSTimeDlyHMSM(0, 0, 0, 100);
-					}
-					*ledBase = 0;
-					printf("Open up!!!\n\n");
-					printf("Unlocking\n");
-					Solenoid::unlock(solenoidSem, solenoidMutex);
-					continue;
+			Database dbAccess(databaseSemaphore);
+			if(dbAccess.checkAccess(fid)){
+				//Success, unlock door!
+				char * ledBase = (char*) GREEN_LEDS_BASE;
+				for (int i = 0; i < GREEN_LEDS_DATA_WIDTH; i++){
+					*ledBase = 1 << i;
+					OSTimeDlyHMSM(0, 0, 0, 100);
 				}
+				*ledBase = 0;
+				printf("Open up!!!\n\n");
+				printf("Unlocking\n");
+				Solenoid::unlock(solenoidSem, solenoidMutex);
+				continue;
 			}
+
 			//Fallthrough error case. Notify owner!
 			printf("Failed to verify print!\n\n");
 			{
