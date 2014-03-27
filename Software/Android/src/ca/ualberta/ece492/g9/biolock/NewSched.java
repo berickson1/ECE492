@@ -1,7 +1,11 @@
 
 package ca.ualberta.ece492.g9.biolock;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,6 +53,10 @@ public class NewSched extends Activity {
 	private TextView startDate;
 	private TextView endDate;
 	private TextView deleteSched;
+	private int startHourFormatted;
+	private int endHourFormatted;
+	private Long startDateFormatted;
+	private Long endDateFormatted;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		mContext = this;
@@ -97,11 +105,13 @@ public class NewSched extends Activity {
 	
 	// Shows the schedule selected
 	public void displaySchedule(){
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");	
 		checkDays(selectedSchedule.getDays());
-		startHour.setText(String.valueOf(selectedSchedule.getStartTime()));
-		endHour.setText(String.valueOf(selectedSchedule.getEndTime()));
-		startDate.setText(String.valueOf(selectedSchedule.getStartDate()));
-		endDate.setText(String.valueOf(selectedSchedule.getEndDate()));
+		startHour.setText(timeFormat.format(selectedSchedule.getEndTime()).toString());
+		endHour.setText(timeFormat.format(selectedSchedule.getStartTime()).toString());
+		startDate.setText(dateFormat.format(selectedSchedule.getStartDate()*1000L).toString());
+		endDate.setText(dateFormat.format(selectedSchedule.getEndDate()*1000L).toString());
 	}
 	
 	// Checks the day authorized
@@ -216,10 +226,10 @@ public class NewSched extends Activity {
 		});
 		changeSchedule = new RoleSchedule();
 		changeSchedule.setDays(getAllDays());
-		changeSchedule.setStartTime(Integer.valueOf(startHour.getText().toString()));
-		changeSchedule.setEndTime(Integer.valueOf(endHour.getText().toString()));
-		changeSchedule.setStartDate(Long.valueOf(startDate.getText().toString()));
-		changeSchedule.setEndDate(Long.valueOf(endDate.getText().toString()));
+		changeSchedule.setStartTime(startHourFormatted);
+		changeSchedule.setEndTime(endHourFormatted);
+		changeSchedule.setStartDate(startDateFormatted);
+		changeSchedule.setEndDate(endDateFormatted);
 		// Update schedule
 		if (selectedSchedule != null) {
 			changeSchedule.setID(selectedSchedule.getID());
@@ -243,16 +253,16 @@ public class NewSched extends Activity {
 			if (getAllDays() != selectedSchedule.getDays()){
 				updateSchedule();
 			// Check start time
-			} else if (Integer.valueOf(startHour.getText().toString()) != selectedSchedule.getStartTime()) {
+			} else if (selectedSchedule.getStartTime() != startHourFormatted) {
 				updateSchedule();
 			// Check end time
-			} else if (Integer.valueOf(endHour.getText().toString()) != selectedSchedule.getEndTime()) {
+			} else if (selectedSchedule.getEndTime() != endHourFormatted) {
 				updateSchedule();
 			// Check start date
-			} else if (Long.valueOf(startDate.getText().toString()) != selectedSchedule.getStartDate()) {
+			} else if (selectedSchedule.getStartDate() != startDateFormatted) {
 				updateSchedule();
 			// Check end date
-			} else if (Long.valueOf(endDate.getText().toString()) != selectedSchedule.getEndDate()) {
+			} else if (selectedSchedule.getEndDate() != endDateFormatted) {
 				updateSchedule();
 			} else {
 				Intent noChange = getIntent();
@@ -285,7 +295,7 @@ public class NewSched extends Activity {
          TimePickerDialog selectStartHour = new TimePickerDialog(NewSched.this, new TimePickerDialog.OnTimeSetListener() {
              @Override
              public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-            	 String startTime = getTime(selectedHour, selectedMinute);
+            	 String startTime = getTime("start", selectedHour, selectedMinute);
                  startHour.setText(startTime);
              }
          }, hour, minute, true);
@@ -302,7 +312,7 @@ public class NewSched extends Activity {
         TimePickerDialog selectEndHour = new TimePickerDialog(NewSched.this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-            	String endTime = getTime(selectedHour, selectedMinute);
+            	String endTime = getTime("end", selectedHour, selectedMinute);
 	           	endHour.setText(endTime);
             }
         }, hour, minute, true);
@@ -321,7 +331,7 @@ public class NewSched extends Activity {
 			@Override
 			public void onDateSet(DatePicker view, int selectedYear, int selectedMonth,
 					int selectedDay) {
-				String startDay = getDate(selectedYear, selectedMonth, selectedDay);
+				String startDay = getDate("start", selectedYear, selectedMonth, selectedDay);
 				startDate.setText(startDay);
 			}
         }, year, month, day);
@@ -339,7 +349,7 @@ public class NewSched extends Activity {
 			@Override
 			public void onDateSet(DatePicker view, int selectedYear, int selectedMonth,
 					int selectedDay) {
-				String endDay = getDate(selectedYear, selectedMonth, selectedDay);
+				String endDay = getDate("end", selectedYear, selectedMonth, selectedDay);
 				endDate.setText(endDay);
 			}
         }, year, month, day);
@@ -348,7 +358,7 @@ public class NewSched extends Activity {
 	}
 	
 	// Gets the date
-	public String getDate(int year, int month, int day){
+	public String getDate(String type, int year, int month, int day){
 		String date = year + "-";
 		// Month offset
 		month += 1;
@@ -362,11 +372,21 @@ public class NewSched extends Activity {
 		} else {
 			date += day;
 		}
+		try {
+			Date dateFormatted = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(date);
+			if (type.equals("start")) {
+				startDateFormatted = dateFormatted.getTime()/1000L;
+			} else if (type.equals("end")) {
+				endDateFormatted = dateFormatted.getTime()/1000L;
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
 		return date;
 	}
 	
 	// Gets the time
-	public String getTime(int hour, int minute){
+	public String getTime(String type, int hour, int minute){
 		String time = null; 
        	if (hour < 10){
        		time = "0" + hour + ":";
@@ -377,6 +397,11 @@ public class NewSched extends Activity {
        		time += "0" + minute;
        	} else {
        		time += minute;
+       	}
+       	if (type.equals("start")) {
+       		startHourFormatted = (minute*60) + (hour*3600);
+       	} else if (type.equals("end")) {
+       		endHourFormatted = (minute*60) + (hour*3600);
        	}
        	return time;
 	}
