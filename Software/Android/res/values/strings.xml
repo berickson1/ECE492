@@ -54,5 +54,8 @@
     <string name="endTime">End Time</string>
     <string name="sampleDate">YYYY-MM-DD</string>
     <string name="picture">Picture</string>
+    <string name="access">Access</string>
+    <string name="accessDate">Access Date</string>
+    <string name="accessTime">Access Time</string>
 
 </resources>

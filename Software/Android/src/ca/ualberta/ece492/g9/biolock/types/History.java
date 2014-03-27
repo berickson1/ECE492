@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class History {
+public class History implements Parcelable{
 	int id, uid;
 	boolean success;
 	Long time;

@@ -3,19 +3,27 @@ package ca.ualberta.ece492.g9.biolock;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import ca.ualberta.ece492.g9.biolock.customs.HistoryAdapter;
 import ca.ualberta.ece492.g9.biolock.customs.JSONCallbackFunction;
 import ca.ualberta.ece492.g9.biolock.customs.JSONParser;
 import ca.ualberta.ece492.g9.biolock.types.History;
+import ca.ualberta.ece492.g9.biolock.types.User;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.AdapterView.OnItemClickListener;
 
 //From Manage - user wishes to view the access log
 public class Log extends Activity {
@@ -23,6 +31,7 @@ public class Log extends Activity {
 	private static String ip;
 	private static Context mContext;
 	private static HistoryAdapter adapter;
+	private Intent showHistory;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		mContext = this;
@@ -51,26 +60,48 @@ public class Log extends Activity {
 					historyList.setAdapter(adapter);
 					wait.dismiss();
 					// User is clicked on
-					/*historyList.setOnItemClickListener(new OnItemClickListener() {
+					historyList.setOnItemClickListener(new OnItemClickListener() {
 						@Override
 						public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-							User userSelected = (User) userList.getItemAtPosition(position);
-							Intent updateUser = new Intent(Users.this, NewUser.class);
-							updateUser.putExtra("User", userSelected);
-							startActivity(updateUser);
+							History historySelected = (History) historyList.getItemAtPosition(position);
+							showHistory = new Intent(Log.this, DetailHistory.class);
+							showHistory.putExtra("History", historySelected);
+							getUser(historySelected);
 						}
-					});*/
+					});
 				}
 			}
 		});
 		parser.execute(ip.concat("/history"));
 	}
 	
-	public void onResume(){
-		if (adapter != null){
-			// Updates listview 
-			adapter.notifyDataSetChanged();
-		}
-		super.onResume();
+	public void getUser(History historySelected) {
+		final ProgressDialog loadHistoryWait = ProgressDialog.show(Log.this, "History", "Loading log history details", true, false, null);
+		JSONParser parseUser = new JSONParser(new JSONCallbackFunction() {
+			@Override
+			public void execute(JSONArray json) {
+				if (json != null){
+					try {
+						showHistory.putExtra("User", new User(json.getJSONObject(0)));
+						loadHistoryWait.dismiss();
+						startActivity(showHistory);
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				} else {
+					loadHistoryWait.dismiss();
+					AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
+					noConn.setMessage("Could not get log history information");
+					noConn.setTitle("Log History");
+					noConn.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+			            public void onClick(DialogInterface dialog, int which) {}
+			        });
+					noConn.setCancelable(false);
+					noConn.setCanceledOnTouchOutside(false);
+					noConn.show();
+				}
+			}
+		});
+		parseUser.execute(ip.concat("/users/").concat(String.valueOf(historySelected.getUID())));
 	}
 }

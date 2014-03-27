@@ -1,9 +1,10 @@
-// TODO: get the date and time
 // https://github.com/thecodepath/android_guides/wiki/Using-an-ArrayAdapter-with-ListView
 
 package ca.ualberta.ece492.g9.biolock.customs;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.TimeZone;
 
 import ca.ualberta.ece492.g9.biolock.R;
 import ca.ualberta.ece492.g9.biolock.types.History;
@@ -21,6 +22,7 @@ public class HistoryAdapter extends ArrayAdapter<History> {
 	
 	public HistoryAdapter(Context context, boolean enabled, ArrayList<History> history) {
 		super(context, R.layout.list_view_row_two_columns, history);
+		this.enabled = enabled;
 	}
 	
 	@Override
@@ -38,9 +40,13 @@ public class HistoryAdapter extends ArrayAdapter<History> {
        TextView time = (TextView) convertView.findViewById(R.id.listTime);
        
        // Populate the data into the template view using the data object
-       if (history.getID() == -1){
-    	   date.setText(String.valueOf(history.getTime()));
-    	   time.setText(String.valueOf(history.getTime()));
+       if (history.getID() != -1){
+    	   SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd,HH:mm");
+    	   dateFormat.setTimeZone(TimeZone.getDefault());
+    	   String dateString = dateFormat.format(history.getTime()*1000L).toString();
+    	   int split = dateString.indexOf(",");
+    	   date.setText(String.valueOf(dateString.substring(split + 1)));
+    	   time.setText(dateString.subSequence(0,  split));
        } else {
     	   date.setText("No access history found");
     	   time.setText("");

@@ -1,0 +1,110 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".MainActivity" >
+
+    <TextView
+        android:id="@+id/logTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30sp"
+        android:layout_marginTop="50sp"
+        android:gravity="center"
+        android:text="@string/display_log"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="35sp" />
+
+    <TextView
+        android:id="@+id/userName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/logTitle"
+        android:layout_below="@+id/logTitle"
+        android:layout_marginLeft="20dp"
+        android:text="@string/userName"
+        android:textSize="25sp" />
+
+    <TextView
+        android:id="@+id/user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/userName"
+        android:layout_alignBottom="@+id/userName"
+        android:layout_marginLeft="100dp"
+        android:layout_toRightOf="@+id/userName"
+        android:textSize="20sp" 
+        android:gravity="right"
+        android:text="@string/sampleName" />
+
+    <TextView
+        android:id="@+id/access"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/userName"
+        android:layout_below="@+id/userName"
+        android:layout_marginTop="60dp"
+        android:text="@string/access"
+        android:textSize="25sp" />
+
+    <TextView
+        android:id="@+id/accessResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/access"
+        android:layout_alignRight="@+id/user"
+        android:layout_toRightOf="@+id/userName"
+        android:gravity="right"
+        android:text="@string/access"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/access"
+        android:layout_below="@+id/access"
+        android:layout_marginTop="60dp"
+        android:text="@string/accessDate"
+        android:textSize="25sp" />
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/date"
+        android:layout_below="@+id/date"
+        android:layout_marginTop="60dp"
+        android:text="@string/accessTime"
+        android:textSize="25sp" />
+
+    <TextView
+        android:id="@+id/dateResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/time"
+        android:layout_alignLeft="@+id/user"
+        android:layout_alignRight="@+id/accessResult"
+        android:gravity="right"
+        android:text="@string/accessDate"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/timeResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/time"
+        android:layout_alignBottom="@+id/time"
+        android:layout_alignLeft="@+id/dateResult"
+        android:layout_alignRight="@+id/dateResult"
+        android:gravity="right"
+        android:text="@string/accessTime"
+        android:textSize="20sp" />
+
+</RelativeLayout>
