@@ -286,9 +286,9 @@ string RestAPI::enroll1(){
 }
 string RestAPI::enroll2(){
 	int fid = getFingerprintId(true);
-	string retString = m_successString;
-	retString.insert(m_successString.size() - 1, ",\"fid\":%d", fid);
-	return retString;
+	stringstream retString;
+	retString << m_successString << ",{\"fid\":\"" << fid << "\"}";
+	return retString.str();
 }
 
 int RestAPI::extractID(string URI){
