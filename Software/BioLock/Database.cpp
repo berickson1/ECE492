@@ -996,7 +996,7 @@ bool Database::checkAccess(int fid){
 	h.id = fid;
 	h.uid = -1;
 	h.success = false;
-	h.time = mktime(timeInfo);
+	h.time = rawtime;
 
 	return true;
 	if (userPrint.uid != -1){
@@ -1025,9 +1025,8 @@ bool Database::checkAccess(int fid){
 						int days = roleSchedule.days;
 						if (days != -1){
 							//Check days
-							int currentDay = timeInfo->tm_wday;
-							//TODO: check current day with allowed days
-							if (currentDay < days){
+							int currentDay = 0x01 << timeInfo->tm_wday;
+							if (currentDay & (days << currentDay)){
 								//Check if current time falls within allowed times
 								int currentTime = timeInfo->tm_hour;
 								int startTime = roleSchedule.startTime;
@@ -1044,7 +1043,6 @@ bool Database::checkAccess(int fid){
 			}
 		}
 	}
-
 	insertHistory(h);
 	return false;
 }
