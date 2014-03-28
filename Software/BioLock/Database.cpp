@@ -1005,7 +1005,7 @@ bool Database::checkAccess(int fid){
 		string userJSON = findUser(uid);
 		user.loadFromJson(userJSON);
 		if (!user.name.empty()){
-			printf(" Name:%s\n", user.name);
+			printf(" Name:%s\n", user.name.c_str());
 			//Check if user is enabled
 			if(user.enabled){
 				//Check if current date falls within allowed dates
