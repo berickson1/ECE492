@@ -1310,7 +1310,7 @@ void http_handle_receive(http_conn* conn, int http_instance)
         }
       } 
     } /* while(conn->state == PROCESS) */
-    printf("[http_handle_receive] Incoming %d connection: %s", conn->action, conn->uri);
+    printf("[http_handle_receive] Incoming %d connection: %s\n", conn->action, conn->uri);
     if( http_prepare_response(conn) )
     {
       conn->state = RESET;
@@ -1340,7 +1340,7 @@ void http_handle_receive(http_conn* conn, int http_instance)
     /* Jump to the file_upload() function....process more received data. */
     upload_field.func(conn);
   }
-  printf("[http_handle_receive] Finished processing connection: %s", conn->uri);
+  printf("[http_handle_receive] Finished processing connection: %s\n", conn->uri);
 }
 
 /* 
