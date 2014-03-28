@@ -33,7 +33,7 @@
 #include "ZFMComm.h"
 #include "RestAPI.h"
 #include "Database.h"
-#include "json/reader.h"
+#include "json/json.h"
 #include "Audio.h"
 
 extern "C" {

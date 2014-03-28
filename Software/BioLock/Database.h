@@ -8,14 +8,11 @@
 #ifndef __DATABASE_H__
 #define __DATABASE_H__
 
-#include "alt_types.h"
-#include "includes.h"
-#include <stdio.h>
+#include "json/json.h"
 #include <stdlib.h>
-#include <string>
+#include <stdio.h>
+#include "includes.h"
 #include <sstream>
-#include "json/writer.h"
-#include "json/reader.h"
 #include "Database_CONST.h"
 #include "DatabaseTableTypes.h"
 

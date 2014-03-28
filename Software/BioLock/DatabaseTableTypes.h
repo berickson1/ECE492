@@ -8,9 +8,7 @@
 #ifndef DATABASE_TABLE_TYPES_H_
 #define DATABASE_TABLE_TYPES_H_
 
-#include "includes.h"
-#include "json/writer.h"
-#include "json/reader.h"
+#include "json/json.h"
 #include <sstream>
 using namespace std;
 
@@ -28,7 +26,7 @@ typedef struct History {
 	void loadFromJson(string jsonString) {
 		Json::Reader reader;
 		Json::Value node;
-		reader.parse(jsonString, node, true);
+		reader.parse(jsonString, node, false);
 		id = node["id"].asInt();
 		uid = node["uid"].asInt();
 		success = node["success"].asBool();
@@ -52,15 +50,17 @@ typedef struct User {
 		string jsonValue = nodeToInsert.toStyledString();
 		return jsonValue;
 	}
-	void loadFromJson(string jsonString) {
-		Json::Reader reader;
-		Json::Value node;
-		reader.parse(jsonString, node, true);
-		id = node["id"].asInt();
-		name = node["name"].asString();
-		enabled = node["enabled"].asBool();
-		startDate = node["startDate"].asDouble();
-		endDate = node["endDate"].asDouble();
+	void loadFromJson(string jsonString1) {
+		{
+			Json::Reader reader = Json::Reader();
+			Json::Value node;
+			reader.parse(jsonString1, node, false);
+			id = node["id"].asInt();
+			name = node["name"].asString();
+			enabled = node["enabled"].asBool();
+			startDate = node["startDate"].asDouble();
+			endDate = node["endDate"].asDouble();
+		}
 	}
 	int id;
 	string name;
@@ -78,11 +78,13 @@ typedef struct UserPrint {
 		return jsonValue;
 	}
 	void loadFromJson(string jsonString) {
-		Json::Reader reader;
-		Json::Value node;
-		reader.parse(jsonString, node, true);
-		uid = node["uid"].asInt();
-		id = node["id"].asInt();
+		{
+			Json::Reader reader2 = Json::Reader();
+			Json::Value node2;
+			reader2.parse(jsonString, node2, false);
+			uid = node2["uid"].asInt();
+			id = node2["id"].asInt();
+		}
 	}
 	int id, uid;
 } UserPrint;
@@ -103,7 +105,7 @@ typedef struct Role {
 	void loadFromJson(string jsonString) {
 		Json::Reader reader;
 		Json::Value node;
-		reader.parse(jsonString, node, true);
+		reader.parse(jsonString, node, false);
 		id = node["id"].asInt();
 		name = node["name"].asString();
 		admin = node["admin"].asBool();
@@ -134,7 +136,7 @@ typedef struct UserRole {
 	void loadFromJson(string jsonString) {
 		Json::Reader reader;
 		Json::Value node;
-		reader.parse(jsonString, node, true);
+		reader.parse(jsonString, node, false);
 		name = node["name"].asString();
 		id = node["id"].asInt();
 		uid = node["uid"].asInt();
@@ -164,7 +166,7 @@ typedef struct RoleSchedule {
 	void loadFromJson(string jsonString) {
 		Json::Reader reader;
 		Json::Value node;
-		reader.parse(jsonString, node, true);
+		reader.parse(jsonString, node, false);
 		id = node["id"].asInt();
 		rid = node["rid"].asInt();
 		startTime = node["startTime"].asInt();

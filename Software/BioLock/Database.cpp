@@ -980,35 +980,57 @@ void Database::testPopulate() {
 
 bool Database::checkAccess(int fid){
 	UserPrint userPrint;
-	User user;
 	UserRole userRole;
 	RoleSchedule roleSchedule;
-
+	History history;
 	time_t rawtime;
 	struct tm * timeInfo;
 
-	time(&rawtime);
-	timeInfo = localtime(&rawtime);
+	history.id = findNextID(HISTORY);
+	//time(&rawtime);
+	//timeInfo = localtime(&rawtime);
 
-	string userPrintJSON = findUserPrint(fid);
-	userPrint.loadFromJson(userPrintJSON);
-	History h;
-	h.id = fid;
-	h.uid = -1;
-	h.success = false;
-	h.time = rawtime;
+	// Fingerprint unauthorized, log to history and return fail
+	if (fid < 1) {
+		history.uid = -1;
+		history.success = false;
+		history.time = rawtime;
+		insertHistory(history);
+		return false;
+	}
 
-	if (userPrint.uid != -1){
-		int uid = userPrint.uid;
-		printf("User found. ID:%d", uid);
-		h.uid = uid;
-		string userJSON = findUser(uid);
-		user.loadFromJson(userJSON);
-		if (!user.name.empty()){
-			printf(" Name:%s\n", user.name);
-			//Check if user is enabled
-			if(user.enabled){
-				//Check if current date falls within allowed dates
+	// Find user print
+	userPrint.loadFromJson(findUserPrint(fid));
+	//userPrint.loadFromJson(userPrintJSON);
+
+	// Invalid user, should not enter this as fid < 1 will handle invalid prints
+	if (userPrint.id == -1) {
+		// Add to history
+		history.uid = -1;
+		history.success = false;
+		history.time = rawtime;
+		insertHistory(history);
+		return false;
+	// Valid user
+	} else {
+		User user;
+		history.uid = userPrint.uid;
+		printf("User found. ID:%d", userPrint.uid);
+		user.loadFromJson(findUser(userPrint.uid));
+		// User not enabled
+		if(!user.enabled){
+			history.success = false;
+			history.time = rawtime;
+			insertHistory(history);
+		// User enabled
+		} else {
+			double currentDate = mktime(timeInfo);
+			double startDate = user.startDate;
+			double endDate = user.endDate;
+		}
+	}
+
+	/*			//Check if current date falls within allowed dates
 				double currentDate = mktime(timeInfo);
 				double startDate = user.startDate;
 				double endDate = user.endDate;
@@ -1031,8 +1053,8 @@ bool Database::checkAccess(int fid){
 								int startTime = roleSchedule.startTime;
 								int endTime = roleSchedule.endTime;
 								if ((currentTime >= startTime) && (currentTime < endTime)){
-									h.success = true;
-									insertHistory(h);
+									history.success = true;
+									insertHistory(history);
 									return true;
 								}
 							}
@@ -1041,8 +1063,8 @@ bool Database::checkAccess(int fid){
 				}
 			}
 		}
-	}
-	insertHistory(h);
+	} */
+	insertHistory(history);
 	return false;
 }
 // Unmount the file system
