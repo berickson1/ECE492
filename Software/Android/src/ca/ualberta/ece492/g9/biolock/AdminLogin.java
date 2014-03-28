@@ -104,7 +104,7 @@ public class AdminLogin extends Activity {
 				}
 			}
 		});
-		//checkUser.execute(ip.concat("/checkAdmin"));
+		checkUser.execute(ip.concat("/checkAdmin"));
 	}
 	
 	// Scan fingerprint for the first time
