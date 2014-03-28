@@ -35,6 +35,8 @@ public class GetPicture extends AsyncTask<String, Void, byte[]> {
 	@Override
     protected void onPreExecute() {
 		loadPictureWait.setMessage("Loading picture");
+		loadPictureWait.setCancelable(false);
+		loadPictureWait.setCanceledOnTouchOutside(false);
 		loadPictureWait.show();
     }
 	
