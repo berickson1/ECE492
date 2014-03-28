@@ -88,16 +88,18 @@ string Database::listAll(char *path) {
 	if (ret == -1)
 		printf("Could not open directory. Please check definition of path\n");
 	if (ls_getNext(&list) == 0) {
-		file = atoi((const char*) list.currentEntry.FileName);
-		// If not an empty file
-		if (file != 0)
-			results.append(findEntry(path, file));
+		string filename = getFileName(path, list.currentEntry.FileName);
+		// If not empty file
+		if (atoi((const char*) list.currentEntry.FileName) != 0){
+			results.append(findEntryByName(filename));
+		}
 	}
 	while (ls_getNext(&list) == 0) {
-		file = atoi((const char*) list.currentEntry.FileName);
-		if (file != 0){
+		string filename = getFileName(path, list.currentEntry.FileName);
+		// If not empty file
+		if (atoi((const char*) list.currentEntry.FileName) != 0){
 			results.append(",");
-			results.append(findEntry(path, file));
+			results.append(findEntryByName(filename));
 		}
 	}
 	results.append("]");
@@ -948,6 +950,12 @@ void Database::testPopulate() {
 	UserPrint up5;
 	up5.uid = 1;
 	up5.id = 9;
+	insertUserPrint(up5);
+
+	UserPrint up6;
+	up6.uid = 1;
+	up6.id = 10;
+	insertUserPrint(up6);
 
 	History h1;
 	h1.id = 1;
