@@ -30,11 +30,11 @@ typedef struct History {
 		id = node["id"].asInt();
 		uid = node["uid"].asInt();
 		success = node["success"].asBool();
-		time = node["time"].asDouble();
+		time = node["time"].asString();
 	}
 	int id, uid;
 	bool success;
-	double time;
+	string time;
 } History;
 
 typedef struct User {
@@ -58,14 +58,13 @@ typedef struct User {
 			id = node["id"].asInt();
 			name = node["name"].asString();
 			enabled = node["enabled"].asBool();
-			startDate = node["startDate"].asDouble();
-			endDate = node["endDate"].asDouble();
+			startDate = node["startDate"].asString();
+			endDate = node["endDate"].asString();
 		}
 	}
 	int id;
-	string name;
+	string name, startDate, endDate;
 	bool enabled;
-	double startDate, endDate;
 } User;
 
 typedef struct UserPrint {
@@ -110,13 +109,12 @@ typedef struct Role {
 		name = node["name"].asString();
 		admin = node["admin"].asBool();
 		enabled = node["enabled"].asBool();
-		startDate = node["startDate"].asDouble();
-		endDate = node["endDate"].asDouble();
+		startDate = node["startDate"].asString();
+		endDate = node["endDate"].asString();
 	}
 	int id;
-	string name;
+	string name, startDate, endDate;
 	bool admin, enabled;
-	double startDate, endDate;
 } Role;
 
 typedef struct UserRole {
@@ -141,12 +139,11 @@ typedef struct UserRole {
 		id = node["id"].asInt();
 		uid = node["uid"].asInt();
 		rid = node["rid"].asInt();
-		startDate = node["startDate"].asDouble();
-		endDate = node["endDate"].asDouble();
+		startDate = node["startDate"].asString();
+		endDate = node["endDate"].asString();
 	}
-	string name, userName;
+	string name, userName, startDate, endDate;
 	int id, uid, rid;
-	double startDate, endDate;
 } UserRole;
 
 typedef struct RoleSchedule {
@@ -169,14 +166,14 @@ typedef struct RoleSchedule {
 		reader.parse(jsonString, node, false);
 		id = node["id"].asInt();
 		rid = node["rid"].asInt();
-		startTime = node["startTime"].asInt();
-		endTime = node["endTime"].asInt();
+		startTime = node["startTime"].asString();
+		endTime = node["endTime"].asString();
 		days = node["days"].asInt();
-		startDate = node["startDate"].asDouble();
-		endDate = node["endDate"].asDouble();
+		startDate = node["startDate"].asString();
+		endDate = node["endDate"].asString();
 	}
-	int id, rid, startTime, endTime, days;
-	double startDate, endDate;
+	int id, rid, days;
+	string startDate, endDate, startTime, endTime;
 } RoleSchedule;
 
 #endif /* DATABASE_TABLE_TYPES_H_ */

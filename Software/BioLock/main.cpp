@@ -27,6 +27,7 @@
  *     minutes per iteration.                                             *
  **************************************************************************/
 
+#include <time.h>
 #include <stdio.h>
 #include <fcntl.h>
 #include "includes.h"
@@ -76,7 +77,111 @@ int getBufferNum(bool isFirstBuffer){
 	return isFirstBuffer ? 1 : 2;
 }
 
+bool checkAccess(int fid){
+	Database db(databaseSemaphore);
+	UserPrint userPrint;
+	UserRole userRole;
+	RoleSchedule roleSchedule;
+	History history;
+	time_t tTime;
+	struct tm *currDate, *startDate, *endDate;
+	char *failDate;
 
+//TODO: get current time - this doesn't work?
+	tTime = time(0);
+	currDate = localtime(&tTime);
+	strftime(failDate, 1024, "%Y-%m-%d,%H:%M", currDate);
+	string failDateString(failDate);
+
+	history.id = db.findNextID(HISTORY);
+	history.uid = -1;
+	history.success = false;
+	history.time = failDateString;
+
+	// Fingerprint unauthorized, log to history and return fail
+	if (fid < 1) {
+		db.insertHistory(history);
+		return false;
+	}
+	// Find user print
+	userPrint.loadFromJson(db.findUserPrint(fid));
+
+	// Invalid user, should not enter this as fid < 1 will handle invalid prints
+	if (userPrint.id == -1) {
+		db.insertHistory(history);
+		return false;
+	}
+	// Get user info
+	User user;
+	history.uid = userPrint.uid;
+	printf("User found. ID:%d", userPrint.uid);
+	user.loadFromJson(db.findUser(userPrint.uid));
+
+	// User not enabled
+	if(!user.enabled){
+		db.insertHistory(history);
+		return false;
+	}
+	// Get user access dates
+	strptime(user.startDate.c_str(), "%Y-%m-%d,%H:%M", startDate);
+	strptime(user.endDate.c_str(), "%Y-%m-%d,%H:%M", endDate);
+	double sDiff = difftime(mktime(currDate), mktime(startDate));
+	double eDiff = difftime(mktime(endDate), mktime(currDate));
+
+	// Current date does not fall withing allowed dates
+	if ((sDiff < 0) && (eDiff < 0)) {
+		db.insertHistory(history);
+		return;
+	}
+// TODO: check all user roles
+	// Check role
+	string uRole = db.findUserRole(user.id);
+	if (uRole.find("[") == 0){
+		userRole.loadFromJson(uRole.substr(1, uRole.size() - 1));
+	} else {
+		userRole.loadFromJson(uRole);
+	}
+
+	// User role invalid
+	if (userRole.id == -1) {
+		db.insertHistory(history);
+		return false;
+	}
+	printf("Role found. ID:%d\n", userRole.rid);
+	// Check role schedule
+	roleSchedule.loadFromJson(db.findRoleSchedule(userRole.rid));
+	if (roleSchedule.id == -1){
+		db.insertHistory(history);
+	}
+	/*
+						int rid = userRole.rid;
+						printf("Role found. ID:%d\n", rid);
+						string roleScheduleJSON = findRoleSchedule(rid);
+						roleSchedule.loadFromJson(roleScheduleJSON);
+						int days = roleSchedule.days;
+						if (days != -1){
+							//Check days
+							int currentDay = 0x01 << timeInfo->tm_wday;
+							if (currentDay & (days << currentDay)){
+								//Check if current time falls within allowed times
+								int currentTime = timeInfo->tm_hour;
+								int startTime = roleSchedule.startTime;
+								int endTime = roleSchedule.endTime;
+								if ((currentTime >= startTime) && (currentTime < endTime)){
+									history.success = true;
+									insertHistory(history);
+									return true;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	} */
+	db.insertHistory(history);
+	return false;
+}
 
 /* Checks for fingerprint */
 void task1(void* pdata) {
@@ -132,8 +237,7 @@ void task1(void* pdata) {
 
 			//Check if fingerprint is allowed access and unlock door
 			//After this point, we fall through to the error if (uriString.compare(0, 7,
-			Database dbAccess(databaseSemaphore);
-			if(dbAccess.checkAccess(fid)){
+			if(checkAccess(fid)){
 				//Success, unlock door!
 				char * ledBase = (char*) GREEN_LEDS_BASE;
 				for (int i = 0; i < GREEN_LEDS_DATA_WIDTH; i++){
@@ -368,11 +472,12 @@ const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 	} else if (uriString.compare(0, 7, "/prints") == 0) {
 		retString = api.getPrints(uriString);
 	} else if (uriString.compare(0, 11, "/checkAdmin") == 0) {
-		if(api.checkAdminPrint()){
+		checkAccess(10);
+		/*if(api.checkAdminPrint()){
 			retString = "{\"success\":true}";
 		} else {
 			retString = "{\"success\":false}";
-		}
+		}*/
 	}  else if (uriString.compare(0, 8, "/enroll1") == 0) {
 		retString = api.enroll1();
 	} else if (uriString.compare(0, 8, "/enroll2") == 0) {
