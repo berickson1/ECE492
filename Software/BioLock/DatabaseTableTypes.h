@@ -9,9 +9,9 @@
 #define DATABASE_TABLE_TYPES_H_
 
 #include "includes.h"
-#include "json/writer.h"
-#include "json/reader.h"
+#include "json/json.h"
 #include <sstream>
+#include <list>
 using namespace std;
 
 typedef struct History {
@@ -146,6 +146,30 @@ typedef struct UserRole {
 	int id, uid, rid;
 	double startDate, endDate;
 } UserRole;
+
+typedef struct UserRoles {
+	string toJSONString() {
+		string jsonValue = "[";
+		for(list<UserRole>::iterator iter = roles.begin(); iter != roles.end(); iter++){
+			jsonValue.append(iter->toJSONString());
+			jsonValue.append(",");
+		}
+		//Replace final comma with close tag
+		jsonValue.replace(jsonValue.size() - 2, 1, "]");
+		return jsonValue;
+	}
+	void loadFromJson(string jsonString) {
+		Json::Reader reader;
+		Json::Value node;
+		reader.parse(jsonString, node, true);
+		for (int i = 0; i < node.size(); i++){
+			UserRole userRole;
+			userRole.loadFromJson(node[i].asString());
+			roles.push_front(userRole);
+		}
+	}
+	list<UserRole> roles;
+} UserRoles;
 
 typedef struct RoleSchedule {
 	string toJSONString() {
