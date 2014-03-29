@@ -109,9 +109,12 @@ void task1(void* pdata) {
 			lcd.writeToLCD(lcdMutex, "Print found", "Looking for ID");
 			int fid = fingerprintSensor.findFingerprint(getBufferNum(firstBuffer));
 			printf("Fingerprint id:%d\n", fid);
-			char *fidStr;
+
+			char *fidStr = (char *)malloc(sizeof(fid));
 			sprintf(fidStr,"%d",fid);
 			lcd.writeToLCD(lcdMutex, "Print ID: ", fidStr);
+			free(fidStr);
+
 			if (sendToMailbox) {
 				//Swap Fingerprint Buffer used in case we enroll next
 				firstBuffer = !firstBuffer;
@@ -142,7 +145,7 @@ void task1(void* pdata) {
 			//Check if fingerprint is allowed access and unlock door
 			//After this point, we fall through to the error if (uriString.compare(0, 7,
 			Database dbAccess(databaseSemaphore);
-			if(dbAccess.checkAccess(fid)){
+			if(dbAccess.checkAccess(fid, lcd, lcdMutex)){
 				//Success, unlock door!
 				char * ledBase = (char*) GREEN_LEDS_BASE;
 				for (int i = 0; i < GREEN_LEDS_DATA_WIDTH; i++){
@@ -205,7 +208,7 @@ void task3(void* pdata) {
 	LCD lcd = LCD(lcdMutex);
 	while (1){
 		//Ensures that the lock re-locks
-		Solenoid::timedLock(solenoidSem, solenoidMutex, 10 * CLOCKS_PER_SEC);
+		Solenoid::timedLock(solenoidSem, solenoidMutex, 10 * CLOCKS_PER_SEC, lcd, lcdMutex);
 		lcd.writeToLCD(lcdMutex, "Locking", "");
 	}
 }

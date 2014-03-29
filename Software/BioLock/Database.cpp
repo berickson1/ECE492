@@ -978,7 +978,7 @@ void Database::testPopulate() {
 	insertHistory(h4);
 }
 
-bool Database::checkAccess(int fid){
+bool Database::checkAccess(int fid, LCD lcd, OS_EVENT * lcdMutex){
 	UserPrint userPrint;
 	User user;
 	UserRoles userRoles;
@@ -1001,11 +1001,23 @@ bool Database::checkAccess(int fid){
 	if (userPrint.id != -1){
 		int uid = userPrint.uid;
 		printf("User found. ID:%d", uid);
+
+		char *uidStr = (char *)malloc(sizeof(uid));
+		sprintf(uidStr,"%d",fid);
+		lcd.writeToLCD(lcdMutex, "User ID: ", uidStr);
+		free(uidStr);
+
 		h.uid = uid;
 		string userJSON = findUser(uid);
 		user.loadFromJson(userJSON);
 		if (!user.name.empty()){
 			printf(" Name:%s\n", user.name.c_str());
+
+			char *nameStr = (char *)malloc(sizeof(user.name.c_str()));
+			sprintf(nameStr,"%s", user.name.c_str());
+			lcd.writeToLCD(lcdMutex, "Name: ", nameStr);
+			free(nameStr);
+
 			//Check if user is enabled
 			if(user.enabled){
 				//Check if current date falls within allowed dates
@@ -1023,6 +1035,12 @@ bool Database::checkAccess(int fid){
 						userRole = *iter;
 						int rid = userRole.rid;
 						printf("Role found. Role ID:%d\n", rid);
+
+						char *ridStr = (char *)malloc(sizeof(rid));
+						sprintf(ridStr,"%d",rid);
+						lcd.writeToLCD(lcdMutex, "Role ID: ", ridStr);
+						free(ridStr);
+
 						string roleScheduleJSON = findRoleSchedule(rid);
 						roleSchedule.loadFromJson(roleScheduleJSON);
 						int days = roleSchedule.days;

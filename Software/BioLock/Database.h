@@ -19,6 +19,7 @@
 #include "json/reader.h"
 #include "Database_CONST.h"
 #include "DatabaseTableTypes.h"
+#include "LCD.h"
 
 extern "C" {
 #include "Database/EFSL/efs.h"
@@ -66,7 +67,7 @@ public:
 	string enableUser(int uid, bool enable);
 
 	void testPopulate();
-	bool checkAccess(int fid);
+	bool checkAccess(int fid, LCD lcd, OS_EVENT * lcdMutex);
 	static string noRecord();
 	static string success();
 	static string fail();

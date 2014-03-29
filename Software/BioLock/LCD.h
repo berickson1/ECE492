@@ -18,7 +18,7 @@ extern "C"{
 class LCD {
 public:
 	LCD(OS_EVENT * lcdMutex);
-	void writeToLCD(OS_EVENT * lcdMutex, char * message, char * status);
+	void writeToLCD(OS_EVENT * lcdMutex, char * firstLine, char * secondLine);
 private:
 	alt_up_character_lcd_dev *char_lcd;
 };

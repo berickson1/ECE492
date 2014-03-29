@@ -25,7 +25,7 @@ void Solenoid::unlock(OS_EVENT * solenoidSem, OS_EVENT * solenoidMutex) {
 	}
 }
 
-void Solenoid::timedLock(OS_EVENT * solenoidSem, OS_EVENT * solenoidMutex, int unlockedTime){
+void Solenoid::timedLock(OS_EVENT * solenoidSem, OS_EVENT * solenoidMutex, int unlockedTime, LCD lcd, OS_EVENT * lcdMutex){
 	INT8U err = OS_NO_ERR;
 	OSSemPend(solenoidSem, 0, &err);
 	if(err != OS_NO_ERR){
@@ -36,6 +36,7 @@ void Solenoid::timedLock(OS_EVENT * solenoidSem, OS_EVENT * solenoidMutex, int u
 		OSSemPend(solenoidSem, unlockedTime, &err);
 		if(err == OS_NO_ERR){
 			printf("Door unlocked again, sleep some more\n");
+			lcd.writeToLCD(lcdMutex, "Door unlocked", "again");
 		}
 	} while (err == OS_NO_ERR);
 	printf("Locking\n");
