@@ -998,8 +998,8 @@ bool Database::checkAccess(int fid, LCD lcd, OS_EVENT * lcdMutex){
 	time(&rawtime);
 	timeInfo = localtime(&rawtime);
 
-	string userPrintJSON = findUserPrint(fid);
-	userPrint.loadFromJson(userPrintJSON);
+	string returnJSON = findUserPrint(fid);
+	userPrint.loadFromJson(returnJSON);
 	History h;
 	h.id = fid;
 	h.uid = -1;
@@ -1016,8 +1016,8 @@ bool Database::checkAccess(int fid, LCD lcd, OS_EVENT * lcdMutex){
 		free(uidStr);
 
 		h.uid = uid;
-		string userJSON = findUser(uid);
-		user.loadFromJson(userJSON);
+		returnJSON = findUser(uid);
+		user.loadFromJson(returnJSON);
 		if (!user.name.empty()){
 			printf(" Name:%s\n", user.name.c_str());
 
@@ -1035,8 +1035,8 @@ bool Database::checkAccess(int fid, LCD lcd, OS_EVENT * lcdMutex){
 				double endDate = user.endDate;
 				if ((currentDate > startDate) && (currentDate < endDate)){
 					//Check if role
-					string userRoleJSON = findUserRole(uid);
-					userRoles.loadFromJson(userRoleJSON);
+					returnJSON = findUserRole(uid);
+					userRoles.loadFromJson(returnJSON);
 					list<UserRole> roles = userRoles.roles;
 					UserRole userRole;
 					for(list<UserRole>::iterator iter = roles.begin(); iter != roles.end(); ++iter) {
@@ -1049,8 +1049,8 @@ bool Database::checkAccess(int fid, LCD lcd, OS_EVENT * lcdMutex){
 						lcd.writeToLCD(lcdMutex, "Role ID: ", ridStr);
 						free(ridStr);
 
-						string roleScheduleJSON = findRoleSchedule(rid);
-						roleSchedule.loadFromJson(roleScheduleJSON);
+						returnJSON = findRoleSchedule(rid);
+						roleSchedule.loadFromJson(returnJSON);
 						int days = roleSchedule.days;
 						if (days != -1){
 							//Check days
