@@ -41,7 +41,9 @@ extern "C" {
 #include "WebServer/web_server.h"
 #include "WebServer/http.h"
 #include "Solenoid.h"
+#include "LCD.h"
 }
+
 
 /* Definition of Task Stacks */
 #define   TASK_STACKSIZE       2048
@@ -54,6 +56,7 @@ OS_EVENT *fingerprintSem;
 OS_EVENT *databaseSemaphore;
 OS_EVENT *solenoidSem;
 OS_EVENT *solenoidMutex;
+OS_EVENT *lcdMutex;
 
 /* Definition of Task Priorities */
 
@@ -80,6 +83,7 @@ int getBufferNum(bool isFirstBuffer){
 
 /* Checks for fingerprint */
 void task1(void* pdata) {
+	LCD lcd = LCD(lcdMutex);
 	INT8U err;
 	bool firstBuffer = true;
 	while (true) {
@@ -90,6 +94,7 @@ void task1(void* pdata) {
 		while (!fingerprintSensor.hasError()) {
 			OSTimeDlyHMSM(0, 0, 1, 0);
 			printf("Checking for fingerprint\n");
+			lcd.writeToLCD(lcdMutex, "Checking for", "fingerprint");
 			//Check if the web server is pending on a fingerprint
 			bool sendToMailbox = OSSemAccept(fingerprintSem) > 0;
 			while (!fingerprintSensor.scanFinger()
@@ -101,8 +106,15 @@ void task1(void* pdata) {
 				}
 			}
 			printf("Fingerprint acquired, looking for fingerprint ID\n");
+			lcd.writeToLCD(lcdMutex, "Print found", "Looking for ID");
 			int fid = fingerprintSensor.findFingerprint(getBufferNum(firstBuffer));
 			printf("Fingerprint id:%d\n", fid);
+
+			char *fidStr = (char *)malloc(sizeof(fid));
+			sprintf(fidStr,"%d",fid);
+			lcd.writeToLCD(lcdMutex, "Print ID: ", fidStr);
+			free(fidStr);
+
 			if (sendToMailbox) {
 				//Swap Fingerprint Buffer used in case we enroll next
 				firstBuffer = !firstBuffer;
@@ -133,7 +145,7 @@ void task1(void* pdata) {
 			//Check if fingerprint is allowed access and unlock door
 			//After this point, we fall through to the error if (uriString.compare(0, 7,
 			Database dbAccess(databaseSemaphore);
-			if(dbAccess.checkAccess(fid)){
+			if(dbAccess.checkAccess(fid, lcd, lcdMutex)){
 				//Success, unlock door!
 				char * ledBase = (char*) GREEN_LEDS_BASE;
 				for (int i = 0; i < GREEN_LEDS_DATA_WIDTH; i++){
@@ -143,12 +155,14 @@ void task1(void* pdata) {
 				*ledBase = 0;
 				printf("Open up!!!\n\n");
 				printf("Unlocking\n");
+				lcd.writeToLCD(lcdMutex, "Unlocking", "");
 				Solenoid::unlock(solenoidSem, solenoidMutex);
 				continue;
 			}
 
 			//Fallthrough error case. Notify owner!
 			printf("Failed to verify print!\n\n");
+			lcd.writeToLCD(lcdMutex, "Print not", "verified");
 			{
 				Audio sound(databaseSemaphore);
 				for (int i = 0; i < 3; i++){
@@ -159,6 +173,7 @@ void task1(void* pdata) {
 	}
 }
 void task2(void* pdata) {
+	LCD lcd = LCD(lcdMutex);
 	while (1) {
 		if (*((char*) SWITCHES_BASE) & 1 << 1) {
 			// Clearing database
@@ -167,22 +182,34 @@ void task2(void* pdata) {
 				db.clearAll();
 			}
 			printf("Database has been cleared\n");
+			lcd.writeToLCD(lcdMutex, "Database cleared", "");
 			if (*((char*) SWITCHES_BASE) & 1 << 2) {
 				// Populate database
 				Database db(databaseSemaphore);
 				db.testPopulate();
 				printf("Database has been populated\n");
+				lcd.writeToLCD(lcdMutex, "Database","populated");
 			}
 		}
+		if (*((char*) SWITCHES_BASE) & 1 << 3){
+			Solenoid::unlock(solenoidSem, solenoidMutex);
+			lcd.writeToLCD(lcdMutex, "Unlocking", "");
+		}
+		//TODO: Switches for rest api calls
+		/*if (*((char*) SWITCHES_BASE) & 1 << 4){
 
+		}
+		 */
 		OSTimeDlyHMSM(0, 0, 1, 0);
 	}
 }
 void task3(void* pdata) {
 	Camera::init();
+	LCD lcd = LCD(lcdMutex);
 	while (1){
 		//Ensures that the lock re-locks
-		Solenoid::timedLock(solenoidSem, solenoidMutex, 10 * CLOCKS_PER_SEC);
+		Solenoid::timedLock(solenoidSem, solenoidMutex, 10 * CLOCKS_PER_SEC, lcd, lcdMutex);
+		lcd.writeToLCD(lcdMutex, "Locking", "");
 	}
 }
 
@@ -433,6 +460,12 @@ int main(void) {
 	solenoidMutex = OSMutexCreate(0, &err);
 	if(err != OS_NO_ERR){
 		printf("Error initializing solenoid mutex\n");
+		return -1;
+	}
+
+	lcdMutex = OSMutexCreate(1, &err); //TODO: Double check if prio is correct
+	if(err != OS_NO_ERR){
+		printf("Error initializing LCD mutex\n");
 		return -1;
 	}
 

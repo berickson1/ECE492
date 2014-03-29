@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include "includes.h"
+#include "LCD.h"
 
 extern "C"{
 #include "altera_avalon_pio_regs.h"
@@ -22,7 +23,7 @@ extern "C"{
 class Solenoid {
 public:
 	static void unlock(OS_EVENT * solenoidSem, OS_EVENT * solenoidMutex);
-	static void timedLock(OS_EVENT * solenoidSem, OS_EVENT * solenoidMutex, int unlockedTime);
+	static void timedLock(OS_EVENT * solenoidSem, OS_EVENT * solenoidMutex, int unlockedTime, LCD lcd, OS_EVENT * lcdMutex);
 	static void lock(OS_EVENT * solenoidMutex);
 };
 
