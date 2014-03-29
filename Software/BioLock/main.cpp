@@ -109,7 +109,9 @@ void task1(void* pdata) {
 			lcd.writeToLCD(lcdMutex, "Print found", "Looking for ID");
 			int fid = fingerprintSensor.findFingerprint(getBufferNum(firstBuffer));
 			printf("Fingerprint id:%d\n", fid);
-			lcd.writeToLCD(lcdMutex, "Print ID: ", (char *)fid);
+			char *fidStr;
+			sprintf(fidStr,"%d",fid);
+			lcd.writeToLCD(lcdMutex, "Print ID: ", fidStr);
 			if (sendToMailbox) {
 				//Swap Fingerprint Buffer used in case we enroll next
 				firstBuffer = !firstBuffer;
