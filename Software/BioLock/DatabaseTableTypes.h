@@ -201,4 +201,28 @@ typedef struct RoleSchedule {
 	double startDate, endDate;
 } RoleSchedule;
 
+typedef struct RoleSchedules {
+	string toJSONString() {
+		string jsonValue = "[";
+		for(list<RoleSchedule>::iterator iter = schedules.begin(); iter != schedules.end(); iter++){
+			jsonValue.append(iter->toJSONString());
+			jsonValue.append(",");
+		}
+		//Replace final comma with close tag
+		jsonValue.replace(jsonValue.size() - 2, 1, "]");
+		return jsonValue;
+	}
+	void loadFromJson(string jsonString) {
+		Json::Reader reader;
+		Json::Value node;
+		reader.parse(jsonString, node, true);
+		for (int i = 0; i < node.size(); i++){
+			RoleSchedule roleSchedule;
+			roleSchedule.loadFromJson(node[i].toStyledString());
+			schedules.push_front(roleSchedule);
+		}
+	}
+	list<RoleSchedule> schedules;
+} RoleSchedules;
+
 #endif /* DATABASE_TABLE_TYPES_H_ */
