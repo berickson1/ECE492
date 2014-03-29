@@ -164,7 +164,7 @@ typedef struct UserRoles {
 		reader.parse(jsonString, node, true);
 		for (int i = 0; i < node.size(); i++){
 			UserRole userRole;
-			userRole.loadFromJson(node[i].asString());
+			userRole.loadFromJson(node[i].toStyledString());
 			roles.push_front(userRole);
 		}
 	}
