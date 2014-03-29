@@ -990,7 +990,7 @@ bool Database::checkAccess(int fid, LCD lcd, OS_EVENT * lcdMutex){
 	UserPrint userPrint;
 	User user;
 	UserRoles userRoles;
-	RoleSchedule roleSchedule;
+	RoleSchedules roleSchedules;
 
 	time_t rawtime;
 	struct tm * timeInfo;
@@ -1050,20 +1050,24 @@ bool Database::checkAccess(int fid, LCD lcd, OS_EVENT * lcdMutex){
 						free(ridStr);
 
 						returnJSON = findRoleSchedule(rid);
-						roleSchedule.loadFromJson(returnJSON);
-						int days = roleSchedule.days;
-						if (days != -1){
-							//Check days
-							int currentDay = 0x01 << timeInfo->tm_wday;
-							if (currentDay & (days << currentDay)){
-								//Check if current time falls within allowed times
-								int currentTime = timeInfo->tm_hour;
-								int startTime = roleSchedule.startTime;
-								int endTime = roleSchedule.endTime;
-								if ((currentTime >= startTime) && (currentTime < endTime)){
-									h.success = true;
-									insertHistory(h);
-									return true;
+						roleSchedules.loadFromJson(returnJSON);
+						list<RoleSchedule> roleScheduleList = roleSchedules.schedules;
+						RoleSchedule roleSchedule;
+						for(list<RoleSchedule>::iterator iter = roleScheduleList.begin(); iter != roleScheduleList.end(); ++iter) {
+							int days = roleSchedule.days;
+							if (days != -1){
+								//Check days
+								int currentDay = 0x01 << timeInfo->tm_wday;
+								if (currentDay & (days << currentDay)){
+									//Check if current time falls within allowed times
+									int currentTime = timeInfo->tm_hour;
+									int startTime = roleSchedule.startTime;
+									int endTime = roleSchedule.endTime;
+									if ((currentTime >= startTime) && (currentTime < endTime)){
+										h.success = true;
+										insertHistory(h);
+										return true;
+									}
 								}
 							}
 						}
