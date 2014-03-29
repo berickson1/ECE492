@@ -986,7 +986,7 @@ void Database::testPopulate() {
 	insertHistory(h4);
 }
 
-bool Database::checkAccess(int fid, LCD lcd, OS_EVENT * lcdMutex){
+bool Database::checkAccess(int fid, LCD lcd){
 	UserPrint userPrint;
 	User user;
 	UserRoles userRoles;
@@ -1012,7 +1012,7 @@ bool Database::checkAccess(int fid, LCD lcd, OS_EVENT * lcdMutex){
 
 		char *uidStr = (char *)malloc(sizeof(uid));
 		sprintf(uidStr,"%d",fid);
-		lcd.writeToLCD(lcdMutex, "User ID: ", uidStr);
+		lcd.writeToLCD("User ID: ", uidStr);
 		free(uidStr);
 
 		h.uid = uid;
@@ -1020,11 +1020,7 @@ bool Database::checkAccess(int fid, LCD lcd, OS_EVENT * lcdMutex){
 		user.loadFromJson(returnJSON);
 		if (!user.name.empty()){
 			printf(" Name:%s\n", user.name.c_str());
-
-			char *nameStr = (char *)malloc(sizeof(user.name.c_str()));
-			sprintf(nameStr,"%s", user.name.c_str());
-			lcd.writeToLCD(lcdMutex, "Name: ", nameStr);
-			free(nameStr);
+			lcd.writeToLCD("Name: ", (char *)user.name.c_str());
 
 			//Check if user is enabled
 			if(user.enabled){
@@ -1046,7 +1042,7 @@ bool Database::checkAccess(int fid, LCD lcd, OS_EVENT * lcdMutex){
 
 						char *ridStr = (char *)malloc(sizeof(rid));
 						sprintf(ridStr,"%d",rid);
-						lcd.writeToLCD(lcdMutex, "Role ID: ", ridStr);
+						lcd.writeToLCD("Role ID: ", ridStr);
 						free(ridStr);
 
 						returnJSON = findRoleSchedule(rid);

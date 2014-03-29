@@ -7,9 +7,9 @@
 
 #include "LCD.h"
 
-LCD::LCD(OS_EVENT * lcdMutex){
+LCD::LCD(OS_EVENT * lcdMutex):m_lcdMutex(lcdMutex){
 	INT8U err = OS_NO_ERR;
-	OSMutexPend(lcdMutex, 0, &err);
+	OSMutexPend(m_lcdMutex, 0, &err);
 	if(err != OS_NO_ERR){
 		printf("Error pending on LCD mutex during LCD init\n");
 		return;
@@ -19,16 +19,16 @@ LCD::LCD(OS_EVENT * lcdMutex){
 		printf("Could not open LCD device\n");
 	}
 	alt_up_character_lcd_init(char_lcd);
-	err = OSMutexPost(lcdMutex);
+	err = OSMutexPost(m_lcdMutex);
 	if(err != OS_NO_ERR){
 		printf("Error posting to LCD mutex during LCD init\n");
 	}
 
 }
 
-void LCD::writeToLCD(OS_EVENT * lcdMutex, char * firstLine, char * secondLine){
+void LCD::writeToLCD(char * firstLine, char * secondLine){
 	INT8U err = OS_NO_ERR;
-	OSMutexPend(lcdMutex, 0, &err);
+	OSMutexPend(m_lcdMutex, 0, &err);
 	if(err != OS_NO_ERR){
 		printf("Error pending on LCD mutex\n");
 		return;
@@ -45,7 +45,7 @@ void LCD::writeToLCD(OS_EVENT * lcdMutex, char * firstLine, char * secondLine){
 	alt_up_character_lcd_string(char_lcd, firstLine);
 	alt_up_character_lcd_set_cursor_pos(char_lcd, 0, 1);
 	alt_up_character_lcd_string(char_lcd, secondLine);
-	err = OSMutexPost(lcdMutex);
+	err = OSMutexPost(m_lcdMutex);
 	if(err != OS_NO_ERR){
 		printf("Error posting to LCD mutex\n");
 		return;

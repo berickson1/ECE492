@@ -94,7 +94,7 @@ void task1(void* pdata) {
 		while (!fingerprintSensor.hasError()) {
 			OSTimeDlyHMSM(0, 0, 1, 0);
 			printf("Checking for fingerprint\n");
-			lcd.writeToLCD(lcdMutex, "Checking for", "fingerprint");
+			lcd.writeToLCD("Checking for", "fingerprint");
 			//Check if the web server is pending on a fingerprint
 			bool sendToMailbox = OSSemAccept(fingerprintSem) > 0;
 			while (!fingerprintSensor.scanFinger()
@@ -106,13 +106,13 @@ void task1(void* pdata) {
 				}
 			}
 			printf("Fingerprint acquired, looking for fingerprint ID\n");
-			lcd.writeToLCD(lcdMutex, "Print found", "Looking for ID");
+			lcd.writeToLCD("Print found", "Looking for ID");
 			int fid = fingerprintSensor.findFingerprint(getBufferNum(firstBuffer));
 			printf("Fingerprint id:%d\n", fid);
 
 			char *fidStr = (char *)malloc(sizeof(fid));
 			sprintf(fidStr,"%d",fid);
-			lcd.writeToLCD(lcdMutex, "Print ID: ", fidStr);
+			lcd.writeToLCD("Print ID: ", fidStr);
 			free(fidStr);
 
 			if (sendToMailbox) {
@@ -145,7 +145,7 @@ void task1(void* pdata) {
 			//Check if fingerprint is allowed access and unlock door
 			//After this point, we fall through to the error if (uriString.compare(0, 7,
 			Database dbAccess(databaseSemaphore);
-			if(dbAccess.checkAccess(fid, lcd, lcdMutex)){
+			if(dbAccess.checkAccess(fid, lcd)){
 				//Success, unlock door!
 				char * ledBase = (char*) GREEN_LEDS_BASE;
 				for (int i = 0; i < GREEN_LEDS_DATA_WIDTH; i++){
@@ -155,14 +155,14 @@ void task1(void* pdata) {
 				*ledBase = 0;
 				printf("Open up!!!\n\n");
 				printf("Unlocking\n");
-				lcd.writeToLCD(lcdMutex, "Unlocking", "");
+				lcd.writeToLCD("Unlocking", "");
 				Solenoid::unlock(solenoidSem, solenoidMutex);
 				continue;
 			}
 
 			//Fallthrough error case. Notify owner!
 			printf("Failed to verify print!\n\n");
-			lcd.writeToLCD(lcdMutex, "Print not", "verified");
+			lcd.writeToLCD("Print not", "verified");
 			{
 				Audio sound(databaseSemaphore);
 				for (int i = 0; i < 3; i++){
@@ -182,24 +182,24 @@ void task2(void* pdata) {
 				db.clearAll();
 			}
 			printf("Database has been cleared\n");
-			lcd.writeToLCD(lcdMutex, "Database cleared", "");
+			lcd.writeToLCD("Database cleared", "");
 			if (*((char*) SWITCHES_BASE) & 1 << 2) {
 				// Populate database
 				Database db(databaseSemaphore);
 				db.testPopulate();
 				printf("Database has been populated\n");
-				lcd.writeToLCD(lcdMutex, "Database","populated");
+				lcd.writeToLCD("Database","populated");
 			}
 		}
 		if (*((char*) SWITCHES_BASE) & 1 << 3){
 			Solenoid::unlock(solenoidSem, solenoidMutex);
-			lcd.writeToLCD(lcdMutex, "Unlocking", "");
+			lcd.writeToLCD("Unlocking", "");
 		}
 		//TODO: Switches for rest api calls
 		/*if (*((char*) SWITCHES_BASE) & 1 << 4){
 
-		}
-		 */
+		}*/
+
 		OSTimeDlyHMSM(0, 0, 1, 0);
 	}
 }
@@ -208,8 +208,8 @@ void task3(void* pdata) {
 	LCD lcd = LCD(lcdMutex);
 	while (1){
 		//Ensures that the lock re-locks
-		Solenoid::timedLock(solenoidSem, solenoidMutex, 10 * CLOCKS_PER_SEC, lcd, lcdMutex);
-		lcd.writeToLCD(lcdMutex, "Locking", "");
+		Solenoid::timedLock(solenoidSem, solenoidMutex, 10 * CLOCKS_PER_SEC, lcd);
+		lcd.writeToLCD("Locking", "");
 	}
 }
 

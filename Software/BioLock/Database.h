@@ -67,7 +67,7 @@ public:
 	string enableUser(int uid, bool enable);
 
 	void testPopulate();
-	bool checkAccess(int fid, LCD lcd, OS_EVENT * lcdMutex);
+	bool checkAccess(int fid, LCD lcd);
 	static string noRecord();
 	static string success();
 	static string fail();
