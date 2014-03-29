@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <string>
 #include <sstream>
+#include <list>
 #include "json/writer.h"
 #include "json/reader.h"
 #include "Database_CONST.h"

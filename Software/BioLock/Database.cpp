@@ -981,7 +981,7 @@ void Database::testPopulate() {
 bool Database::checkAccess(int fid){
 	UserPrint userPrint;
 	User user;
-	UserRole userRole;
+	UserRoles userRoles;
 	RoleSchedule roleSchedule;
 
 	time_t rawtime;
@@ -998,7 +998,7 @@ bool Database::checkAccess(int fid){
 	h.success = false;
 	h.time = rawtime;
 
-	if (userPrint.uid != -1){
+	if (userPrint.id != -1){
 		int uid = userPrint.uid;
 		printf("User found. ID:%d", uid);
 		h.uid = uid;
@@ -1009,16 +1009,20 @@ bool Database::checkAccess(int fid){
 			//Check if user is enabled
 			if(user.enabled){
 				//Check if current date falls within allowed dates
-				double currentDate = mktime(timeInfo);
+				double currentDate = rawtime;
+				//double startDate = user.startDate;
 				double startDate = user.startDate;
 				double endDate = user.endDate;
 				if ((currentDate > startDate) && (currentDate < endDate)){
 					//Check if role
 					string userRoleJSON = findUserRole(uid);
-					userRole.loadFromJson(userRoleJSON);
-					if (userRole.rid != -1) {
+					userRoles.loadFromJson(userRoleJSON);
+					list<UserRole> roles = userRoles.roles;
+					UserRole userRole;
+					for(list<UserRole>::iterator iter = roles.begin(); iter != roles.end(); ++iter) {
+						userRole = *iter;
 						int rid = userRole.rid;
-						printf("Role found. ID:%d\n", rid);
+						printf("Role found. Role ID:%d\n", rid);
 						string roleScheduleJSON = findRoleSchedule(rid);
 						roleSchedule.loadFromJson(roleScheduleJSON);
 						int days = roleSchedule.days;
