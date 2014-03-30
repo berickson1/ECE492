@@ -247,19 +247,19 @@ string RestAPI::unlockLock(){
 bool RestAPI::checkAdminPrint(){
 	int fid = getFingerprintId(false);
 	if (fid == -1){
-		return false;
+		return fid;
 	}
 	Database db(m_databaseSem);
 	UserPrint print;
 	print.loadFromJson(db.findUserPrint(fid));
 	if(print.id == -1){
-		return false;
+		return print.id;
 	}
 	User user;
 	user.loadFromJson(db.findUser(print.uid));
 	//TODO: check start and end date
 	if(user.id == -1 || !user.enabled){
-		return false;
+		return user.id;
 	}
 	UserRole userRole;
 	string uRole = db.findUserRole(user.id);
@@ -269,14 +269,19 @@ bool RestAPI::checkAdminPrint(){
 		userRole.loadFromJson(uRole);
 	}
 	if(userRole.id == -1){
-		return false;
+		return userRole.id;
 	}
 	Role role;
 	role.loadFromJson(db.findRole(userRole.rid));
 	if(role.id == -1 || !role.enabled){
-		return false;
+		return role.id;
 	}
-	return role.admin;
+	// Is admin
+	if (role.admin == true){
+		return 1;
+	}
+	// Not admin
+	return 0;
 }
 
 

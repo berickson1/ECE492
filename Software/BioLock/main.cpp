@@ -402,9 +402,12 @@ const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 	} else if (uriString.compare(0, 7, "/prints") == 0) {
 		retString = api.getPrints(uriString);
 	} else if (uriString.compare(0, 11, "/checkAdmin") == 0) {
-		if(api.checkAdminPrint()){
-			retString = "{\"success\":true}";
-		} else {
+		int result = api.checkAdminPrint();
+		if(result == 1){
+			retString = "{\"admin\":true}";
+		} else if (result == 0){
+			retString = "{\"admin\":false}";
+		} else if (result == -1){
 			retString = "{\"success\":false}";
 		}
 	}  else if (uriString.compare(0, 8, "/enroll1") == 0) {
