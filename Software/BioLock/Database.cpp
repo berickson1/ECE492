@@ -1033,10 +1033,9 @@ bool Database::checkAccess(int fid, LCD lcd){
 					//Check if role
 					returnJSON = findUserRole(uid);
 					userRoles.loadFromJson(returnJSON);
-					list<UserRole> roles = userRoles.roles;
-					UserRole userRole;
+					list<UserRole> &roles = userRoles.roles;
 					for(list<UserRole>::iterator iter = roles.begin(); iter != roles.end(); ++iter) {
-						userRole = *iter;
+						UserRole &userRole = *iter;
 						int rid = userRole.rid;
 						printf("Role found. Role ID:%d\n", rid);
 
@@ -1047,9 +1046,9 @@ bool Database::checkAccess(int fid, LCD lcd){
 
 						returnJSON = findRoleSchedule(rid);
 						roleSchedules.loadFromJson(returnJSON);
-						list<RoleSchedule> roleScheduleList = roleSchedules.schedules;
-						RoleSchedule roleSchedule;
+						list<RoleSchedule> &roleScheduleList = roleSchedules.schedules;
 						for(list<RoleSchedule>::iterator iter = roleScheduleList.begin(); iter != roleScheduleList.end(); ++iter) {
+							RoleSchedule &roleSchedule = *iter;
 							int days = roleSchedule.days;
 							if (days != -1){
 								//Check days
