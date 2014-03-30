@@ -49,7 +49,8 @@ public:
 	string enroll2();
 	string setSystemTime(INT32U time);
 	INT32U getSystemTime();
-	bool checkAdminPrint();
+	string checkAdminPrint();
+	string checkAdminPrint(int fid);
 private:
 	int (*getFingerprintId)(bool enrollNow);
 	OS_EVENT * m_databaseSem;

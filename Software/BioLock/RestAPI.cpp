@@ -244,22 +244,26 @@ string RestAPI::unlockLock(){
 	return m_successString;
 }
 
-bool RestAPI::checkAdminPrint(){
+string RestAPI::checkAdminPrint(){
 	int fid = getFingerprintId(false);
 	if (fid == -1){
-		return fid;
+		return "{\"success\":false}";
 	}
+	return checkAdminPrint(fid);
+}
+
+string RestAPI::checkAdminPrint(int fid){
 	Database db(m_databaseSem);
 	UserPrint print;
 	print.loadFromJson(db.findUserPrint(fid));
 	if(print.id == -1){
-		return print.id;
+		return "{\"success\":false}";
 	}
 	User user;
 	user.loadFromJson(db.findUser(print.uid));
 	//TODO: check start and end date
 	if(user.id == -1 || !user.enabled){
-		return user.id;
+		return "{\"success\":false}";
 	}
 	UserRole userRole;
 	string uRole = db.findUserRole(user.id);
@@ -269,19 +273,23 @@ bool RestAPI::checkAdminPrint(){
 		userRole.loadFromJson(uRole);
 	}
 	if(userRole.id == -1){
-		return userRole.id;
+		return "{\"success\":false}";
 	}
 	Role role;
 	role.loadFromJson(db.findRole(userRole.rid));
 	if(role.id == -1 || !role.enabled){
-		return role.id;
+		return "{\"success\":false}";
 	}
+	stringstream retString;
 	// Is admin
 	if (role.admin == true){
-		return 1;
-	}
+		retString << "{\"admin\":true}";
 	// Not admin
-	return 0;
+	} else {
+		retString << "{\"admin\":false}";
+	}
+	retString << ",{\"fid\":\"" << print.id << "\"}";
+	return retString.str();
 }
 
 

@@ -402,13 +402,10 @@ const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 	} else if (uriString.compare(0, 7, "/prints") == 0) {
 		retString = api.getPrints(uriString);
 	} else if (uriString.compare(0, 11, "/checkAdmin") == 0) {
-		int result = api.checkAdminPrint();
-		if(result == 1){
-			retString = "{\"admin\":true}";
-		} else if (result == 0){
-			retString = "{\"admin\":false}";
-		} else if (result == -1){
-			retString = "{\"success\":false}";
+		if (uriString.length() == 11){
+			retString = api.checkAdminPrint();
+		} else {
+			retString = api.checkAdminPrint(atoi(uriString.substr(12).c_str()));
 		}
 	}  else if (uriString.compare(0, 8, "/enroll1") == 0) {
 		retString = api.enroll1();
