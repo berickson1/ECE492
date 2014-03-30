@@ -4,8 +4,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import ca.ualberta.ece492.g9.biolock.customs.DatabaseHandler;
 import ca.ualberta.ece492.g9.biolock.customs.JSONCallbackFunction;
 import ca.ualberta.ece492.g9.biolock.customs.JSONParser;
+import ca.ualberta.ece492.g9.biolock.types.LockInfo;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -107,5 +109,26 @@ public class Manage extends Activity {
 			}
 		});
 		unlock.execute(ip.concat("/unlock"));
+	}
+	
+	// Logs user out - requiring scanning print next use
+	public void logout(View v) {
+		DatabaseHandler db = new DatabaseHandler(mContext);
+		LockInfo currentLock = db.getLock(ip);
+		currentLock.setAdmin(0);
+		currentLock.setUserPrint(-1);
+		db.updateLock(currentLock);
+		AlertDialog logout  = new AlertDialog.Builder(mContext).create();
+		logout.setMessage("You have logged out successfully");
+		logout.setTitle("Logout");
+		logout.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+            	System.exit(0);
+            	
+            }
+        });
+		logout.setCancelable(false);
+		logout.setCanceledOnTouchOutside(false);
+		logout.show();
 	}
 }

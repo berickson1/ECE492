@@ -64,5 +64,6 @@
     <string name="timeBlank">__:__</string>
     <string name="changeDate"><u>Change Date</u></string>
     <string name="changeTime"><u>Change Time</u></string>
+     <string name="logout">Logout</string>
 
 </resources>
