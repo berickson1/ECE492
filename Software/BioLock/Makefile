@@ -176,6 +176,7 @@ CXX_SRCS += Database.cpp
 CXX_SRCS += Camera/Camera.cpp
 CXX_SRCS += Solenoid.cpp
 CXX_SRCS += Audio.cpp
+CXX_SRCS += LCD.cpp
 ASM_SRCS :=
 
 
