@@ -1010,11 +1010,12 @@ bool Database::checkAccess(int fid, LCD &lcd){
 		int uid = userPrint.uid;
 		printf("User found. ID:%d", uid);
 
-		stringstream sStream;
-		sStream << uid;
+		{
+			stringstream sStream;
+			sStream << uid;
 
-		lcd.writeToLCD("User ID: ", sStream.str());
-		sStream.str("");
+			lcd.writeToLCD("User ID: ", sStream.str());
+		}
 
 		h.uid = uid;
 		returnJSON = findUser(uid);
@@ -1040,8 +1041,11 @@ bool Database::checkAccess(int fid, LCD &lcd){
 						int rid = userRole.rid;
 						printf("Role found. Role ID:%d\n", rid);
 
-						sStream << rid;
-						lcd.writeToLCD("Role ID: ", sStream.str());
+						{
+							stringstream sStream;
+							sStream << rid;
+							lcd.writeToLCD("Role ID: ", sStream.str());
+						}
 
 						returnJSON = findRoleSchedule(rid);
 						roleSchedules.loadFromJson(returnJSON);
