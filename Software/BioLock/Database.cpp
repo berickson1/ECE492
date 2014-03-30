@@ -986,7 +986,7 @@ void Database::testPopulate() {
 	insertHistory(h4);
 }
 
-bool Database::checkAccess(int fid, LCD lcd){
+bool Database::checkAccess(int fid, LCD &lcd){
 	UserPrint userPrint;
 	User user;
 	UserRoles userRoles;

@@ -25,7 +25,7 @@ void Solenoid::unlock(OS_EVENT * solenoidSem, OS_EVENT * solenoidMutex) {
 	}
 }
 
-void Solenoid::timedLock(OS_EVENT * solenoidSem, OS_EVENT * solenoidMutex, int unlockedTime, LCD lcd){
+void Solenoid::timedLock(OS_EVENT * solenoidSem, OS_EVENT * solenoidMutex, int unlockedTime, LCD &lcd){
 	INT8U err = OS_NO_ERR;
 	OSSemPend(solenoidSem, 0, &err);
 	if(err != OS_NO_ERR){
