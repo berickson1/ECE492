@@ -112,7 +112,7 @@ void task1(void* pdata) {
 
 			stringstream sStream;
 			sStream << fid;
-			lcd.writeToLCD("Print ID: ", sStream.str().c_str());
+			lcd.writeToLCD("Print ID: ", sStream.str());
 
 
 			if (sendToMailbox) {

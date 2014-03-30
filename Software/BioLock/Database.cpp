@@ -1013,7 +1013,7 @@ bool Database::checkAccess(int fid, LCD &lcd){
 		stringstream sStream;
 		sStream << uid;
 
-		lcd.writeToLCD("User ID: ", sStream.str().c_str());
+		lcd.writeToLCD("User ID: ", sStream.str());
 		sStream.str("");
 
 		h.uid = uid;
@@ -1021,7 +1021,7 @@ bool Database::checkAccess(int fid, LCD &lcd){
 		user.loadFromJson(returnJSON);
 		if (!user.name.empty()){
 			printf(" Name:%s\n", user.name.c_str());
-			lcd.writeToLCD("Name: ", user.name.c_str());
+			lcd.writeToLCD("Name: ", user.name);
 
 			//Check if user is enabled
 			if(user.enabled){
@@ -1041,7 +1041,7 @@ bool Database::checkAccess(int fid, LCD &lcd){
 						printf("Role found. Role ID:%d\n", rid);
 
 						sStream << rid;
-						lcd.writeToLCD("Role ID: ", sStream.str().c_str());
+						lcd.writeToLCD("Role ID: ", sStream.str());
 
 						returnJSON = findRoleSchedule(rid);
 						roleSchedules.loadFromJson(returnJSON);
