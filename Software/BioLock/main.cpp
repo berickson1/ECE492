@@ -110,10 +110,10 @@ void task1(void* pdata) {
 			int fid = fingerprintSensor.findFingerprint(getBufferNum(firstBuffer));
 			printf("Fingerprint id:%d\n", fid);
 
-			char *fidStr = (char *)malloc(sizeof(fid));
-			sprintf(fidStr,"%d",fid);
-			lcd.writeToLCD("Print ID: ", fidStr);
-			free(fidStr);
+			stringstream sStream;
+			sStream << fid;
+			lcd.writeToLCD("Print ID: ", sStream.str().c_str());
+
 
 			if (sendToMailbox) {
 				//Swap Fingerprint Buffer used in case we enroll next

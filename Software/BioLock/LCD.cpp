@@ -6,7 +6,7 @@
  */
 
 #include "LCD.h"
-
+using namespace std;
 LCD::LCD(OS_EVENT * lcdMutex):m_lcdMutex(lcdMutex){
 	INT8U err = OS_NO_ERR;
 	OSMutexPend(m_lcdMutex, 0, &err);
@@ -26,7 +26,7 @@ LCD::LCD(OS_EVENT * lcdMutex):m_lcdMutex(lcdMutex){
 
 }
 
-void LCD::writeToLCD(char * firstLine, char * secondLine){
+void LCD::writeToLCD(string firstLine, string secondLine){
 	INT8U err = OS_NO_ERR;
 	OSMutexPend(m_lcdMutex, 0, &err);
 	if(err != OS_NO_ERR){
@@ -42,9 +42,9 @@ void LCD::writeToLCD(char * firstLine, char * secondLine){
 	//Write status to screen
 
 	alt_up_character_lcd_set_cursor_pos(char_lcd, 0, 0);
-	alt_up_character_lcd_string(char_lcd, firstLine);
+	alt_up_character_lcd_string(char_lcd, firstLine.c_str());
 	alt_up_character_lcd_set_cursor_pos(char_lcd, 0, 1);
-	alt_up_character_lcd_string(char_lcd, secondLine);
+	alt_up_character_lcd_string(char_lcd, secondLine.c_str());
 	err = OSMutexPost(m_lcdMutex);
 	if(err != OS_NO_ERR){
 		printf("Error posting to LCD mutex\n");

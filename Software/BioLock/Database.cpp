@@ -1010,17 +1010,18 @@ bool Database::checkAccess(int fid, LCD &lcd){
 		int uid = userPrint.uid;
 		printf("User found. ID:%d", uid);
 
-		char *uidStr = (char *)malloc(sizeof(uid));
-		sprintf(uidStr,"%d",fid);
-		lcd.writeToLCD("User ID: ", uidStr);
-		free(uidStr);
+		stringstream sStream;
+		sStream << uid;
+
+		lcd.writeToLCD("User ID: ", sStream.str().c_str());
+		sStream.str("");
 
 		h.uid = uid;
 		returnJSON = findUser(uid);
 		user.loadFromJson(returnJSON);
 		if (!user.name.empty()){
 			printf(" Name:%s\n", user.name.c_str());
-			lcd.writeToLCD("Name: ", (char *)user.name.c_str());
+			lcd.writeToLCD("Name: ", user.name.c_str());
 
 			//Check if user is enabled
 			if(user.enabled){
@@ -1029,7 +1030,7 @@ bool Database::checkAccess(int fid, LCD &lcd){
 				//double startDate = user.startDate;
 				double startDate = user.startDate;
 				double endDate = user.endDate;
-				if ((currentDate > startDate) && (currentDate < endDate)){
+				if ((currentDate >= startDate) && (currentDate < endDate)){
 					//Check if role
 					returnJSON = findUserRole(uid);
 					userRoles.loadFromJson(returnJSON);
@@ -1039,10 +1040,8 @@ bool Database::checkAccess(int fid, LCD &lcd){
 						int rid = userRole.rid;
 						printf("Role found. Role ID:%d\n", rid);
 
-						char *ridStr = (char *)malloc(sizeof(rid));
-						sprintf(ridStr,"%d",rid);
-						lcd.writeToLCD("Role ID: ", ridStr);
-						free(ridStr);
+						sStream << rid;
+						lcd.writeToLCD("Role ID: ", sStream.str().c_str());
 
 						returnJSON = findRoleSchedule(rid);
 						roleSchedules.loadFromJson(returnJSON);
