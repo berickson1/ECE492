@@ -363,7 +363,14 @@ const char * handleHTTPPost(http_conn* conn, int *replyLen) {
 		} else if (postType == "update"){
 			retString = api.updatePrint(jsonData);
 		}
-	} else {
+	} else if (uriString.compare(0, 5, "/time") == 0) {
+		if (postType == "update"){
+			istringstream reader(jsonData);
+			INT32U time;
+			reader >> time;
+			retString = api.setSystemTime(time);
+		}
+	}else {
 		*replyLen = 0;
 		return NULL;
 	}
@@ -411,7 +418,11 @@ const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 		char * imgData = Camera::getBMP(len);
 		retString.append(imgData, *len);
 		free(imgData);
-	} else {
+	} else if (uriString.compare(0, 5, "/time") == 0) {
+		stringstream writer;
+		writer << api.getSystemTime();
+		retString = writer.str();
+	}else {
 		*len = 0;
 		return NULL;
 	}

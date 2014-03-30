@@ -316,3 +316,13 @@ int RestAPI::extractID(string URI){
 	}
 	return id;
 }
+
+bool RestAPI::setSystemTime(INT32U time){
+	OSTimeSet(time * CLOCKS_PER_SEC);
+	return true;
+}
+
+INT32U RestAPI::getSystemTime(){
+	INT32U time = OSTimeGet();
+	return time / CLOCKS_PER_SEC;
+}

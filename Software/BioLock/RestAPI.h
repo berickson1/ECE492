@@ -47,6 +47,8 @@ public:
 	string unlockLock();
 	string enroll1();
 	string enroll2();
+	bool setSystemTime(INT32U time);
+	INT32U getSystemTime();
 	bool checkAdminPrint();
 private:
 	int (*getFingerprintId)(bool enrollNow);
