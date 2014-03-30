@@ -1,0 +1,3 @@
+[submodule "Software/BioLock/ZFM-20"]
+	path = Software/BioLock/ZFM-20
+	url = git@github.com:berickson1/Adafruit-ZFM-lib.git

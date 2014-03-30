@@ -30,7 +30,7 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include "includes.h"
-#include "ZFMComm.h"
+#include "ZFM-20/ZFMComm.h"
 #include "RestAPI.h"
 #include "Database.h"
 #include "json/reader.h"

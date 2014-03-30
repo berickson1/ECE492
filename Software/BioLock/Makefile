@@ -166,7 +166,6 @@ C_SRCS += Database/EFSL/plibc.c
 C_SRCS += Database/EFSL/sd.c
 C_SRCS += Database/EFSL/time.c
 C_SRCS += Database/EFSL/ui.c
-CXX_SRCS += ZFMComm.cpp
 CXX_SRCS += main.cpp
 CXX_SRCS += RestAPI.cpp
 CXX_SRCS += json/json_reader.cpp
@@ -177,6 +176,7 @@ CXX_SRCS += Camera/Camera.cpp
 CXX_SRCS += Solenoid.cpp
 CXX_SRCS += Audio.cpp
 CXX_SRCS += LCD.cpp
+CXX_SRCS += ZFM-20/ZFMComm.cpp
 ASM_SRCS :=
 
 
