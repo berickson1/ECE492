@@ -57,5 +57,12 @@
     <string name="access">Access</string>
     <string name="accessDate">Access Date</string>
     <string name="accessTime">Access Time</string>
+    <string name="display_time">Time</string>
+    <string name="setTime"><u>Set Date and Time</u></string>
+    <string name="setCurrTime"><u>Set Current Date and Time</u></string>
+    <string name="dateBlank">____-__-__</string>
+    <string name="timeBlank">__:__</string>
+    <string name="changeDate"><u>Change Date</u></string>
+    <string name="changeTime"><u>Change Time</u></string>
 
 </resources>

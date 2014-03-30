@@ -302,8 +302,7 @@ public class NewSched extends Activity {
          TimePickerDialog selectStartHour = new TimePickerDialog(NewSched.this, new TimePickerDialog.OnTimeSetListener() {
              @Override
              public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-            	 String startTime = getTime("start", selectedHour, selectedMinute);
-                 startHour.setText(startTime);
+                 startHour.setText(getTime(selectedHour, selectedMinute));
              }
          }, hour, minute, true);
          selectStartHour.setTitle("Select Start Time");
@@ -319,8 +318,7 @@ public class NewSched extends Activity {
         TimePickerDialog selectEndHour = new TimePickerDialog(NewSched.this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-            	String endTime = getTime("end", selectedHour, selectedMinute);
-	           	endHour.setText(endTime);
+	           	endHour.setText(getTime(selectedHour, selectedMinute));
             }
         }, hour, minute, true);
         selectEndHour.setTitle("Select End Time");
@@ -338,8 +336,7 @@ public class NewSched extends Activity {
 			@Override
 			public void onDateSet(DatePicker view, int selectedYear, int selectedMonth,
 					int selectedDay) {
-				String startDay = getDate("start", selectedYear, selectedMonth, selectedDay);
-				startDate.setText(startDay);
+				startDate.setText(getDate(selectedYear, selectedMonth, selectedDay));
 			}
         }, year, month, day);
         selectStartDate.setTitle("Select Start Date");
@@ -356,8 +353,7 @@ public class NewSched extends Activity {
 			@Override
 			public void onDateSet(DatePicker view, int selectedYear, int selectedMonth,
 					int selectedDay) {
-				String endDay = getDate("end", selectedYear, selectedMonth, selectedDay);
-				endDate.setText(endDay);
+				endDate.setText(getDate(selectedYear, selectedMonth, selectedDay));
 			}
         }, year, month, day);
         selectEndDate.setTitle("Select End Date");
@@ -365,7 +361,7 @@ public class NewSched extends Activity {
 	}
 	
 	// Gets the date
-	public String getDate(String type, int year, int month, int day){
+	public String getDate(int year, int month, int day){
 		String date = year + "-";
 		// Month offset
 		month += 1;
@@ -383,7 +379,7 @@ public class NewSched extends Activity {
 	}
 	
 	// Gets the time
-	public String getTime(String type, int hour, int minute){
+	public String getTime(int hour, int minute){
 		String time = null; 
        	if (hour < 10){
        		time = "0" + hour + ":";

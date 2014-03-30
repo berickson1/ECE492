@@ -61,6 +61,12 @@ public class Manage extends Activity {
 		startActivity(showLog);
 	}
 	
+	// Jumps to Log screen
+	public void modifyTime(View v) {
+		Intent showTime = new Intent(Manage.this, Time.class);
+		startActivity(showTime);
+	}
+	
 	// Unlocks door lock
 	public void unlockDoor(View v) {
 		// Disable repeated button click

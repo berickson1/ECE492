@@ -70,7 +70,16 @@
                 android:text="@string/display_log"
                 android:textColor="@color/selector"
                 android:textSize="25sp" />
-
+             <TextView
+                android:id="@+id/time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20sp"
+                android:clickable="true"
+                android:onClick="modifyTime"
+                android:text="@string/display_time"
+                android:textColor="@color/selector"
+                android:textSize="25sp" />
             <TextView
                 android:id="@+id/unlock"
                 android:layout_width="wrap_content"

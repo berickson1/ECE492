@@ -6,7 +6,6 @@ import java.util.TimeZone;
 import ca.ualberta.ece492.g9.biolock.types.History;
 import ca.ualberta.ece492.g9.biolock.types.User;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Window;
