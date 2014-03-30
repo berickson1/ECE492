@@ -36,6 +36,7 @@ import android.widget.AdapterView.OnItemClickListener;
 public class MainActivity extends Activity {
 	public static final String PREFS_NAME = "CONNECTION";
 	private static Context mContext;
+	private static String ip;
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		mContext = this;
@@ -75,7 +76,7 @@ public class MainActivity extends Activity {
 				// Store ip in preferences for access in other intents
 				SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 				SharedPreferences.Editor editor = settings.edit();
-				String ip = lockArray.get(position).get("IP");
+				ip = lockArray.get(position).get("IP");
 			    editor.putString("ipAddress", ip);
 			    editor.commit();
 
@@ -86,19 +87,30 @@ public class MainActivity extends Activity {
 						if (json != null){
 							try {
 								JSONObject response = (JSONObject) json.get(0);
+								// Connection with lock can be established
 								if (response.getString("alive").equalsIgnoreCase("true")){
-									// Lock is valid, will jump to admin login screen
-									Intent login = new Intent(MainActivity.this, AdminLogin.class);
-									login.putExtra("Caller", mContext.getClass().getSimpleName());
-									wait.dismiss();
-									listLocks.setEnabled(true);
-									startActivity(login);
+									DatabaseHandler db = new DatabaseHandler(mContext);
+									LockInfo lock = db.getLock(ip);
+									// Owner of this device is not admin of the lock
+									if (lock.getAdmin() == 0){
+										Intent login = new Intent(MainActivity.this, AdminLogin.class);
+										login.putExtra("Caller", mContext.getClass().getSimpleName());
+										wait.dismiss();
+										listLocks.setEnabled(true);
+										startActivity(login);
+									// Owner if this device is admin - skip login screen
+									} else if (lock.getAdmin() == 1) {
+										Intent manage = new Intent(MainActivity.this, Manage.class);
+										wait.dismiss();
+										listLocks.setEnabled(true);
+										startActivity(manage);
+									}
 								}
 							} catch (JSONException e) {
 								e.printStackTrace();
 							}
+						// Cannot connect to lock
 						} else {
-							// Cannot connect to lock
 							wait.dismiss();
 							AlertDialog noConn  = new AlertDialog.Builder(mContext).create();
 							noConn.setMessage("Could not connection to device");

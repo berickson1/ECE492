@@ -4,8 +4,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import ca.ualberta.ece492.g9.biolock.customs.DatabaseHandler;
 import ca.ualberta.ece492.g9.biolock.customs.JSONCallbackFunction;
 import ca.ualberta.ece492.g9.biolock.customs.JSONParser;
+import ca.ualberta.ece492.g9.biolock.types.LockInfo;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -66,7 +68,14 @@ public class AdminLogin extends Activity {
 				if (json != null){
 					try{
 						JSONObject response = (JSONObject) json.get(0);
-						if (response.getString("success").equalsIgnoreCase("true")){
+						if (response.isNull("success")){
+							// Owner of this device is an admin, can skip the login screen
+							if (response.getString("admin").equalsIgnoreCase("true")) {
+								DatabaseHandler db = new DatabaseHandler(mContext);
+								LockInfo lock = db.getLock(ip);
+								lock.setAdmin(1);
+								db.updateLock(lock);
+							}
 							AlertDialog auth  = new AlertDialog.Builder(mContext).create();
 							auth.setMessage("Fingerprint Authorized");
 							auth.setTitle("Fingerprint");
