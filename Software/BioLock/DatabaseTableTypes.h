@@ -29,10 +29,10 @@ typedef struct History {
 		Json::Reader reader;
 		Json::Value node;
 		reader.parse(jsonString, node, true);
-		id = node["id"].asInt();
-		uid = node["uid"].asInt();
-		success = node["success"].asBool();
-		time = node["time"].asDouble();
+		id = node.get("id", -1).asInt();
+		uid = node.get("uid", -1).asInt();
+		success = node.get("success", false).asBool();
+		time = node.get("time", -1).asDouble();
 	}
 	int id, uid;
 	bool success;
@@ -56,11 +56,11 @@ typedef struct User {
 		Json::Reader reader;
 		Json::Value node;
 		reader.parse(jsonString, node, true);
-		id = node["id"].asInt();
-		name = node["name"].asString();
-		enabled = node["enabled"].asBool();
-		startDate = node["startDate"].asDouble();
-		endDate = node["endDate"].asDouble();
+		id = node.get("id", -1).asInt();
+		name = node.get("name", "Unknown").asString();
+		enabled = node.get("enabled", false).asBool();
+		startDate = node.get("startDate", -1).asDouble();
+		endDate = node.get("endDate", -1).asDouble();
 	}
 	int id;
 	string name;
@@ -81,8 +81,8 @@ typedef struct UserPrint {
 		Json::Reader reader;
 		Json::Value node;
 		reader.parse(jsonString, node, true);
-		uid = node["uid"].asInt();
-		id = node["id"].asInt();
+		uid = node.get("uid", -1).asInt();
+		id = node.get("id", -1).asInt();
 	}
 	int id, uid;
 } UserPrint;
@@ -104,12 +104,12 @@ typedef struct Role {
 		Json::Reader reader;
 		Json::Value node;
 		reader.parse(jsonString, node, true);
-		id = node["id"].asInt();
-		name = node["name"].asString();
-		admin = node["admin"].asBool();
-		enabled = node["enabled"].asBool();
-		startDate = node["startDate"].asDouble();
-		endDate = node["endDate"].asDouble();
+		id = node.get("id", -1).asInt();
+		name = node.get("name", "Unknown").asString();
+		admin = node.get("admin", false).asBool();
+		enabled = node.get("enabled", "false").asBool();
+		startDate = node.get("startDate", -1).asDouble();
+		endDate = node.get("endDate", -1).asDouble();
 	}
 	int id;
 	string name;
@@ -135,12 +135,12 @@ typedef struct UserRole {
 		Json::Reader reader;
 		Json::Value node;
 		reader.parse(jsonString, node, true);
-		name = node["name"].asString();
-		id = node["id"].asInt();
-		uid = node["uid"].asInt();
-		rid = node["rid"].asInt();
-		startDate = node["startDate"].asDouble();
-		endDate = node["endDate"].asDouble();
+		name = node.get("name", "Unknown").asString();
+		id = node.get("id", -1).asInt();
+		uid = node.get("uid", -1).asInt();
+		rid = node.get("rid", -1).asInt();
+		startDate = node.get("startDate", -1).asDouble();
+		endDate = node.get("endDate", -1).asDouble();
 	}
 	string name, userName;
 	int id, uid, rid;
@@ -189,13 +189,13 @@ typedef struct RoleSchedule {
 		Json::Reader reader;
 		Json::Value node;
 		reader.parse(jsonString, node, true);
-		id = node["id"].asInt();
-		rid = node["rid"].asInt();
-		startTime = node["startTime"].asInt();
-		endTime = node["endTime"].asInt();
-		days = node["days"].asInt();
-		startDate = node["startDate"].asDouble();
-		endDate = node["endDate"].asDouble();
+		id = node.get("id", -1).asInt();
+		rid = node.get("rid", -1).asInt();
+		startTime = node.get("startTime", -1).asInt();
+		endTime = node.get("endTime", -1).asInt();
+		days = node.get("days", -1).asInt();
+		startDate = node.get("startDate", -1).asDouble();
+		endDate = node.get("endDate", -1).asDouble();
 	}
 	int id, rid, startTime, endTime, days;
 	double startDate, endDate;
