@@ -19,6 +19,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	private static final String KEY_ID = "ip";
 	private static final String KEY_NAME = "name";
 	private static final String KEY_ADMIN = "admin";
+	private static final String KEY_USERPRINT = "userPrint";
 
 	public DatabaseHandler(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -28,7 +29,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		String CREATE_LOCKS_TABLE = "CREATE TABLE " + TABLE_LOCKS + "("
-				+ KEY_ID + " STRING PRIMARY KEY, " + KEY_NAME + " TEXT, " + KEY_ADMIN +  " INTEGER" + ")";
+				+ KEY_ID + " STRING PRIMARY KEY, " + KEY_NAME + " TEXT, " + KEY_ADMIN +  " INTEGER, " + KEY_USERPRINT +  " INTEGER" + ")";
 		db.execSQL(CREATE_LOCKS_TABLE);
 	}
 
@@ -50,6 +51,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		values.put(KEY_NAME, lock.getName()); // Lock Name
 		values.put(KEY_ID, lock.getIP()); // Lock ip address
 		values.put(KEY_ADMIN, lock.getAdmin()); // Check if this device belongs to admin
+		values.put(KEY_USERPRINT, lock.getUserPrint()); // Check which user owns this device
 
 		// Inserting Row
 		long check = db.insert(TABLE_LOCKS, null, values);
@@ -74,6 +76,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 				lock.setIP(cursor.getString(0));
 				lock.setName(cursor.getString(1));
 				lock.setAdmin(cursor.getInt(2));
+				lock.setUserPrint(cursor.getInt(3));
 				// Adding contact to list
 				lockList.add(lock);
 			} while (cursor.moveToNext());
@@ -106,11 +109,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	public LockInfo getLock(String ipAddress) {
 		SQLiteDatabase db = this.getReadableDatabase();
 
-		Cursor cursor = db.query(TABLE_LOCKS, new String[] { KEY_NAME, KEY_ADMIN }, KEY_ID
+		Cursor cursor = db.query(TABLE_LOCKS, new String[] { KEY_NAME, KEY_ADMIN, KEY_USERPRINT }, KEY_ID
 				+ "=?", new String[] { ipAddress }, null, null, null, null);
 		if (cursor.getCount() > 0){
 			cursor.moveToFirst();
-			LockInfo lock = new LockInfo(ipAddress, cursor.getString(0), cursor.getInt(1));
+			LockInfo lock = new LockInfo(ipAddress, cursor.getString(0), cursor.getInt(1), cursor.getInt(2));
 			// return lock
 			return lock;
 		} else {
@@ -124,6 +127,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		values.put(KEY_ID, lock.getIP());
 		values.put(KEY_NAME, lock.getName());
 		values.put(KEY_ADMIN, lock.getAdmin());
+		values.put(KEY_USERPRINT, lock.getUserPrint());
 		
 		return db.update(TABLE_LOCKS, values, KEY_ID + " = ?", new String[] { lock.getIP() });
 	}

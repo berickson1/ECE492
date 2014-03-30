@@ -9,7 +9,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import ca.ualberta.ece492.g9.biolock.customs.JSONCallbackFunction;
-import ca.ualberta.ece492.g9.biolock.customs.JSONParser;
 import ca.ualberta.ece492.g9.biolock.customs.JSONPost;
 
 import android.app.Activity;

@@ -76,7 +76,7 @@ public class NewLock extends Activity {
 						JSONObject response = (JSONObject) json.get(0);
 						if (response.getString("alive").equalsIgnoreCase("true")){
 							DatabaseHandler db = new DatabaseHandler(mContext);
-							if (db.addLock(new LockInfo(ip, name, 0)) != -1){
+							if (db.addLock(new LockInfo(ip, name, 0, -1)) != -1){
 								lockFound(searchButton);
 							}
 						} else{

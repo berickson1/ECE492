@@ -71,9 +71,11 @@ public class AdminLogin extends Activity {
 						if (response.isNull("success")){
 							// Owner of this device is an admin, can skip the login screen
 							if (response.getString("admin").equalsIgnoreCase("true")) {
+								JSONObject print = (JSONObject) json.get(1);
 								DatabaseHandler db = new DatabaseHandler(mContext);
 								LockInfo lock = db.getLock(ip);
 								lock.setAdmin(1);
+								lock.setUserPrint(print.getInt("fid"));
 								db.updateLock(lock);
 							}
 							AlertDialog auth  = new AlertDialog.Builder(mContext).create();
