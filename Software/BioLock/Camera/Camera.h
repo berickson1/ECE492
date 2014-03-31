@@ -26,6 +26,10 @@ public:
 	static void init();
 
 private:
+	static const int SNAPSHOT_MODE_REG = 0x1E;
+	static const int  SNAPSHOT_MODE_VAL = 0x4006 | (1<<8);
+	static const int HORIZONTAL_REG = 0x20;
+	static const int  HORIZONTAL_VAL = 0x0040 | (1<<14);
 	static const int BMPHEADERLEN = 54;
 	static const char BMPHEADER1[];
 	static const int BMPHEADER1LEN = 2;
