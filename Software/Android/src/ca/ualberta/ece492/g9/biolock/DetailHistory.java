@@ -40,7 +40,7 @@ public class DetailHistory extends Activity {
 		selectedUser = (User) intent.getParcelableExtra("User");
 		
 		// User was recognized
-		if (selectedUser.getID() != -1) {
+		if (selectedHistory.getUID() != -1) {
 			user.setText(selectedUser.getName());
 		} else {
 			user.setText("Guest was unknown");
