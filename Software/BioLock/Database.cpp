@@ -990,90 +990,82 @@ bool Database::checkAccess(int fid, LCD &lcd){
 	UserPrint userPrint;
 	User user;
 	UserRoles userRoles;
+	Role role;
 	RoleSchedules roleSchedules;
-
 	time_t rawtime;
 	struct tm * timeInfo;
 
-	time(&rawtime);
+	INT32U currTime = OSTimeGet();
+	rawtime = currTime;
 	timeInfo = localtime(&rawtime);
+	// Sun = 6, Mon = 5, Tues = 4 ... Sat = 0
+	int currDay = abs(timeInfo->tm_wday - 6);
 
-	string returnJSON = findUserPrint(fid);
-	userPrint.loadFromJson(returnJSON);
 	History h;
-	h.id = fid;
+	h.id = findNextID(HISTORY);
 	h.uid = -1;
 	h.success = false;
-	h.time = rawtime;
+	h.time = currTime;
 
-	if (userPrint.id != -1){
-		int uid = userPrint.uid;
-		printf("User found. ID:%d", uid);
+	// Fingerprint unauthorized, log to history and return fail
+	if (fid < 1) {
+		insertHistory(h);
+		return false;
+	}
 
-		{
-			stringstream sStream;
-			sStream << uid;
+	// Find user print
+	userPrint.loadFromJson(findUserPrint(fid));
+	// Invalid user, should not enter this as fid < 1 will handle invalid prints
+	if (userPrint.id == -1){
+		insertHistory(h);
+		return false;
+	}
+	h.uid = userPrint.uid;
+	printf("User ID: %d\n", userPrint.uid);
+	{
+		stringstream sStream;
+		sStream << userPrint.uid;
+		lcd.writeToLCD("User ID: ", sStream.str());
+	}
 
-			lcd.writeToLCD("User ID: ", sStream.str());
-		}
+	// Find user
+	user.loadFromJson(findUser(userPrint.uid));
+	// User not enabled
+	if(!user.enabled){
+		insertHistory(h);
+		return false;
+	}
+	printf("Name: %s\n", user.name.c_str());
+	lcd.writeToLCD("Name: ", user.name);
 
-		h.uid = uid;
-		returnJSON = findUser(uid);
-		user.loadFromJson(returnJSON);
-		if (!user.name.empty()){
-			printf(" Name:%s\n", user.name.c_str());
-			lcd.writeToLCD("Name: ", user.name);
-
-			//Check if user is enabled
-			if(user.enabled){
-				//Check if current date falls within allowed dates
-				double currentDate = rawtime;
-				//double startDate = user.startDate;
-				double startDate = user.startDate;
-				double endDate = user.endDate;
-				if ((currentDate >= startDate) && (currentDate < endDate)){
-					//Check if role
-					returnJSON = findUserRole(uid);
-					userRoles.loadFromJson(returnJSON);
-					list<UserRole> &roles = userRoles.roles;
-					for(list<UserRole>::iterator iter = roles.begin(); iter != roles.end(); ++iter) {
-						UserRole &userRole = *iter;
-						int rid = userRole.rid;
-						printf("Role found. Role ID:%d\n", rid);
-
-						{
-							stringstream sStream;
-							sStream << rid;
-							lcd.writeToLCD("Role ID: ", sStream.str());
-						}
-
-						returnJSON = findRoleSchedule(rid);
-						roleSchedules.loadFromJson(returnJSON);
-						list<RoleSchedule> &roleScheduleList = roleSchedules.schedules;
-						for(list<RoleSchedule>::iterator iter = roleScheduleList.begin(); iter != roleScheduleList.end(); ++iter) {
-							RoleSchedule &roleSchedule = *iter;
-							int days = roleSchedule.days;
-							if (days != -1){
-								//Check days
-								int currentDay = 0x01 << timeInfo->tm_wday;
-								if (currentDay & (days << currentDay)){
-									//Check if current time falls within allowed times
-									int currentTime = timeInfo->tm_hour;
-									int startTime = roleSchedule.startTime;
-									int endTime = roleSchedule.endTime;
-									if ((currentTime >= startTime) && (currentTime < endTime)){
-										h.success = true;
-										insertHistory(h);
-										return true;
-									}
-								}
-							}
-						}
+	// Find user role
+	userRoles.loadFromJson(findUserRole(user.id));
+	list<UserRole> &roles = userRoles.roles;
+	for(list<UserRole>::iterator iter = roles.begin(); iter != roles.end(); ++iter) {
+		UserRole &userRole = *iter;
+		// Find role
+		role.loadFromJson(findRole(userRole.rid));
+		// Role is enabled
+		if (role.enabled) {
+			printf("Role Name: %s\n", role.name.c_str());
+			lcd.writeToLCD("Role Name: ", role.name);
+			// Find role schedule
+			roleSchedules.loadFromJson(findRoleSchedule(role.id));
+			list<RoleSchedule> &roleScheduleList = roleSchedules.schedules;
+			for(list<RoleSchedule>::iterator iter = roleScheduleList.begin(); iter != roleScheduleList.end(); ++iter) {
+				RoleSchedule &roleSchedule = *iter;
+				// Scheduled access is valid
+				if (roleSchedule.startDate < currTime && roleSchedule.endDate > currTime){
+					if (((roleSchedule.days >> currDay) & 1) == 1){
+						h.success = true;
+						insertHistory(h);
+						return true;
 					}
 				}
 			}
 		}
 	}
+	// Fallthrough case
 	insertHistory(h);
 	return false;
 }

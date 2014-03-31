@@ -253,43 +253,66 @@ string RestAPI::checkAdminPrint(){
 }
 
 string RestAPI::checkAdminPrint(int fid){
+	struct tm * timeInfo;
+	INT32U currTime = OSTimeGet();
+	time_t currtime = currTime;
+	timeInfo = localtime(&currtime);
+	// Sun = 6, Mon = 5, Tues = 4 ... Sat = 0
+	int currDay = abs(timeInfo->tm_wday - 6);
+
 	Database db(m_databaseSem);
+	// Check user print
 	UserPrint print;
 	print.loadFromJson(db.findUserPrint(fid));
 	if(print.id == -1){
 		return "{\"success\":false}";
 	}
+
+	// Check user
 	User user;
 	user.loadFromJson(db.findUser(print.uid));
-	//TODO: check start and end date
 	if(user.id == -1 || !user.enabled){
 		return "{\"success\":false}";
 	}
-	UserRole userRole;
-	string uRole = db.findUserRole(user.id);
-	if (uRole.find("[") == 0){
-		userRole.loadFromJson(uRole.substr(1, uRole.size() - 1));
-	} else {
-		userRole.loadFromJson(uRole);
+
+	// Check user roles
+	UserRoles userRoles;
+	userRoles.loadFromJson(db.findUserRole(user.id));
+	list<UserRole> &roles = userRoles.roles;
+	for(list<UserRole>::iterator roleIter = roles.begin(); roleIter != roles.end(); ++roleIter) {
+		UserRole &userRole = *roleIter;
+		if (userRole.id != -1){
+
+			// Check role for specific user role
+			Role role;
+			role.loadFromJson(db.findRole(userRole.rid));
+			if (role.id != -1 && role.enabled){
+
+				// Check role schedule time
+				RoleSchedules roleSchedules;
+				roleSchedules.loadFromJson(db.findRoleSchedule(role.id));
+				list<RoleSchedule> &schedules = roleSchedules.schedules;
+				for(list<RoleSchedule>::iterator schedIter = schedules.begin(); schedIter != schedules.end(); ++schedIter) {
+					RoleSchedule &roleSchedule = *schedIter;
+					if (roleSchedule.startDate < currTime && roleSchedule.endDate > currTime){
+						if (((roleSchedule.days >> currDay) & 1) == 1){
+							stringstream retString;
+							// Is admin
+							if (role.admin == true){
+								retString << "{\"admin\":true}";
+							// Not admin
+							} else {
+								retString << "{\"admin\":false}";
+							}
+							retString << ",{\"fid\":\"" << print.id << "\"}";
+							return retString.str();
+						}
+					}
+				}
+			}
+		}
 	}
-	if(userRole.id == -1){
-		return "{\"success\":false}";
-	}
-	Role role;
-	role.loadFromJson(db.findRole(userRole.rid));
-	if(role.id == -1 || !role.enabled){
-		return "{\"success\":false}";
-	}
-	stringstream retString;
-	// Is admin
-	if (role.admin == true){
-		retString << "{\"admin\":true}";
-	// Not admin
-	} else {
-		retString << "{\"admin\":false}";
-	}
-	retString << ",{\"fid\":\"" << print.id << "\"}";
-	return retString.str();
+	return "{\"success\":false}";
 }
 
 
@@ -331,11 +354,10 @@ int RestAPI::extractID(string URI){
 }
 
 string RestAPI::setSystemTime(INT32U time){
-	OSTimeSet(time * CLOCKS_PER_SEC);
+	OSTimeSet((time/1000) * CLOCKS_PER_SEC);
 	return "{\"success\":true}";
 }
 
 INT32U RestAPI::getSystemTime(){
-	INT32U time = OSTimeGet();
-	return time / CLOCKS_PER_SEC;
+	return OSTimeGet();
 }
