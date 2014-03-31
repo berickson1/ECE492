@@ -434,7 +434,7 @@ const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 extern "C" {
 void startTasks() {
 	OSTaskCreateExt(task1, NULL, &task1_stk[(TASK_STACKSIZE * 4) - 1], TASK1_PRIORITY,
-			TASK1_PRIORITY, task1_stk, TASK_STACKSIZE * 4, NULL, OS_TASK_OPT_STK_CHK );
+			TASK1_PRIORITY, task1_stk, TASK_STACKSIZE * 4, NULL, 0 );
 	OSTaskCreateExt(task2, NULL, &task2_stk[TASK_STACKSIZE - 1], TASK2_PRIORITY,
 			TASK2_PRIORITY, task2_stk, TASK_STACKSIZE, NULL, 0);
 
