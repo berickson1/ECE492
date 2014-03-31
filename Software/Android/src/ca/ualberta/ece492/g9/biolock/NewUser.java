@@ -568,7 +568,6 @@ public class NewUser extends Activity {
 				changeUserStatus("delete");
 			}
 		}
-		finish();
 	}
 	
 	public void disableScreen(){
