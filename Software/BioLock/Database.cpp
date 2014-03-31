@@ -871,7 +871,7 @@ void Database::testPopulate() {
 	rs1.id = 1;
 	rs1.rid = 1;
 	rs1.startDate = 0.0;
-	rs1.endDate = 99999999.0;
+	rs1.endDate = 2145830400.0;
 	rs1.days = 127;
 	rs1.startTime = 9;
 	rs1.endTime = 23;
