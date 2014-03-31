@@ -870,9 +870,9 @@ void Database::testPopulate() {
 	RoleSchedule rs1;
 	rs1.id = 1;
 	rs1.rid = 1;
-	rs1.startDate = time(0);
-	rs1.endDate = time(0);
-	rs1.days = 50;
+	rs1.startDate = 0.0;
+	rs1.endDate = 99999999.0;
+	rs1.days = 127;
 	rs1.startTime = 9;
 	rs1.endTime = 23;
 	insertRoleSched(rs1);
