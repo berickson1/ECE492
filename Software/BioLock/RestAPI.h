@@ -7,7 +7,6 @@
 #ifndef RESTAPI_H_
 #define RESTAPI_H_
 
-#include "json/writer.h"
 #include "Database.h"
 #include "Solenoid.h"
 using namespace std;

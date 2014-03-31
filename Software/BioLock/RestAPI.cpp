@@ -6,6 +6,7 @@
  */
 
 #include "RestAPI.h"
+#include "json/json.h"
 using namespace std;
 RestAPI::RestAPI(int (*getFingerprintIdFunction)(bool enrollNow), OS_EVENT * databaseSem, OS_EVENT * solenoidSem, OS_EVENT * solenoidMutex):
 	getFingerprintId(getFingerprintIdFunction),
@@ -322,9 +323,10 @@ string RestAPI::enroll1(){
 }
 string RestAPI::enroll2(){
 	int fid = getFingerprintId(true);
-	stringstream retString;
-	retString << m_successString << ",{\"fid\":\"" << fid << "\"}";
-	return retString.str();
+	Json::Value node;
+	node["success"] = (fid != -1);
+	node["fid"] = fid;
+	return node.toStyledString();
 }
 
 int RestAPI::extractID(string URI){
