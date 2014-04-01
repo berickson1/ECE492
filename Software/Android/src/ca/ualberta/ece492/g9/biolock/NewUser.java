@@ -41,7 +41,7 @@ public class NewUser extends Activity {
 	public static final String PREFS_NAME = "CONNECTION";
 	private static String ip;
 	private static Context mContext;
-	private static User selectedUser;
+	private static User selectedUser = null;
 	private User newUser;
 	private UserRole roleToDelete;
 	private UserRole addUserRole;
@@ -81,6 +81,7 @@ public class NewUser extends Activity {
 	}
 	
 	public void onResume(){
+		String userName = null;
 		ArrayList<UserPrint> printsArray = new ArrayList<UserPrint>();
 		UserPrint userPrint = new UserPrint();
 		userPrintsJSON = new JSONArray();
@@ -90,8 +91,10 @@ public class NewUser extends Activity {
 		
 		// Retrieves information of the selected user or new user name
 		Intent intent = getIntent();
-		selectedUser = (User) intent.getParcelableExtra("User");
-		String userName = intent.getStringExtra("Name");
+		if (selectedUser == null) {
+			selectedUser = (User) intent.getParcelableExtra("User");
+			userName = intent.getStringExtra("Name");
+		}
 		if (intent.getExtras().size() > 2) {
 			try {
 				// Retrieves user prints and user roles
