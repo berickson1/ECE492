@@ -130,7 +130,7 @@ public class MainActivity extends Activity {
 	
 	// Check if admin status has be revoked or user has been disabled
 	public void checkUser(final LockInfo lock){
-		final ProgressDialog checkUserWait = ProgressDialog.show(MainActivity.this,"Device Connection", "Please wait for connection", true, false, null);
+		final ProgressDialog checkUserWait = ProgressDialog.show(MainActivity.this,"Permissions", "Checking permissions", true, false, null);
 		JSONParser checkUserStatus = new JSONParser(new JSONCallbackFunction() {		
 			@Override
 			public void execute(JSONArray json) {
