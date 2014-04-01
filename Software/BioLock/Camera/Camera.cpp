@@ -7,15 +7,22 @@
 
 #include "Camera.h"
 const char Camera::BMPHEADER1[] = {0x42, 0x4d};
-const char Camera::BMPHEADER2[] = {0x00, 0x00, 0x00, 0x00, 0x36, 0x00, 0x00, 0x00, 0x28, 0x00, 0x00, 0x00};
-const char Camera::BMPHEADER3[] = {0x01, 0x00, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-									 0xc4, 0x0e, 0x00, 0x00, 0xc4, 0x0e, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+const char Camera::BMPHEADER2[] = {0x00, 0x00, 0x00, 0x00, 0x7A, 0x00, 0x00, 0x00, 0x6C, 0x00, 0x00, 0x00};
+const char Camera::BMPHEADER3[] = {0x01, 0x00, 0x20, 0x00, 0x03, 0x00, 0x00, 0x00, 0x20, 0x00, 0x00, 0x00,
+									 0x13, 0x0b, 0x00, 0x00, 0x13, 0x0b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+									                         //Red                   //Green
+									 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00,
+									 //Blue                  //Alpha
+									 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x20, 0x6E, 0x69, 0x57,
+									 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+									 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+									 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 char* Camera::getBMP(int * memsize){
 	bool cameraCaptureActive = true;
 	//TODO: Is this correct?
-	IOWR_ALTERA_AVALON_PIO_DATA(CAMERA_TRIGGER_BASE, cameraCaptureActive);
-	OSTimeDlyHMSM(0, 0, 1, 0);
+	/*IOWR_ALTERA_AVALON_PIO_DATA(CAMERA_TRIGGER_BASE, cameraCaptureActive);
+	//OSTimeDlyHMSM(0, 0, 1, 0);
 	{
 
 		alt_up_av_config_dev* camConfig = alt_up_av_config_open_dev(CAMERA_NAME);
@@ -25,9 +32,9 @@ char* Camera::getBMP(int * memsize){
 		alt_up_av_config_write_D5M_cfg_register(camConfig, 0x0B, 1<<1);
 		OSTimeDlyHMSM(0, 0, 1, 0);
 		alt_up_av_config_write_D5M_cfg_register(camConfig, 0x0B, 1<<1 | 1<<0);
-	}
+	}*/
 	*memsize = CAM_WIDTH*CAM_HEIGHT*4 + BMPHEADERLEN;
-	OSTimeDlyHMSM(0, 0, 1, 0);
+	OSTimeDlyHMSM(0, 0, 5, 0);
 	char * dataBuff = (char*)malloc((*memsize));
 	//TODO: Check return value
 	memset(dataBuff, (*memsize), 0);
@@ -49,14 +56,14 @@ char* Camera::getBMP(int * memsize){
 	memcpy((void*)(dataBuff + offset), (void*)&BMPHEADER3, BMPHEADER3LEN);
 	offset += BMPHEADER3LEN;
 	imageToBuffer(dataBuff + offset);
-	IOWR_ALTERA_AVALON_PIO_DATA(CAMERA_TRIGGER_BASE, !cameraCaptureActive);
+	/*IOWR_ALTERA_AVALON_PIO_DATA(CAMERA_TRIGGER_BASE, !cameraCaptureActive);
 	{
 		alt_up_av_config_dev* camConfig = alt_up_av_config_open_dev(CAMERA_NAME);
 		//Override config type
 		camConfig -> type = TRDB_D5M_CONFIG;
 		//Enable snapshot mode!
 		alt_up_av_config_write_D5M_cfg_register(camConfig, 0x0B, 1<<0);
-	}
+	}*/
 	return dataBuff;
 }
 
@@ -78,6 +85,14 @@ void Camera::init(){
 	OSTimeDlyHMSM(0, 0, 1, 0);
 	//Mirror Rows and Columns
 	alt_up_av_config_write_D5M_cfg_register(camConfig, 0x20, 0xC000);
+	//alt_up_av_config_write_D5M_cfg_register(camConfig, 0xA0, 0x41);
+
+	alt_up_av_config_write_D5M_cfg_register(camConfig, 0x0A, 0x08);
+	//Shutter max time
+	alt_up_av_config_write_D5M_cfg_register(camConfig, 0x09, 0x64);
+	//Set PLL Factor M and N
+
+	/*
 	//PLL On
 	alt_up_av_config_write_D5M_cfg_register(camConfig, 0x10, 0x51);
 	//Set PLL Factor M and N
@@ -88,6 +103,7 @@ void Camera::init(){
 	//Use PLL
 	alt_up_av_config_write_D5M_cfg_register(camConfig, 0x10, 0x53);
 	OSTimeDlyHMSM(0, 0, 1, 0);
+	*/
 	alt_up_av_config_write_D5M_cfg_register(camConfig, SNAPSHOT_MODE_REG, SNAPSHOT_MODE_VAL);
 	OSTimeDlyHMSM(0, 0, 1, 0);
 	alt_up_av_config_write_D5M_cfg_register(camConfig, HORIZONTAL_REG, HORIZONTAL_VAL);
