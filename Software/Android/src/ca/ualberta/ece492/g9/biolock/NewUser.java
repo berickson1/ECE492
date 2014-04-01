@@ -120,13 +120,18 @@ public class NewUser extends Activity {
 		if (selectedUser != null){
 			nameField.setText(selectedUser.getName());
 			enabledStatus.setChecked(selectedUser.getEnabled());
-			if (userPrintsJSON != null){
+			if (userPrintsJSON.length() != 0){
 				// Displays user prints
 				printsArray = userPrint.fromJson(userPrintsJSON);
 				userPrintAdapter.addAll(printsArray);
 				printsList.setAdapter(userPrintAdapter);
+			} else {
+				// Set no fingerprint
+				userPrint.setID(-1);
+				userPrintAdapter.add(userPrint);
+				printsList.setAdapter(userPrintAdapter);
 			}
-			if (userRolesJSON != null){
+			if (userRolesJSON.length() != 0){
 				// Displays user roles
 				userRolesArray = userRole.fromJson(userRolesJSON);
 				userRoleAdapter.addAll(userRolesArray);
@@ -138,6 +143,11 @@ public class NewUser extends Activity {
 						confirmDeleteUserRole(position);
 					}
 				});
+			} else {
+				// Set no user role
+				userRole.setID(-1);
+				userRoleAdapter.add(userRole);
+				rolesList.setAdapter(userRoleAdapter);
 			}
 			// User is disabled
 			if (!selectedUser.getEnabled()){
@@ -191,10 +201,12 @@ public class NewUser extends Activity {
 					try {
 						JSONObject response = (JSONObject) json.get(0);
 						if (response.getString("success").equalsIgnoreCase("true")){
-							// Remove 'no record' entry if exists
-							UserPrint noRecord = new UserPrint(userPrintAdapter.getItem(0).toJson());
-							if ((noRecord.getID() == -1) && (userPrintsJSON.length() == 1)){
-								userPrintsJSON.remove(0);
+							if (userPrintAdapter.getCount() != 0){
+								// Remove 'no record' entry if exists
+								UserPrint noRecord = new UserPrint(userPrintAdapter.getItem(0).toJson());
+								if ((noRecord.getID() == -1) && (userPrintsJSON.length() == 1)){
+									userPrintsJSON.remove(0);
+								}
 							}
 							userPrintsJSON.put(newPrint.toJson());
 							addPrintWait.dismiss();
