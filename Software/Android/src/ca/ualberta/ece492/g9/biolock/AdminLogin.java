@@ -166,9 +166,8 @@ public class AdminLogin extends Activity {
 			public void execute(JSONArray json) {
 				if (json != null) {
 					try{
-						JSONObject response = (JSONObject) json.get(0);
+						final JSONObject response = (JSONObject) json.get(0);
 						if (response.getString("success").equalsIgnoreCase("true")){
-							final JSONObject id = (JSONObject) json.get(1);
 							AlertDialog added  = new AlertDialog.Builder(mContext).create();
 							added.setMessage("Fingerprint Added");
 							added.setTitle("Fingerprint");
@@ -176,7 +175,7 @@ public class AdminLogin extends Activity {
 								public void onClick(DialogInterface dialog, int which) {
 									try {
 										Intent addedPrint = getIntent();
-										addedPrint.putExtra("id", id.getInt("fid"));
+										addedPrint.putExtra("id", response.getInt("fid"));
 										setResult(RESULT_OK, addedPrint);
 										finish();
 									} catch (JSONException e) {
