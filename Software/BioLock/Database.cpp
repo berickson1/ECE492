@@ -22,6 +22,7 @@
  */
 
 #include "Database.h"
+#include "RestAPI.h"
 using namespace std;
 
 Database::Database(OS_EVENT *databaseSemaphore) :
@@ -995,7 +996,7 @@ bool Database::checkAccess(int fid, LCD &lcd){
 	time_t rawtime;
 	struct tm * timeInfo;
 
-	INT32U currTime = OSTimeGet();
+	INT32U currTime = RestAPI::getSystemTime();
 	rawtime = currTime;
 	timeInfo = localtime(&rawtime);
 	// Sun = 6, Mon = 5, Tues = 4 ... Sat = 0

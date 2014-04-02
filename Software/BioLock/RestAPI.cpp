@@ -7,6 +7,7 @@
 
 #include "RestAPI.h"
 #include "json/json.h"
+#include "Time.h"
 using namespace std;
 RestAPI::RestAPI(int (*getFingerprintIdFunction)(bool enrollNow), OS_EVENT * databaseSem, OS_EVENT * solenoidSem, OS_EVENT * solenoidMutex):
 	getFingerprintId(getFingerprintIdFunction),
@@ -356,10 +357,10 @@ int RestAPI::extractID(string URI){
 }
 
 string RestAPI::setSystemTime(INT32U time){
-	OSTimeSet((time/1000) * CLOCKS_PER_SEC);
+	Time::setTime(time);
 	return "{\"success\":true}";
 }
 
 INT32U RestAPI::getSystemTime(){
-	return OSTimeGet();
+	return Time::getTime();
 }

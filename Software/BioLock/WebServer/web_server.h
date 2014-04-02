@@ -91,11 +91,11 @@ extern FILE* lcdDevice;
  * An ethernet CLIENT application would have lower prioritization than the 
  * stack & ethernet tasks.
  */
-#define HTTP_PRIO     4
-#define WS_INITIAL_TASK_PRIO 5
-#define LED_PRIO      8
-#define SSD_PRIO      9
-#define BOARD_PRIO    10
+#define HTTP_PRIO     5
+#define WS_INITIAL_TASK_PRIO 6
+#define LED_PRIO      9
+#define SSD_PRIO      10
+#define BOARD_PRIO    11
 /* 
  * Buffer size for a routine to call if things fail
  */

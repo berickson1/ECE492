@@ -47,7 +47,7 @@ public:
 	string enroll1();
 	string enroll2();
 	string setSystemTime(INT32U time);
-	INT32U getSystemTime();
+	static INT32U getSystemTime();
 	string checkAdminPrint();
 	string checkAdminPrint(int fid);
 private:

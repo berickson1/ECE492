@@ -177,6 +177,7 @@ CXX_SRCS += Solenoid.cpp
 CXX_SRCS += Audio.cpp
 CXX_SRCS += LCD.cpp
 CXX_SRCS += ZFM-20/ZFMComm.cpp
+CXX_SRCS += Time.cpp
 ASM_SRCS :=
 
 

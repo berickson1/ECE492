@@ -35,6 +35,7 @@
 #include "Database.h"
 #include "json/reader.h"
 #include "Audio.h"
+#include "Time.h"
 
 extern "C" {
 #include "Camera/Camera.h"
@@ -60,9 +61,9 @@ OS_EVENT *lcdMutex;
 
 /* Definition of Task Priorities */
 
-#define TASK1_PRIORITY      6
-#define TASK2_PRIORITY      7
-#define TASK3_PRIORITY		11
+#define TASK1_PRIORITY      7
+#define TASK2_PRIORITY      8
+#define TASK3_PRIORITY		12
 
 const char * aliveJSON = "[{\"alive\":true}]";
 bool m_enrollNow;
@@ -479,6 +480,11 @@ int main(void) {
 	lcdMutex = OSMutexCreate(1, &err); //TODO: Double check if prio is correct
 	if(err != OS_NO_ERR){
 		printf("Error initializing LCD mutex\n");
+		return -1;
+	}
+
+	if (!Time::init()){
+		printf("Failed to initialize time object\n");
 		return -1;
 	}
 
