@@ -49,7 +49,7 @@ INT32U Time::getTime(){
 		printf("Error pending on Time Mutex\n");
 		return 0;
 	}
-	INT32U retTime = unixStartTime + ((OSTimeGet() - sysBaseTime)/1000);
+	INT32U retTime = unixStartTime + ((OSTimeGet() - sysBaseTime)/OS_TICKS_PER_SEC);
 	if (OSMutexPost(timeMutex) != OS_NO_ERR){
 		printf("Error posting to Time Mutex\n");
 	}
