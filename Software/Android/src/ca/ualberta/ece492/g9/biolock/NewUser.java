@@ -582,6 +582,8 @@ public class NewUser extends Activity {
 			} else {
 				changeUserStatus("delete");
 			}
+		} else {
+			finish();
 		}
 	}
 	
