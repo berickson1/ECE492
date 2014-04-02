@@ -238,14 +238,6 @@
          type = "int";
       }
    }
-   element altpll_1.pll_slave
-   {
-      datum baseAddress
-      {
-         value = "25727120";
-         type = "String";
-      }
-   }
    element altpll_0.pll_slave
    {
       datum baseAddress
@@ -254,11 +246,11 @@
          type = "String";
       }
    }
-   element camera_trigger.s1
+   element altpll_1.pll_slave
    {
       datum baseAddress
       {
-         value = "25727168";
+         value = "25727120";
          type = "String";
       }
    }
@@ -278,43 +270,6 @@
          type = "String";
       }
    }
-   element green_leds.s1
-   {
-      datum baseAddress
-      {
-         value = "25727248";
-         type = "String";
-      }
-   }
-   element switches.s1
-   {
-      datum _tags
-      {
-         value = "";
-         type = "String";
-      }
-      datum baseAddress
-      {
-         value = "25727264";
-         type = "String";
-      }
-   }
-   element serial.s1
-   {
-      datum baseAddress
-      {
-         value = "25726976";
-         type = "String";
-      }
-   }
-   element sdram_0.s1
-   {
-      datum baseAddress
-      {
-         value = "8388608";
-         type = "String";
-      }
-   }
    element timer_0.s1
    {
       datum baseAddress
@@ -328,6 +283,51 @@
       datum baseAddress
       {
          value = "25706496";
+         type = "String";
+      }
+   }
+   element sdram_0.s1
+   {
+      datum baseAddress
+      {
+         value = "8388608";
+         type = "String";
+      }
+   }
+   element serial.s1
+   {
+      datum baseAddress
+      {
+         value = "25726976";
+         type = "String";
+      }
+   }
+   element green_leds.s1
+   {
+      datum baseAddress
+      {
+         value = "25727248";
+         type = "String";
+      }
+   }
+   element camera_trigger.s1
+   {
+      datum baseAddress
+      {
+         value = "25727168";
+         type = "String";
+      }
+   }
+   element switches.s1
+   {
+      datum _tags
+      {
+         value = "";
+         type = "String";
+      }
+      datum baseAddress
+      {
+         value = "25727264";
          type = "String";
       }
    }
@@ -492,7 +492,7 @@
  <parameter name="projectName" value="BioLock.qpf" />
  <parameter name="sopcBorderPoints" value="false" />
  <parameter name="systemHash" value="1" />
- <parameter name="timeStamp" value="1394740083417" />
+ <parameter name="timeStamp" value="1396470667911" />
  <parameter name="useTestBenchNamingPattern" value="false" />
  <instanceScript></instanceScript>
  <interface name="reset" internal="clk_0.clk_in_reset" type="reset" dir="end" />
@@ -652,7 +652,7 @@
   <parameter name="mmu_tlbPtrSz" value="7" />
   <parameter name="mmu_tlbNumWays" value="16" />
   <parameter name="mmu_processIDNumBits" value="8" />
-  <parameter name="impl" value="Tiny" />
+  <parameter name="impl" value="Fast" />
   <parameter name="icache_size" value="4096" />
   <parameter name="icache_ramBlockType" value="Automatic" />
   <parameter name="icache_numTCIM" value="0" />
