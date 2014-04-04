@@ -128,7 +128,7 @@ public class Role implements Parcelable{
 		pc.writeInt(id);
 		pc.writeString(name);
 		// write 1 if true
-		pc.writeInt(enabled ? 1:0);
+		pc.writeInt(admin ? 1:0);
 		pc.writeInt(enabled ? 1:0);
 		pc.writeLong(startDate);
 		pc.writeLong(endDate);
