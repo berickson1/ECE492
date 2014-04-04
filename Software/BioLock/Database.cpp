@@ -878,26 +878,6 @@ void Database::testPopulate() {
 	rs1.endTime = 23;
 	insertRoleSched(rs1);
 
-	RoleSchedule rs2;
-	rs2.id = 2;
-	rs2.rid = 2;
-	rs2.startDate = time(0);
-	rs2.endDate = time(0);
-	rs2.days = 5;
-	rs2.startTime = 9;
-	rs2.endTime = 11;
-	insertRoleSched(rs2);
-
-	RoleSchedule rs3;
-	rs3.id = 3;
-	rs3.rid = 2;
-	rs3.startDate = time(0);
-	rs3.endDate = time(0);
-	rs3.days = 1;
-	rs3.startTime = 13;
-	rs3.endTime = 14;
-	insertRoleSched(rs3);
-
 	UserRole ur1;
 	ur1.name = "Owner";
 	ur1.userName = "Mavis Chan";
@@ -919,72 +899,29 @@ void Database::testPopulate() {
 	insertUserRole(ur2);
 
 	UserRole ur3;
-	ur3.name = "Guest";
+	ur3.name = "Owner";
 	ur3.userName = "Sydney Bitner";
 	ur3.id = 3;
 	ur3.uid = 3;
-	ur3.rid = 2;
+	ur3.rid = 1;
 	ur3.startDate = time(0);
 	ur3.endDate = time(0);
 	insertUserRole(ur3);
 
 	UserPrint up1;
-	up1.uid = 1;
-	up1.id = 1;
+	up1.uid = 2;
+	up1.id = 7;
 	insertUserPrint(up1);
 
 	UserPrint up2;
-	up2.uid = 2;
-	up2.id = 2;
+	up2.uid = 1;
+	up2.id = 9;
 	insertUserPrint(up2);
 
 	UserPrint up3;
-	up3.uid = 3;
-	up3.id = 3;
+	up3.uid = 1;
+	up3.id = 10;
 	insertUserPrint(up3);
-
-	UserPrint up4;
-	up4.uid = 2;
-	up4.id = 7;
-	insertUserPrint(up4);
-
-	UserPrint up5;
-	up5.uid = 1;
-	up5.id = 9;
-	insertUserPrint(up5);
-
-	UserPrint up6;
-	up6.uid = 1;
-	up6.id = 10;
-	insertUserPrint(up6);
-
-	History h1;
-	h1.id = 1;
-	h1.uid = 1;
-	h1.success = true;
-	h1.time = time(0);
-	insertHistory(h1);
-
-	History h2;
-	h2.id = 2;
-	h2.uid = 1;
-	h2.success = false;
-	h2.time = time(0);
-	insertHistory(h2);
-
-	History h3;
-	h3.id = 3;
-	h3.uid = 2;
-	h3.success = false;
-	h3.time = time(0);
-	insertHistory(h3);
-
-	History h4;
-	h4.id = 4;
-	h4.uid = 3;
-	h4.success = false;
-	h4.time = time(0);
-	insertHistory(h4);
 }
 
 bool Database::checkAccess(int fid, LCD &lcd){
