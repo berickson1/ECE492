@@ -257,28 +257,38 @@ public class NewSched extends Activity {
 		try {
 			startDateFormatted = dateFormat.parse(start).getTime()/1000L;
 			endDateFormatted = dateFormat.parse(end).getTime()/1000L;
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		// Check for changes
-		if (selectedSchedule != null) {
-			// Check days
-			if (getAllDays() != selectedSchedule.getDays()){
-				updateSchedule();
-			// Check start date
-			} else if (selectedSchedule.getStartDate() != startDateFormatted) {
-				updateSchedule();
-			// Check end date
-			} else if (selectedSchedule.getEndDate() != endDateFormatted) {
-				updateSchedule();
+			// Check for changes
+			if (selectedSchedule != null) {
+				// Check days
+				if (getAllDays() != selectedSchedule.getDays()){
+					updateSchedule();
+				// Check start date
+				} else if (selectedSchedule.getStartDate() != startDateFormatted) {
+					updateSchedule();
+				// Check end date
+				} else if (selectedSchedule.getEndDate() != endDateFormatted) {
+					updateSchedule();
+				} else {
+					Intent noChange = getIntent();
+					setResult(RESULT_OK, noChange); 
+					finish();
+				}
+			// New schedule, add to db
 			} else {
-				Intent noChange = getIntent();
-				setResult(RESULT_OK, noChange); 
-				finish();
+				updateSchedule();
 			}
-		// New schedule, add to db
-		} else {
-			updateSchedule();
+		} catch (ParseException e) {
+			AlertDialog noDate  = new AlertDialog.Builder(mContext).create();
+			noDate.setMessage("Please select valid start and end date");
+			noDate.setTitle("Date");
+			noDate.setButton(AlertDialog.BUTTON_POSITIVE, "OK", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					return;
+				}
+			});
+			noDate.setCancelable(false);
+			noDate.setCanceledOnTouchOutside(false);
+			noDate.show();
 		}
 	}
 	
