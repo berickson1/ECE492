@@ -219,39 +219,4 @@ public class AdminLogin extends Activity {
 	// Disable back button press
 	@Override
 	public void onBackPressed() {}
-	
-	// Temp button to simulate fingerprint detected & accepted
-	public void tempPrintDetected(View v) {
-
-		int DELAY = 1000;
-
-		// Displays text stating print is found (or not found)
-		printStatus = (TextView) findViewById(R.id.print_detected);
-		printStatus.setVisibility(View.VISIBLE);
-
-		// Jumps to Manage screen after 1 second delay
-		new Handler().postDelayed(new Runnable() {
-
-			@Override
-			public void run() {
-				// Runs Manage
-				Intent i = new Intent(AdminLogin.this, Manage.class);
-				startActivity(i);
-
-				// Close this activity
-				finish();
-			}
-		}, DELAY);
-	}
-
-	// Temp button to simulate fingerprint detected & accepted
-	public void tempNewUser(View v) {
-
-		Intent i = new Intent(AdminLogin.this, NewUser.class);
-		startActivity(i);
-		
-		// Close this activity
-		finish();
-
-	}
 }
