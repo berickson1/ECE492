@@ -37,11 +37,11 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/userName"
         android:layout_alignBottom="@+id/userName"
-        android:layout_marginLeft="100dp"
-        android:layout_toRightOf="@+id/userName"
-        android:textSize="20sp" 
+        android:layout_alignLeft="@+id/logTitle"
+        android:layout_alignRight="@+id/logTitle"
         android:gravity="right"
-        android:text="@string/sampleName" />
+        android:text="@string/sampleName"
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/access"
@@ -58,8 +58,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/access"
+        android:layout_alignLeft="@+id/user"
         android:layout_alignRight="@+id/user"
-        android:layout_toRightOf="@+id/userName"
         android:gravity="right"
         android:text="@string/access"
         android:textSize="20sp" />
@@ -89,7 +89,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/time"
-        android:layout_alignLeft="@+id/user"
+        android:layout_alignLeft="@+id/accessResult"
         android:layout_alignRight="@+id/accessResult"
         android:gravity="right"
         android:text="@string/accessDate"
