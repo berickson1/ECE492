@@ -21,9 +21,9 @@ class LCD {
 public:
 	LCD();
 	static bool init();
-	void writeToLCD(string firstLine, string secondLine);
+	static void writeToLCD(string firstLine, string secondLine);
 private:
-	alt_up_character_lcd_dev *char_lcd;
+	static alt_up_character_lcd_dev *char_lcd;
 	static OS_EVENT * m_lcdMutex;
 };
 

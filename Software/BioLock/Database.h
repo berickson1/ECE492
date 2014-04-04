@@ -67,7 +67,7 @@ public:
 	string enableUser(int uid, bool enable);
 
 	void testPopulate();
-	bool checkAccess(int fid, LCD &lcd);
+	bool checkAccess(int fid);
 	static string noRecord();
 	static string success();
 	static string fail();

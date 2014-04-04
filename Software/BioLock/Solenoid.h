@@ -23,7 +23,7 @@ extern "C"{
 class Solenoid {
 public:
 	static void unlock();
-	static void timedLock(int unlockedTime, LCD &lcd);
+	static void timedLock(int unlockedTime);
 	static void lock();
 	static bool init();
 

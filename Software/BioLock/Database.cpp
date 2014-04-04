@@ -917,7 +917,7 @@ void Database::testPopulate() {
 	insertUserPrint(testUserPrint);
 }
 
-bool Database::checkAccess(int fid, LCD &lcd){
+bool Database::checkAccess(int fid){
 	UserPrint userPrint;
 	User user;
 	UserRoles userRoles;
@@ -956,7 +956,7 @@ bool Database::checkAccess(int fid, LCD &lcd){
 	{
 		stringstream sStream;
 		sStream << userPrint.uid;
-		lcd.writeToLCD("User ID: ", sStream.str());
+		LCD::writeToLCD("User ID: ", sStream.str());
 	}
 
 	// Find user
@@ -967,7 +967,7 @@ bool Database::checkAccess(int fid, LCD &lcd){
 		return false;
 	}
 	printf("Name: %s\n", user.name.c_str());
-	lcd.writeToLCD("Name: ", user.name);
+	LCD::writeToLCD("Name: ", user.name);
 
 	// Find user role
 	userRoles.loadFromJson(findUserRole(user.id));
@@ -979,7 +979,7 @@ bool Database::checkAccess(int fid, LCD &lcd){
 		// Role is enabled
 		if (role.enabled) {
 			printf("Role Name: %s\n", role.name.c_str());
-			lcd.writeToLCD("Role Name: ", role.name);
+			LCD::writeToLCD("Role Name: ", role.name);
 			// Find role schedule
 			roleSchedules.loadFromJson(findRoleSchedule(role.id));
 			list<RoleSchedule> &roleScheduleList = roleSchedules.schedules;

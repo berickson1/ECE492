@@ -43,7 +43,7 @@ void Solenoid::unlock() {
 	}
 }
 
-void Solenoid::timedLock(int unlockedTime, LCD &lcd){
+void Solenoid::timedLock(int unlockedTime){
 	INT8U err = OS_NO_ERR;
 	OSSemPend(solenoidSem, 0, &err);
 	if(err != OS_NO_ERR){
@@ -54,7 +54,7 @@ void Solenoid::timedLock(int unlockedTime, LCD &lcd){
 		OSSemPend(solenoidSem, unlockedTime, &err);
 		if(err == OS_NO_ERR){
 			printf("Door unlocked again, sleep some more\n");
-			lcd.writeToLCD("Door unlocked", "again");
+			LCD::writeToLCD("Door unlocked", "again");
 		}
 	} while (err == OS_NO_ERR);
 	printf("Locking\n");
