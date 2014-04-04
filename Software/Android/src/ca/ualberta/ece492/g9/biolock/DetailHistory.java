@@ -55,7 +55,7 @@ public class DetailHistory extends Activity {
  	   	dateFormat.setTimeZone(TimeZone.getDefault());
  	   	String dateString = dateFormat.format(selectedHistory.getTime()*1000L).toString();
  	   	int split = dateString.indexOf(",");
- 	   	dateResult.setText(String.valueOf(dateString.substring(split + 1)));
- 	   	timeResult.setText(dateString.subSequence(0,  split));
+ 	   	timeResult.setText(String.valueOf(dateString.substring(split + 1)));
+ 	   	dateResult.setText(dateString.subSequence(0,  split));
 	}
 }
