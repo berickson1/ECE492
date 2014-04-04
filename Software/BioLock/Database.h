@@ -31,8 +31,9 @@ extern "C" {
 using namespace std;
 class Database {
 public:
-	Database(OS_EVENT * databaseSemaphore);
+	Database();
 	virtual ~Database();
+	static bool init(OS_EVENT *databaseSemaphore);
 	string listAll(char *path);
 	string createTable(char *tableName);
 
@@ -74,7 +75,7 @@ public:
 	string clearAll();
 
 private:
-	OS_EVENT *m_databaseSemaphore;
+	static OS_EVENT *m_databaseSemaphore;
 	EmbeddedFileSystem db;
 	string findEntry(const char *path, int id);
 	string deleteEntry(string file);

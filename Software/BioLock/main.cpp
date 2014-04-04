@@ -116,7 +116,7 @@ void task1(void* pdata) {
 				//Swap Fingerprint Buffer used in case we enroll next
 				firstBuffer = !firstBuffer;
 				if(m_enrollNow){
-					Database dbAccess(databaseSemaphore);
+					Database dbAccess;
 					fid = dbAccess.findNextID(USER_PRINTS);
 					fingerprintSensor.storeFingerprint(fid);
 					m_enrollNow = false;
@@ -142,7 +142,7 @@ void task1(void* pdata) {
 			//Check if fingerprint is allowed access and unlock door
 			//After this point, we fall through to the error if (uriString.compare(0, 7,
 			{
-				Database dbAccess(databaseSemaphore);
+				Database dbAccess;
 				if(dbAccess.checkAccess(fid)){
 					//Success, unlock door!
 					char * ledBase = (char*) GREEN_LEDS_BASE;
@@ -177,14 +177,14 @@ void task2(void* pdata) {
 		if (*((char*) SWITCHES_BASE) & 1 << 1) {
 			// Clearing database
 			{
-				Database db(databaseSemaphore);
+				Database db;
 				db.clearAll();
 			}
 			printf("Database has been cleared\n");
 			LCD::writeToLCD("Database cleared", "");
 			if (*((char*) SWITCHES_BASE) & 1 << 2) {
 				// Populate database
-				Database db(databaseSemaphore);
+				Database db;
 				db.testPopulate();
 				printf("Database has been populated\n");
 				LCD::writeToLCD("Database","populated");
@@ -306,7 +306,7 @@ const char * handleHTTPPost(http_conn* conn, int *replyLen) {
 	retString = "{\"success\":false}";
 	jsonData = getPOSTPayload(incomingData, "json");
 	postType = getPOSTPayload(incomingData, "type");
-	RestAPI api(&getCurrentFingerprintId, databaseSemaphore);
+	RestAPI api(&getCurrentFingerprintId);
 	if (uriString.compare(0, 6, "/users") == 0) {
 		if (postType == "delete"){
 			User user;
@@ -382,7 +382,7 @@ const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 
 	*isImage = false;
 	string uriString(URI), retString;
-	RestAPI api(&getCurrentFingerprintId, databaseSemaphore);
+	RestAPI api(&getCurrentFingerprintId);
 	if (uriString.compare(0, 6, "/alive") == 0) {
 		retString = aliveJSON;
 	} else if (uriString.compare(0, 6, "/users") == 0) {
@@ -457,6 +457,11 @@ int main(void) {
 	databaseSemaphore = OSSemCreate(1);
 	if (databaseSemaphore == NULL) {
 		printf("Error initializing database semaphore");
+		return -1;
+	}
+
+	if (!Database::init(databaseSemaphore)){
+		printf("Error initializing database");
 		return -1;
 	}
 

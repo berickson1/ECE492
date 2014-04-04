@@ -9,9 +9,8 @@
 #include "json/json.h"
 #include "Time.h"
 using namespace std;
-RestAPI::RestAPI(int (*getFingerprintIdFunction)(bool enrollNow), OS_EVENT * databaseSem):
+RestAPI::RestAPI(int (*getFingerprintIdFunction)(bool enrollNow)):
 	getFingerprintId(getFingerprintIdFunction),
-	m_databaseSem(databaseSem),
 	m_successString("{\"success\":true}")
 {
 }
@@ -25,11 +24,11 @@ string RestAPI::getUsers(string URI){
 	if (id != -1){
 		return getUser(id);
 	}
-	Database db(m_databaseSem);
+	Database db;
 	return db.listAll(USERS);
 }
 string RestAPI::getUser(int uid){
-	Database db(m_databaseSem);
+	Database db;
 	return db.findUser(uid);
 }
 string RestAPI::getRoles(string URI){
@@ -37,12 +36,12 @@ string RestAPI::getRoles(string URI){
 	if (id != -1){
 		return getRole(id);
 	}
-	Database db(m_databaseSem);
+	Database db;
 	return db.listAll(ROLES);
 
 }
 string RestAPI::getRole(int rid){
-	Database db(m_databaseSem);
+	Database db;
 	return db.findRole(rid);
 
 }
@@ -51,12 +50,12 @@ string RestAPI::getUserRoles(string URI){
 	if (id != -1){
 		return getUserRoles(id);
 	}
-	Database db(m_databaseSem);
+	Database db;
 	return db.listAll(USER_ROLES);
 
 }
 string RestAPI::getUserRoles(int uid){
-	Database db(m_databaseSem);
+	Database db;
 	return db.findUserRole(uid);
 
 }
@@ -65,11 +64,11 @@ string RestAPI::getRoleUsers(string URI){
 	if (id != -1){
 		return getRoleUsers(id);
 	}
-	Database db(m_databaseSem);
+	Database db;
 	return db.listAll(USER_ROLES);
 }
 string RestAPI::getRoleUsers(int rid){
-	Database db(m_databaseSem);
+	Database db;
 	return db.findRoleUser(rid);
 }
 string RestAPI::getRoleSchedule(string URI){
@@ -77,16 +76,16 @@ string RestAPI::getRoleSchedule(string URI){
 	if (id != -1){
 		return getRoleSchedule(id);
 	}
-	Database db(m_databaseSem);
+	Database db;
 	return db.listAll(ROLE_SCHEDULE);
 
 }
 string RestAPI::getRoleSchedule(int rid){
-	Database db(m_databaseSem);
+	Database db;
 	return db.findRoleSchedule(rid);
 }
 string RestAPI::getHistory(string URI){
-	Database db(m_databaseSem);
+	Database db;
 	return db.listAll(HISTORY);
 
 }
@@ -95,18 +94,18 @@ string RestAPI::getPrints(string URI){
 	if (id != -1){
 		return getPrint(id);
 	}
-	Database db(m_databaseSem);
+	Database db;
 	return db.listAll(USER_PRINTS);
 
 }
 string RestAPI::getPrint(int uid){
-	Database db(m_databaseSem);
+	Database db;
 	return db.findUserPrintUID(uid);
 
 }
 
 string RestAPI::insertUser(string data){
-	Database db(m_databaseSem);
+	Database db;
 	User user;
 	user.loadFromJson(data);
 	stringstream str;
@@ -115,7 +114,7 @@ string RestAPI::insertUser(string data){
 }
 
 string RestAPI::enableUser(string data){
-	Database db(m_databaseSem);
+	Database db;
 	User user;
 	user.loadFromJson(data);
 	stringstream str;
@@ -124,7 +123,7 @@ string RestAPI::enableUser(string data){
 }
 
 string RestAPI::insertRole(string data){
-	Database db(m_databaseSem);
+	Database db;
 	Role role;
 	role.loadFromJson(data);
 	stringstream str;
@@ -133,7 +132,7 @@ string RestAPI::insertRole(string data){
 }
 
 string RestAPI::insertUserRole(string data){
-	Database db(m_databaseSem);
+	Database db;
 	UserRole userRole;
 	userRole.loadFromJson(data);
 	stringstream str;
@@ -142,7 +141,7 @@ string RestAPI::insertUserRole(string data){
 }
 
 string RestAPI::insertRoleSchedule(string data){
-	Database db(m_databaseSem);
+	Database db;
 	RoleSchedule roleSchedule;
 	roleSchedule.loadFromJson(data);
 	stringstream str;
@@ -151,7 +150,7 @@ string RestAPI::insertRoleSchedule(string data){
 }
 
 string RestAPI::insertPrint(string data){
-	Database db(m_databaseSem);
+	Database db;
 	UserPrint print;
 	print.loadFromJson(data);
 	stringstream str;
@@ -160,7 +159,7 @@ string RestAPI::insertPrint(string data){
 }
 
 string RestAPI::updateUser(string data){
-	Database db(m_databaseSem);
+	Database db;
 	User user;
 	user.loadFromJson(data);
 	stringstream str;
@@ -169,7 +168,7 @@ string RestAPI::updateUser(string data){
 }
 
 string RestAPI::updateRole(string data){
-	Database db(m_databaseSem);
+	Database db;
 	Role role;
 	role.loadFromJson(data);
 	stringstream str;
@@ -178,7 +177,7 @@ string RestAPI::updateRole(string data){
 }
 
 string RestAPI::updateUserRole(string data){
-	Database db(m_databaseSem);
+	Database db;
 	UserRole userRole;
 	userRole.loadFromJson(data);
 	stringstream str;
@@ -187,7 +186,7 @@ string RestAPI::updateUserRole(string data){
 }
 
 string RestAPI::updateRoleSchedule(string data){
-	Database db(m_databaseSem);
+	Database db;
 	RoleSchedule roleSchedule;
 	roleSchedule.loadFromJson(data);
 	stringstream str;
@@ -196,7 +195,7 @@ string RestAPI::updateRoleSchedule(string data){
 }
 
 string RestAPI::updatePrint(string data){
-	Database db(m_databaseSem);
+	Database db;
 	UserPrint print;
 	print.loadFromJson(data);
 	stringstream str;
@@ -205,35 +204,35 @@ string RestAPI::updatePrint(string data){
 }
 
 string RestAPI::deleteUser(int id){
-	Database db(m_databaseSem);
+	Database db;
 	stringstream result;
 	result << db.enableUser(id, false);
 	return result.str();
 }
 
 string RestAPI::deleteRole(int id){
-	Database db(m_databaseSem);
+	Database db;
 	stringstream result;
 	result << db.deleteRole(id);
 	return result.str();
 }
 
 string RestAPI::deleteUserRole(int id, int uid, int rid){
-	Database db(m_databaseSem);
+	Database db;
 	stringstream result;
 	result << db.deleteUserRole(id, uid, rid);
 	return result.str();
 }
 
 string RestAPI::deleteRoleSchedule(int id, int rid){
-	Database db(m_databaseSem);
+	Database db;
 	stringstream result;
 	result << db.deleteRoleSchedule(id, rid);
 	return result.str();
 }
 
 string RestAPI::deletePrint(int id, int uid){
-	Database db(m_databaseSem);
+	Database db;
 	stringstream result;
 	result << db.deleteUserPrint(id, uid);
 	return result.str();
@@ -260,7 +259,7 @@ string RestAPI::checkAdminPrint(int fid){
 	// Sun = 6, Mon = 5, Tues = 4 ... Sat = 0
 	int currDay = abs(timeInfo->tm_wday - 6);
 
-	Database db(m_databaseSem);
+	Database db;
 	// Check user print
 	UserPrint print;
 	print.loadFromJson(db.findUserPrint(fid));

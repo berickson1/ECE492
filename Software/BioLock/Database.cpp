@@ -25,8 +25,9 @@
 #include "RestAPI.h"
 using namespace std;
 
-Database::Database(OS_EVENT *databaseSemaphore) :
-		m_databaseSemaphore(databaseSemaphore) {
+OS_EVENT *Database::m_databaseSemaphore;
+
+Database::Database(){
 	INT8U err = OS_NO_ERR;
 	int ret = 0;
 
@@ -43,6 +44,11 @@ Database::Database(OS_EVENT *databaseSemaphore) :
 		printf("Could not initialize database\n");
 		throw exception();
 	}
+}
+
+bool Database::init(OS_EVENT *databaseSemaphore){
+	m_databaseSemaphore = databaseSemaphore;
+	return true;
 }
 
 // JSON return value when no entry found in database
