@@ -826,47 +826,44 @@ string Database::getFileName(char *path, euint8 *filename){
 }
 
 void Database::testPopulate() {
-	User u1;
-	u1.id = 1;
-	u1.name = "Mavis Chan";
-	u1.enabled = true;
-	u1.startDate = time(0);
-	u1.endDate = time(0);
-	insertUser(u1);
+	User testUser;
+	testUser.id = 1;
+	testUser.name = "Mavis Chan";
+	testUser.enabled = true;
+	testUser.startDate = time(0);
+	testUser.endDate = time(0);
+	insertUser(testUser);
 
-	User u2;
-	u2.id = 2;
-	u2.name = "Brent Erickson";
-	u2.enabled = true;
-	u2.startDate = time(0);
-	u2.endDate = time(0);
-	insertUser(u2);
+	testUser.id = 2;
+	testUser.name = "Brent Erickson";
+	testUser.enabled = true;
+	testUser.startDate = time(0);
+	testUser.endDate = time(0);
+	insertUser(testUser);
 
-	User u3;
-	u3.id = 3;
-	u3.name = "Sydney Bitner";
-	u3.enabled = true;
-	u3.startDate = time(0);
-	u3.endDate = time(0);
-	insertUser(u3);
+	testUser.id = 3;
+	testUser.name = "Sydney Bitner";
+	testUser.enabled = true;
+	testUser.startDate = time(0);
+	testUser.endDate = time(0);
+	insertUser(testUser);
 
-	Role r1;
-	r1.id = 1;
-	r1.name = "Owner";
-	r1.admin = true;
-	r1.enabled = true;
-	r1.startDate = time(0);
-	r1.endDate = time(0);
-	insertRole(r1);
+	Role testRole;
+	testRole.id = 1;
+	testRole.name = "Owner";
+	testRole.admin = true;
+	testRole.enabled = true;
+	testRole.startDate = time(0);
+	testRole.endDate = time(0);
+	insertRole(testRole);
 
-	Role r2;
-	r2.id = 2;
-	r2.name = "Guest";
-	r2.admin = false;
-	r2.enabled = true;
-	r2.startDate = time(0);
-	r2.endDate = time(0);
-	insertRole(r2);
+	testRole.id = 2;
+	testRole.name = "Guest";
+	testRole.admin = false;
+	testRole.enabled = true;
+	testRole.startDate = time(0);
+	testRole.endDate = time(0);
+	insertRole(testRole);
 
 	RoleSchedule rs1;
 	rs1.id = 1;
@@ -878,50 +875,46 @@ void Database::testPopulate() {
 	rs1.endTime = 23;
 	insertRoleSched(rs1);
 
-	UserRole ur1;
-	ur1.name = "Owner";
-	ur1.userName = "Mavis Chan";
-	ur1.id = 1;
-	ur1.uid = 1;
-	ur1.rid = 1;
-	ur1.startDate = time(0);
-	ur1.endDate = time(0);
-	insertUserRole(ur1);
+	UserRole testUserRole;
+	testUserRole.name = "Owner";
+	testUserRole.userName = "Mavis Chan";
+	testUserRole.id = 1;
+	testUserRole.uid = 1;
+	testUserRole.rid = 1;
+	testUserRole.startDate = time(0);
+	testUserRole.endDate = time(0);
+	insertUserRole(testUserRole);
 
-	UserRole ur2;
-	ur2.name = "Owner";
-	ur2.userName = "Brent Erickson";
-	ur2.id = 2;
-	ur2.uid = 2;
-	ur2.rid = 1;
-	ur2.startDate = time(0);
-	ur2.endDate = time(0);
-	insertUserRole(ur2);
+	testUserRole.name = "Owner";
+	testUserRole.userName = "Brent Erickson";
+	testUserRole.id = 2;
+	testUserRole.uid = 2;
+	testUserRole.rid = 1;
+	testUserRole.startDate = time(0);
+	testUserRole.endDate = time(0);
+	insertUserRole(testUserRole);
 
-	UserRole ur3;
-	ur3.name = "Owner";
-	ur3.userName = "Sydney Bitner";
-	ur3.id = 3;
-	ur3.uid = 3;
-	ur3.rid = 1;
-	ur3.startDate = time(0);
-	ur3.endDate = time(0);
-	insertUserRole(ur3);
+	testUserRole.name = "Owner";
+	testUserRole.userName = "Sydney Bitner";
+	testUserRole.id = 3;
+	testUserRole.uid = 3;
+	testUserRole.rid = 1;
+	testUserRole.startDate = time(0);
+	testUserRole.endDate = time(0);
+	insertUserRole(testUserRole);
 
-	UserPrint up1;
-	up1.uid = 2;
-	up1.id = 7;
-	insertUserPrint(up1);
+	UserPrint testUserPrint;
+	testUserPrint.uid = 2;
+	testUserPrint.id = 7;
+	insertUserPrint(testUserPrint);
 
-	UserPrint up2;
-	up2.uid = 1;
-	up2.id = 9;
-	insertUserPrint(up2);
+	testUserPrint.uid = 1;
+	testUserPrint.id = 9;
+	insertUserPrint(testUserPrint);
 
-	UserPrint up3;
-	up3.uid = 1;
-	up3.id = 10;
-	insertUserPrint(up3);
+	testUserPrint.uid = 1;
+	testUserPrint.id = 10;
+	insertUserPrint(testUserPrint);
 }
 
 bool Database::checkAccess(int fid, LCD &lcd){
