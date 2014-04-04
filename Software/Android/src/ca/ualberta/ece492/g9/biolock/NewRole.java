@@ -411,6 +411,7 @@ public class NewRole extends Activity {
 					try {
 						JSONObject response = (JSONObject) json.get(0);
 						if (response.getString("success").equalsIgnoreCase("true")){
+							selectedRole = null;
 							updateRoleWait.dismiss();
 							finish();
 						} else {
@@ -444,6 +445,7 @@ public class NewRole extends Activity {
 		} else if (enabledStatus.isChecked() != selectedRole.getEnabled()) {
 			updateRole();
 		} else {
+			selectedRole = null;
 			finish();
 		}
 	}

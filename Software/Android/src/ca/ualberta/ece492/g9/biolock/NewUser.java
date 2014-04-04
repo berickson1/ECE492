@@ -496,12 +496,14 @@ public class NewUser extends Activity {
 						if (response.getString("success").equalsIgnoreCase("true")){
 							// Don't need to wait for other asynctask
 							if (nameField.getText().toString().equals(selectedUser.getName())){
+								selectedUser = null;
 								changeStatusWait.dismiss();
 								finish();
 							} else {
 								changeStatusWait.dismiss();
 								// Check if asynctask is done
 								if(changeName.getStatus().toString().equals("FINISHED")){
+									selectedUser = null;
 									finish();
 									return;
 								}
@@ -536,12 +538,14 @@ public class NewUser extends Activity {
 						if (response.getString("success").equalsIgnoreCase("true")){
 							// Don't need to wait for other asynctask
 							if (enabledStatus.isChecked() == selectedUser.getEnabled()){
+								selectedUser = null;
 								changeNameWait.dismiss();
 								finish();
 							} else {
 								changeNameWait.dismiss();
 								// Check if asynctask is done
 								if(changeStatus.getStatus().toString().equals("FINISHED")){
+									selectedUser = null;
 									finish();
 									return;
 								}
@@ -583,6 +587,7 @@ public class NewUser extends Activity {
 				changeUserStatus("delete");
 			}
 		} else {
+			selectedUser = null;
 			finish();
 		}
 	}
