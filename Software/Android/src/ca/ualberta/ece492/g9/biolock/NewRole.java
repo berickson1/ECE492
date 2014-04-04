@@ -76,6 +76,7 @@ public class NewRole extends Activity {
 	}
 	
 	public void onResume(){
+		String roleName = null;
 		ArrayList<UserRole> userArray = new ArrayList<UserRole>();
 		UserRole user = new UserRole();
 		userJSON = new JSONArray();
@@ -85,8 +86,10 @@ public class NewRole extends Activity {
 		
 		// Retrieves information of the selected role or new role name
 		Intent intent = getIntent();
-		selectedRole = (Role) intent.getParcelableExtra("Role");
-		String roleName = intent.getStringExtra("Name");
+		if (selectedRole == null) {
+			selectedRole = (Role) intent.getParcelableExtra("Role");
+			roleName = intent.getStringExtra("Name");
+		}
 		if (intent.getExtras().size() > 2) {
 			try {
 				// Retrieves user and role schedule
@@ -113,7 +116,7 @@ public class NewRole extends Activity {
 			nameField.setText(selectedRole.getName());
 			enabledAdmin.setChecked(selectedRole.getAdmin());
 			enabledStatus.setChecked(selectedRole.getEnabled());
-			if (userJSON != null){
+			if (userJSON.length() != 0){
 				// Displays users
 				userArray = user.fromJson(userJSON);
 				userAdapter.addAll(userArray);
@@ -124,8 +127,14 @@ public class NewRole extends Activity {
 						confirmDeleteUser(position);
 					}
 				});
+			} else {
+				// Set no user
+				user.setID(-1);
+				userAdapter.add(user);
+				usersList.setAdapter(userAdapter);
 			}
-			if (scheduleJSON != null){
+			
+			if (scheduleJSON.length() != 0){
 				// Displays role schedules
 				scheduleArray = roleSched.fromJson(scheduleJSON);
 				roleSchedAdapter.addAll(scheduleArray);
@@ -136,6 +145,11 @@ public class NewRole extends Activity {
 						loadSchedule(position);
 					}
 				});
+			} else {
+				// Set no role schedule
+				roleSched.setID(-1);
+				roleSchedAdapter.add(roleSched);
+				schedList.setAdapter(roleSchedAdapter);
 			}
 			// Role is disabled
 			if (!selectedRole.getEnabled()){
@@ -301,7 +315,7 @@ public class NewRole extends Activity {
 					scheduleJSON.remove(0);
 				}
 				// Remove modified schedule
-				if (newSched.getID() == selectedSchedule.getID()){
+				if ((selectedSchedule != null) && (newSched.getID() == selectedSchedule.getID())){
 					int position = roleSchedAdapter.getPosition(selectedSchedule);
 					scheduleJSON.remove(position);
 				}
