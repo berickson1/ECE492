@@ -107,7 +107,7 @@ typedef struct Role {
 		id = node.get("id", -1).asInt();
 		name = node.get("name", "Unknown").asString();
 		admin = node.get("admin", false).asBool();
-		enabled = node.get("enabled", "false").asBool();
+		enabled = node.get("enabled", false).asBool();
 		startDate = node.get("startDate", -1).asDouble();
 		endDate = node.get("endDate", -1).asDouble();
 	}
