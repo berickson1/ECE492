@@ -470,4 +470,11 @@ public class NewRole extends Activity {
 		addSched.setClickable(false);
 		addSched.setTextColor(Color.GRAY);
 	}
+	
+	// Clears selected user info
+	@Override
+	public void onBackPressed() {
+		selectedRole = null;
+		finish();
+	}
 }

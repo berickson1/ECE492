@@ -587,6 +587,7 @@ public class NewUser extends Activity {
 		}
 	}
 	
+	// Disables changing user settings if user not enabled
 	public void disableScreen(){
 		nameField.setEnabled(false);
 		printsList.setEnabled(false);
@@ -595,5 +596,12 @@ public class NewUser extends Activity {
 		addPrint.setTextColor(Color.GRAY);
 		addRole.setClickable(false);
 		addRole.setTextColor(Color.GRAY);
+	}
+	
+	// Clears selected user info
+	@Override
+	public void onBackPressed() {
+		selectedUser = null;
+		finish();
 	}
 }
