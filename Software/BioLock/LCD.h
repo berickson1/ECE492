@@ -19,11 +19,12 @@ extern "C"{
 using namespace std;
 class LCD {
 public:
-	LCD(OS_EVENT * lcdMutex);
+	LCD();
+	static bool init();
 	void writeToLCD(string firstLine, string secondLine);
 private:
 	alt_up_character_lcd_dev *char_lcd;
-	OS_EVENT * m_lcdMutex;
+	static OS_EVENT * m_lcdMutex;
 };
 
 #endif /* LCD_H_ */

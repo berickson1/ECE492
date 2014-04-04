@@ -7,7 +7,10 @@
 
 #include "LCD.h"
 using namespace std;
-LCD::LCD(OS_EVENT * lcdMutex):m_lcdMutex(lcdMutex){
+
+OS_EVENT * LCD::m_lcdMutex;
+
+LCD::LCD(){
 	INT8U err = OS_NO_ERR;
 	OSMutexPend(m_lcdMutex, 0, &err);
 	if(err != OS_NO_ERR){
@@ -24,6 +27,16 @@ LCD::LCD(OS_EVENT * lcdMutex):m_lcdMutex(lcdMutex){
 		printf("Error posting to LCD mutex during LCD init\n");
 	}
 
+}
+
+bool LCD::init(){
+	INT8U err = OS_NO_ERR;
+	m_lcdMutex = OSMutexCreate(1, &err); //TODO: Double check if prio is correct
+	if(err != OS_NO_ERR){
+		printf("Error initializing LCD mutex\n");
+		return false;
+	}
+	return true;
 }
 
 void LCD::writeToLCD(string firstLine, string secondLine){

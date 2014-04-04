@@ -6,8 +6,26 @@
  */
 
 #include "Solenoid.h"
+OS_EVENT * Solenoid::solenoidSem;
+OS_EVENT * Solenoid::solenoidMutex;
 
-void Solenoid::unlock(OS_EVENT * solenoidSem, OS_EVENT * solenoidMutex) {
+bool Solenoid::init(){
+	INT8U err = OS_NO_ERR;
+	solenoidSem = OSSemCreate(0);
+	if (solenoidSem == NULL){
+		printf("Error initializing solenoid semaphore");
+		return false;
+	}
+
+	solenoidMutex = OSMutexCreate(0, &err);
+	if(err != OS_NO_ERR){
+		printf("Error initializing solenoid mutex\n");
+		return false;
+	}
+	return true;
+}
+
+void Solenoid::unlock() {
 	INT8U err = OS_NO_ERR;
 	OSMutexPend(solenoidMutex, 0, &err);
 	if(err != OS_NO_ERR){
@@ -25,7 +43,7 @@ void Solenoid::unlock(OS_EVENT * solenoidSem, OS_EVENT * solenoidMutex) {
 	}
 }
 
-void Solenoid::timedLock(OS_EVENT * solenoidSem, OS_EVENT * solenoidMutex, int unlockedTime, LCD &lcd){
+void Solenoid::timedLock(int unlockedTime, LCD &lcd){
 	INT8U err = OS_NO_ERR;
 	OSSemPend(solenoidSem, 0, &err);
 	if(err != OS_NO_ERR){
@@ -40,10 +58,10 @@ void Solenoid::timedLock(OS_EVENT * solenoidSem, OS_EVENT * solenoidMutex, int u
 		}
 	} while (err == OS_NO_ERR);
 	printf("Locking\n");
-	lock(solenoidMutex);
+	lock();
 }
 
-void Solenoid::lock(OS_EVENT * solenoidMutex) {
+void Solenoid::lock() {
 	INT8U err = OS_NO_ERR;
 	OSMutexPend(solenoidMutex, 0, &err);
 	if(err != OS_NO_ERR){

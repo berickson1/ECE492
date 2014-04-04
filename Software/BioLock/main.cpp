@@ -55,9 +55,6 @@ OS_STK task3_stk[TASK_STACKSIZE];
 OS_EVENT *fingerprintMailbox;
 OS_EVENT *fingerprintSem;
 OS_EVENT *databaseSemaphore;
-OS_EVENT *solenoidSem;
-OS_EVENT *solenoidMutex;
-OS_EVENT *lcdMutex;
 
 /* Definition of Task Priorities */
 
@@ -84,7 +81,7 @@ int getBufferNum(bool isFirstBuffer){
 
 /* Checks for fingerprint */
 void task1(void* pdata) {
-	LCD lcd = LCD(lcdMutex);
+	LCD lcd = LCD();
 	INT8U err;
 	bool firstBuffer = true;
 	while (true) {
@@ -158,7 +155,7 @@ void task1(void* pdata) {
 					printf("Open up!!!\n\n");
 					printf("Unlocking\n");
 					lcd.writeToLCD("Unlocking", "");
-					Solenoid::unlock(solenoidSem, solenoidMutex);
+					Solenoid::unlock();
 					continue;
 				}
 			}
@@ -176,7 +173,7 @@ void task1(void* pdata) {
 	}
 }
 void task2(void* pdata) {
-	LCD lcd = LCD(lcdMutex);
+	LCD lcd = LCD();
 	while (1) {
 		if (*((char*) SWITCHES_BASE) & 1 << 1) {
 			// Clearing database
@@ -195,7 +192,7 @@ void task2(void* pdata) {
 			}
 		}
 		if (*((char*) SWITCHES_BASE) & 1 << 3){
-			Solenoid::unlock(solenoidSem, solenoidMutex);
+			Solenoid::unlock();
 			lcd.writeToLCD("Unlocking", "");
 		}
 		//TODO: Switches for rest api calls
@@ -208,10 +205,10 @@ void task2(void* pdata) {
 }
 void task3(void* pdata) {
 	Camera::init();
-	LCD lcd = LCD(lcdMutex);
+	LCD lcd = LCD();
 	while (1){
 		//Ensures that the lock re-locks
-		Solenoid::timedLock(solenoidSem, solenoidMutex, 10 * CLOCKS_PER_SEC, lcd);
+		Solenoid::timedLock(10 * CLOCKS_PER_SEC, lcd);
 		lcd.writeToLCD("Locking", "");
 	}
 }
@@ -311,7 +308,7 @@ const char * handleHTTPPost(http_conn* conn, int *replyLen) {
 	retString = "{\"success\":false}";
 	jsonData = getPOSTPayload(incomingData, "json");
 	postType = getPOSTPayload(incomingData, "type");
-	RestAPI api(&getCurrentFingerprintId, databaseSemaphore, solenoidSem, solenoidMutex);
+	RestAPI api(&getCurrentFingerprintId, databaseSemaphore);
 	if (uriString.compare(0, 6, "/users") == 0) {
 		if (postType == "delete"){
 			User user;
@@ -387,7 +384,7 @@ const char * createHttpResponse(const char * URI, int *len, bool *isImage) {
 
 	*isImage = false;
 	string uriString(URI), retString;
-	RestAPI api(&getCurrentFingerprintId, databaseSemaphore, solenoidSem, solenoidMutex);
+	RestAPI api(&getCurrentFingerprintId, databaseSemaphore);
 	if (uriString.compare(0, 6, "/alive") == 0) {
 		retString = aliveJSON;
 	} else if (uriString.compare(0, 6, "/users") == 0) {
@@ -465,21 +462,14 @@ int main(void) {
 		return -1;
 	}
 
-	solenoidSem = OSSemCreate(0);
-	if (solenoidSem == NULL){
-		printf("Error initializing solenoid semaphore");
+	if(!Solenoid::init()){
+		printf("Error initializing solenoid\n");
 		return -1;
 	}
 
-	solenoidMutex = OSMutexCreate(0, &err);
-	if(err != OS_NO_ERR){
-		printf("Error initializing solenoid mutex\n");
-		return -1;
-	}
 
-	lcdMutex = OSMutexCreate(1, &err); //TODO: Double check if prio is correct
-	if(err != OS_NO_ERR){
-		printf("Error initializing LCD mutex\n");
+	if(!LCD::init()){
+		printf("Error initializing LCD\n");
 		return -1;
 	}
 
