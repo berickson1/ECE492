@@ -19,7 +19,6 @@ extern "C"{
 using namespace std;
 class LCD {
 public:
-	LCD();
 	static bool init();
 	static void writeToLCD(string firstLine, string secondLine);
 private:

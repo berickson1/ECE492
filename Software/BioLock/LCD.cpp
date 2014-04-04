@@ -11,10 +11,6 @@ using namespace std;
 OS_EVENT * LCD::m_lcdMutex;
 alt_up_character_lcd_dev *LCD::char_lcd = NULL;
 
-LCD::LCD(){
-
-}
-
 bool LCD::init(){
 	INT8U err = OS_NO_ERR;
 	m_lcdMutex = OSMutexCreate(1, &err); //TODO: Double check if prio is correct
